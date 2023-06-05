@@ -10,7 +10,7 @@ namespace nxtlvlOS.Windowing {
         public BufferedElement Parent;
         public List<BufferedElement> Children = new();
 
-        public uint RelativePosX, RelativePosY;
+        public int RelativePosX, RelativePosY;
         public uint SizeX = 100, SizeY = 100;
         public uint[] Buffer;
         private uint _bufSizeX = 0, _bufSizeY = 0;
@@ -50,7 +50,7 @@ namespace nxtlvlOS.Windowing {
 
                     #region Copy Buffer
                     if (child.DrawMode == BufferDrawMode.RawCopy) {
-                        uint offsetInThisElement = (child.RelativePosY * SizeX) + child.RelativePosX;
+                        uint offsetInThisElement = (uint)((child.RelativePosY * SizeX) + child.RelativePosX);
                         uint offsetInChild = 0;
 
                         for (var y = 0; y < child.SizeY; y++) {
@@ -59,7 +59,7 @@ namespace nxtlvlOS.Windowing {
                             offsetInThisElement += SizeX;
                         }
                     }else {
-                        uint offsetInThisElement = (child.RelativePosY * SizeX) + child.RelativePosX;  // Only updated per-line
+                        uint offsetInThisElement = (uint)((child.RelativePosY * SizeX) + child.RelativePosX);  // Only updated per-line
                         uint offsetInChild = 0; // Only updated per-line
 
                         for (var y = 0; y < child.SizeY; y++) {
@@ -143,14 +143,14 @@ namespace nxtlvlOS.Windowing {
         }
 
         public (uint x, uint y) GetAbsolutePosition() {
-            uint x = RelativePosX;
-            uint y = RelativePosY;
+            uint x = (uint)RelativePosX;
+            uint y = (uint)RelativePosY;
 
             BufferedElement par = Parent;
 
             while(par != null) {
-                x += par.RelativePosX;
-                y += par.RelativePosY;
+                x += (uint)par.RelativePosX;
+                y += (uint)par.RelativePosY;
 
                 par = par.Parent;
             }

@@ -39,22 +39,31 @@ namespace nxtlvlOS.Windowing.WindowsTest {
             f1.SetBackgroundColor(0xFFFF0000);
             WindowManager.AddForm(f1);
 
-            for(var x = 0; x < 2; x++) {
+            for(var x = 0; x < 40; x++) {
                 var form = new nxtlvlOS.Windowing.Elements.Form();
-                form.RelativePosX = (uint)(50 + (x*50));
-                form.RelativePosY = (uint)(50 + (x * 50));
+                form.RelativePosX = (50);
+                form.RelativePosY = (50 + (x * 10));
                 form.SizeX = 200;
                 form.SizeY = 200;
                 form.SetTitlebarEnabled(true);
                 form.SetBackgroundColor(0x80DEDEDE);
                 form.DrawMode = BufferDrawMode.PixelByPixel;
 
-                if (x == 1) {
+                if (x != 0) {
+                    var _x = x;
                     var toRight = true;
                     form.PreDrawAndChildUpdate = () => {
-                        form.RelativePosX += (uint)(toRight ? 3 : -3);
-                        if (form.RelativePosX > 600) toRight = false;
-                        if (form.RelativePosX < 40) toRight = true;
+                        form.RelativePosX += (toRight ? _x : -_x);
+                        if (form.RelativePosX > 1080) {
+                            form.RelativePosX += -_x * 2;
+                            toRight = false;
+                        }
+                        
+                        if (form.RelativePosX < 0) {
+                            Debug.WriteLine("left overflow!");
+                            form.RelativePosX += _x * 2;
+                            toRight = true;
+                        }
                     };
                 }
 

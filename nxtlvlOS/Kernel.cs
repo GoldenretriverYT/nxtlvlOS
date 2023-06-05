@@ -52,8 +52,8 @@ namespace nxtlvlOS {
 
             for (var x = 0; x < 2; x++) {
                 var form = new nxtlvlOS.Windowing.Elements.Form();
-                form.RelativePosX = (uint)(50 + (x * 50));
-                form.RelativePosY = (uint)(50 + (x * 50));
+                form.RelativePosX = (50 + (x * 50));
+                form.RelativePosY = (50 + (x * 50));
                 form.SizeX = 200;
                 form.SizeY = 200;
                 form.SetTitlebarEnabled(true);
@@ -63,7 +63,7 @@ namespace nxtlvlOS {
                 if (x == 1) {
                     var toRight = true;
                     form.PreDrawAndChildUpdate = () => {
-                        form.RelativePosX += (uint)(toRight ? 3 : -3);
+                        form.RelativePosX += (toRight ? 3 : -3);
                         if (form.RelativePosX > 600) toRight = false;
                         if (form.RelativePosX < 40) toRight = true;
                     };

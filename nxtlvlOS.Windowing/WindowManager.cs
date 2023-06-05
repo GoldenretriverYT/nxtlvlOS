@@ -30,7 +30,7 @@ namespace nxtlvlOS.Windowing {
 
                 #region Copy Buffer
                 if (form.DrawMode == BufferDrawMode.RawCopy) {
-                    uint offsetInThisElement = (form.RelativePosY * sizeX) + form.RelativePosX;
+                    uint offsetInThisElement = (uint)((form.RelativePosY * sizeX) + form.RelativePosX);
                     uint offsetInChild = 0;
 
                     for (var y = 0; y < form.SizeY; y++) {
@@ -39,7 +39,7 @@ namespace nxtlvlOS.Windowing {
                         offsetInThisElement += sizeX;
                     }
                 } else {
-                    uint offsetInThisElement = (form.RelativePosY * sizeX) + form.RelativePosX;  // Only updated per-line
+                    uint offsetInThisElement = (uint)((form.RelativePosY * sizeX) + form.RelativePosX);  // Only updated per-line
                     uint offsetInChild = 0; // Only updated per-line
 
                     for (var y = 0; y < form.SizeY; y++) {
