@@ -30,38 +30,43 @@ namespace nxtlvlOS.Windowing.WindowsTest {
             WindowManager.Target = new SkiaRenderTarget();
             WindowManager.Init();
 
-            var f1 = new nxtlvlOS.Windowing.Elements.Form();
-            f1.RelativePosX = 0;
-            f1.RelativePosY = 0;
-            f1.SizeX = 1280;
-            f1.SizeY = 720;
+            var f1 = new nxtlvlOS.Windowing.Elements.Form
+            {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 1280,
+                SizeY = 720
+            };
             f1.SetTitlebarEnabled(true);
             f1.SetBackgroundColor(0xFFFF0000);
             WindowManager.AddForm(f1);
 
-            for(var x = 0; x < 40; x++) {
-                var form = new nxtlvlOS.Windowing.Elements.Form();
-                form.RelativePosX = (50);
-                form.RelativePosY = (50 + (x * 10));
-                form.SizeX = 200;
-                form.SizeY = 200;
-                form.SetTitlebarEnabled(true);
-                form.SetBackgroundColor(0x80DEDEDE);
+            for (var x = 0; x < 40; x++) {
+                var form = new nxtlvlOS.Windowing.Elements.Form
+                {
+                    RelativePosX = (50 + x),
+                    RelativePosY = (50 + x),
+                    SizeX = (uint)(200 - x * 2),
+                    SizeY = (uint)(200 - x * 2)
+                };
+
+                form.SetTitlebarEnabled(false);
+                form.SetBackgroundColor(0x40DEDEDE);
                 form.DrawMode = BufferDrawMode.PixelByPixel;
 
                 if (x != 0) {
-                    var _x = x;
+                    var _x = 0; //x;
                     var toRight = true;
                     form.PreDrawAndChildUpdate = () => {
                         form.RelativePosX += (toRight ? _x : -_x);
                         if (form.RelativePosX > 1080) {
-                            form.RelativePosX += -_x * 2;
+                            form.RelativePosX += -_x;
                             toRight = false;
                         }
-                        
+
                         if (form.RelativePosX < 0) {
                             Debug.WriteLine("left overflow!");
-                            form.RelativePosX += _x * 2;
+                            form.RelativePosX += _x;
                             toRight = true;
                         }
                     };

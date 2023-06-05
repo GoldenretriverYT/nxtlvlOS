@@ -45,8 +45,8 @@ namespace nxtlvlOS.Windowing.Elements {
             if (SizeY < 20) throw new Exception("Form must be at least 20 pixels in height");
 
             SetDirty(false);
-            DrawRectFilled(0, 0, SizeX, 20, 0xFF878787);
-            DrawRectFilled(0, 20, SizeX, SizeY, backgroundColor);
+            if(titlebarEnabled) DrawRectFilled(0, 0, SizeX, 20, 0xFF878787);
+            DrawRectFilled(0, (titlebarEnabled ? 20u : 0u), SizeX, SizeY, backgroundColor);
         }
     }
 }
