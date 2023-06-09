@@ -1,4 +1,5 @@
-﻿using System;
+﻿using nxtlvlOS.Windowing.Fonts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,13 +35,14 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-
-
         public override void Draw() {
             if (SizeY < 20) throw new Exception("Form must be at least 20 pixels in height");
 
             SetDirty(false);
-            if(titlebarEnabled) DrawRectFilled(0, 0, SizeX, 20, 0xFF878787);
+            if (titlebarEnabled) {
+                DrawRectFilled(0, 0, SizeX, 20, 0xFF878787);
+                DrawStringPSF(PCScreenFont.Default, 2, 2, title, 0xFF000000);
+            }
             DrawRectFilled(0, (titlebarEnabled ? 20u : 0u), SizeX, SizeY, backgroundColor);
         }
     }

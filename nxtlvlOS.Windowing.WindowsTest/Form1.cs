@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace nxtlvlOS.Windowing.WindowsTest {
@@ -30,8 +31,61 @@ namespace nxtlvlOS.Windowing.WindowsTest {
             WindowManager.Target = new SkiaRenderTarget();
             WindowManager.Init();
 
-            var f1 = new nxtlvlOS.Windowing.Elements.Form
-            {
+            RainbowBgTest();
+            //SimpleTextTest();
+        }
+
+        #region testing stuff
+        private void RainbowBgTest() {
+            var f1 = new nxtlvlOS.Windowing.Elements.Form();
+            f1.RelativePosX = 0;
+            f1.RelativePosY = 0;
+            f1.SizeX = 1280;
+            f1.SizeY = 720;
+            f1.SetTitlebarEnabled(true);
+            f1.SetTitle("Wow, Form!");
+            f1.SetBackgroundColor(0xFFFF0000);
+            WindowManager.AddForm(f1);
+
+            for (var x = 0; x < 10; x++) {
+                var form = new nxtlvlOS.Windowing.Elements.Form();
+                form.RelativePosX = (50 + (x * 50));
+                form.RelativePosY = (50 + (x * 50));
+                form.SizeX = 200;
+                form.SizeY = 200;
+                form.SetTitlebarEnabled(true);
+                form.SetTitle("Wow, Form! " + x);
+                form.SetBackgroundColor(0x80DEDEDE);
+                form.DrawMode = BufferDrawMode.PixelByPixel;
+
+                if (x == 1) {
+                    var toRight = true;
+                    form.PreDrawAndChildUpdate = () => {
+                        form.RelativePosX += (toRight ? 3 : -3);
+                        if (form.RelativePosX > 600) toRight = false;
+                        if (form.RelativePosX < 40) toRight = true;
+                    };
+                }
+
+                WindowManager.AddForm(form);
+            }
+
+            Random rnd = new();
+            HSL hsl = new();
+            hsl.H = 0;
+            hsl.S = 1f;
+            hsl.L = 0.5f;
+
+            f1.PostDrawAndChildUpdate = () => {
+                var rgb = HSLToRGB(hsl);
+                f1.SetBackgroundColor((uint)((0xFF << 24) + (rgb.R << 16) + (rgb.G << 8) + (rgb.B << 0)));
+                hsl.H += 1;
+                if (hsl.H == 360) hsl.H = 0;
+            };
+        }
+        
+        private void SimpleTextTest() {
+            var f1 = new nxtlvlOS.Windowing.Elements.Form {
                 RelativePosX = 0,
                 RelativePosY = 0,
                 SizeX = 1280,
@@ -56,6 +110,7 @@ namespace nxtlvlOS.Windowing.WindowsTest {
 
             WindowManager.AddForm(f1);
         }
+        #endregion
 
         private void pictureBox1_Click(object sender, EventArgs e) {
 
