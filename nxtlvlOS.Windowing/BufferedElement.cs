@@ -1,4 +1,5 @@
-﻿using System;
+﻿using nxtlvlOS.Windowing.Fonts;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -29,7 +30,12 @@ namespace nxtlvlOS.Windowing {
         /// </summary>
         public bool BufferWasUpdated = true;
 
+        public Action PreDrawAndChildUpdate = () => { };
+        public Action PostDrawAndChildUpdate = () => { };
+
         public virtual void Update() {
+            PreDrawAndChildUpdate();
+
             if (_bufSizeX != SizeX || _bufSizeY != SizeY) { // TODO: Implement copy of all children buffers
                 _bufSizeX = SizeX;
                 _bufSizeY = SizeY;
@@ -37,52 +43,18 @@ namespace nxtlvlOS.Windowing {
                 Buffer = new uint[SizeY * SizeX];
             }
 
+
             if(dirty) {
                 Draw();
                 BufferWasUpdated = true;
             }
 
+
             foreach(var child in Children) {
                 child.Update();
-                
-                if(child.BufferWasUpdated) {
-                    child.BufferWasUpdated = false;
-
-                    #region Copy Buffer
-                    if (child.DrawMode == BufferDrawMode.RawCopy) {
-                        uint offsetInThisElement = (uint)((child.RelativePosY * SizeX) + child.RelativePosX);
-                        uint offsetInChild = 0;
-
-                        for (var y = 0; y < child.SizeY; y++) {
-                            System.Buffer.BlockCopy(child.Buffer, (int)offsetInChild * 4, Buffer, (int)offsetInThisElement * 4, (int)child.SizeX * 4);
-                            offsetInChild += child.SizeX;
-                            offsetInThisElement += SizeX;
-                        }
-                    }else {
-                        uint offsetInThisElement = (uint)((child.RelativePosY * SizeX) + child.RelativePosX);  // Only updated per-line
-                        uint offsetInChild = 0; // Only updated per-line
-
-                        for (var y = 0; y < child.SizeY; y++) {
-                            for (var x = 0; x < child.SizeX; x++) {
-                                var childBufVal = child.Buffer[offsetInChild + x];
-                                var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
-
-                                if (childBufValAlpha == 0) continue;
-
-                                if (childBufValAlpha == 255) {
-                                    Buffer[offsetInThisElement + x] = childBufVal;
-                                }else {
-                                    Buffer[offsetInThisElement + x] = 0xFFFF0000; // todo: add alpha blend
-                                }
-                            }
-
-                            offsetInChild += child.SizeX;
-                            offsetInThisElement += SizeX;
-                        }
-                    }
-                    #endregion
-                }
             }
+
+            PostDrawAndChildUpdate();
         }
 
         public void SetDirty(bool isDirty) {
@@ -138,6 +110,30 @@ namespace nxtlvlOS.Windowing {
             for (var x = x1; x < x2; x++) {
                 for (var y = y1; y < y2; y++) {
                     Buffer[(y * SizeX) + x] = colorArgb;
+                }
+            }
+        }
+
+        public void DrawStringPSF(PCScreenFont font, uint x, uint y, string str, uint color) {
+            var xOffset = x;
+
+            foreach(var c in str) {
+                DrawCharPSF(font, xOffset, y, c, color);
+                xOffset += font.Width;
+            }
+        }
+
+        public void DrawCharPSF(PCScreenFont font, uint x, uint y, char c, uint color) {
+            int p = font.Height * (byte)c;
+
+            for (int cy = 0; cy < font.Height; cy++) {
+                for (byte cx = 0; cx < font.Width; cx++) {
+                    if ((font.Data[p + cy] & (1 << (cx))) != 0) {
+                        var xOff = x + (font.Width - cx);
+                        var yOff = y + cy;
+
+                        Buffer[(yOff * SizeX) + xOff] = color;
+                    }
                 }
             }
         }
