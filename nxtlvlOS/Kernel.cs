@@ -119,7 +119,6 @@ namespace nxtlvlOS {
                 form.SizeY = 200;
                 form.SetTitlebarEnabled(true);
                 form.SetTitle("Wow, Form! " + x);
-                form.DrawMode = BufferDrawMode.RawCopy;
 
                 if (x == 1) {
                     var toRight = true;
@@ -127,6 +126,8 @@ namespace nxtlvlOS {
                         form.RelativePosX += (toRight ? 3 : -3);
                         if (form.RelativePosX > 600) toRight = false;
                         if (form.RelativePosX < 40) toRight = true;
+
+                        form.SetTitle("Wow, " + form.RelativePosX + " " + form.RelativePosY);
                     };
                 }
 
