@@ -21,7 +21,7 @@ namespace nxtlvlOS.Windowing {
             EmptyBuffer = new uint[sizeX * sizeY];
         }
 
-        public static void Update(List<WMEvent> events) {
+        public static void Update() {
             // Clear buffer
             System.Buffer.BlockCopy(EmptyBuffer, 0, Buffer, 0, Buffer.Length*4);
 

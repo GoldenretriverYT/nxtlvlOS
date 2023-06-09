@@ -1,11 +1,14 @@
 ﻿using Cosmos.Core;
+using Cosmos.Core.Memory;
 using Cosmos.HAL;
 using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
+using nxtlvlOS.Utils;
 using nxtlvlOS.Windowing;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Sys = Cosmos.System;
 
@@ -16,6 +19,9 @@ namespace nxtlvlOS {
         public NXTLogger Logger = new();
         public CosmosVFS VFS = new();
         public spagSVGAII Canvas;
+
+        private int framesRendered = 0;
+        private int previousSecond = -1;
 
         protected override void BeforeRun() {
             Instance = this;
@@ -41,7 +47,7 @@ namespace nxtlvlOS {
             WindowManager.Target = adapter;
             WindowManager.Init();
 
-            RainbowBgTest();
+            SimpleMultiForm();
 
             Logger.Log(LogLevel.Info, "Initiliazed Window Mananger!");
         }
@@ -95,6 +101,39 @@ namespace nxtlvlOS {
             };
         }
 
+        private void SimpleMultiForm() {
+            var f1 = new nxtlvlOS.Windowing.Elements.Form();
+            f1.RelativePosX = 0;
+            f1.RelativePosY = 0;
+            f1.SizeX = 1280;
+            f1.SizeY = 720;
+            f1.SetTitlebarEnabled(false);
+            f1.SetTitle("Wow, Form!");
+            WindowManager.AddForm(f1);
+
+            for (var x = 0; x < 10; x++) {
+                var form = new nxtlvlOS.Windowing.Elements.Form();
+                form.RelativePosX = (50 + (x * 50));
+                form.RelativePosY = (50 + (x * 50));
+                form.SizeX = 200;
+                form.SizeY = 200;
+                form.SetTitlebarEnabled(true);
+                form.SetTitle("Wow, Form! " + x);
+                form.DrawMode = BufferDrawMode.RawCopy;
+
+                if (x == 1) {
+                    var toRight = true;
+                    form.PreDrawAndChildUpdate = () => {
+                        form.RelativePosX += (toRight ? 3 : -3);
+                        if (form.RelativePosX > 600) toRight = false;
+                        if (form.RelativePosX < 40) toRight = true;
+                    };
+                }
+
+                WindowManager.AddForm(form);
+            }
+        }
+
         private void SimpleTextTest() {
             var f1 = new nxtlvlOS.Windowing.Elements.Form {
                 RelativePosX = 0,
@@ -124,8 +163,22 @@ namespace nxtlvlOS {
         #endregion
 
         protected override void Run() {
+            TimingUtils.Time("RenderFrame");
             WindowManager.Update();
             Canvas.Display();
+            TimingUtils.EndTime("RenderFrame");
+
+            framesRendered++;
+
+            if(framesRendered % 10 == 0) {
+                Heap.Collect();
+            }
+
+            if(RTC.Second != previousSecond) {
+                previousSecond = RTC.Second;
+                Logger.Log(LogLevel.Info, "FPS: ca. " + framesRendered);
+                framesRendered = 0;
+            }
         }
 
         #region temp testing code
