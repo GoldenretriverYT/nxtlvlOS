@@ -15,13 +15,8 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint backgroundColor = 0xFFDEDEDE;
         public uint BackgroundColor => backgroundColor;
 
-        public Action PreDrawAndChildUpdate = () => { };
-        public Action PostDrawAndChildUpdate = () => { };
-
         public override void Update() {
-            PreDrawAndChildUpdate();
             base.Update();
-            PostDrawAndChildUpdate();
         }
 
         public void SetTitle(string title) {

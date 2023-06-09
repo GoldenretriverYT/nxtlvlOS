@@ -37,56 +37,24 @@ namespace nxtlvlOS.Windowing.WindowsTest {
                 SizeX = 1280,
                 SizeY = 720
             };
-            f1.SetTitlebarEnabled(true);
-            f1.SetBackgroundColor(0xFFFF0000);
-            WindowManager.AddForm(f1);
+            f1.SetTitlebarEnabled(false);
+            f1.SetBackgroundColor(0xFF000000);
 
-            for (var x = 0; x < 40; x++) {
-                var form = new nxtlvlOS.Windowing.Elements.Form
-                {
-                    RelativePosX = (50 + x),
-                    RelativePosY = (50 + x),
-                    SizeX = (uint)(200 - x * 2),
-                    SizeY = (uint)(200 - x * 2)
-                };
-
-                form.SetTitlebarEnabled(false);
-                form.SetBackgroundColor(0x40DEDEDE);
-                form.DrawMode = BufferDrawMode.PixelByPixel;
-
-                if (x != 0) {
-                    var _x = 0; //x;
-                    var toRight = true;
-                    form.PreDrawAndChildUpdate = () => {
-                        form.RelativePosX += (toRight ? _x : -_x);
-                        if (form.RelativePosX > 1080) {
-                            form.RelativePosX += -_x;
-                            toRight = false;
-                        }
-
-                        if (form.RelativePosX < 0) {
-                            Debug.WriteLine("left overflow!");
-                            form.RelativePosX += _x;
-                            toRight = true;
-                        }
-                    };
-                }
-
-                WindowManager.AddForm(form);
-            }
-
-            Random rnd = new();
-            HSL hsl = new();
-            hsl.H = 0;
-            hsl.S = 1f;
-            hsl.L = 0.5f;
-
-            f1.PostDrawAndChildUpdate = () => {
-                var rgb = HSLToRGB(hsl);
-                f1.SetBackgroundColor((uint)((0xFF << 24) + (rgb.R << 16) + (rgb.G << 8) + (rgb.B << 0)));
-                hsl.H += 1;
-                if (hsl.H == 360) hsl.H = 0;
+            var lbl = new nxtlvlOS.Windowing.Elements.Label {
+                RelativePosX = 50,
+                RelativePosY = 50,
+                SizeX = 100,
+                SizeY = 30,
             };
+            lbl.SetColor(0xFFFFFFFF);
+
+            lbl.PostDrawAndChildUpdate = () => {
+                lbl.SetText("ok");
+            };
+
+            f1.Children.Add(lbl);
+
+            WindowManager.AddForm(f1);
         }
 
         private void pictureBox1_Click(object sender, EventArgs e) {

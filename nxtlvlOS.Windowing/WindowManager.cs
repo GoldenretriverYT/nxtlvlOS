@@ -1,4 +1,5 @@
 ﻿using nxtlvlOS.Windowing.Elements;
+using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,25 +27,28 @@ namespace nxtlvlOS.Windowing {
 
             foreach(var form in forms) {
                 form.Update();
-                form.BufferWasUpdated = false;
+            }
 
+            foreach(var el in forms.Flatten<BufferedElement>((el) => el.Children)) {
                 #region Copy Buffer
-                if (form.DrawMode == BufferDrawMode.RawCopy) {
-                    uint offsetInThisElement = (uint)((form.RelativePosY * sizeX) + form.RelativePosX);
+                var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
+
+                if (el.DrawMode == BufferDrawMode.RawCopy) {
+                    uint offsetInThisElement = (uint)((absolutePosY * sizeX) + absolutePosX);
                     uint offsetInChild = 0;
 
-                    for (var y = 0; y < form.SizeY; y++) {
-                        System.Buffer.BlockCopy(form.Buffer, (int)offsetInChild*4, Buffer, (int)offsetInThisElement * 4, (int)form.SizeX * 4);
-                        offsetInChild += form.SizeX;
+                    for (var y = 0; y < el.SizeY; y++) {
+                        System.Buffer.BlockCopy(el.Buffer, (int)offsetInChild * 4, Buffer, (int)offsetInThisElement * 4, (int)el.SizeX * 4);
+                        offsetInChild += el.SizeX;
                         offsetInThisElement += sizeX;
                     }
                 } else {
-                    uint offsetInThisElement = (uint)((form.RelativePosY * sizeX) + form.RelativePosX);  // Only updated per-line
+                    uint offsetInThisElement = (uint)((absolutePosY * sizeX) + absolutePosX);  // Only updated per-line
                     uint offsetInChild = 0; // Only updated per-line
 
-                    for (var y = 0; y < form.SizeY; y++) {
-                        for (var x = 0; x < form.SizeX; x++) {
-                            var childBufVal = form.Buffer[offsetInChild + x];
+                    for (var y = 0; y < el.SizeY; y++) {
+                        for (var x = 0; x < el.SizeX; x++) {
+                            var childBufVal = el.Buffer[offsetInChild + x];
                             var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
                             var currentBufVal = Buffer[offsetInThisElement + x];
 
@@ -56,12 +60,12 @@ namespace nxtlvlOS.Windowing {
                                 byte red = (byte)(((childBufVal >> 16) & 0xFF) * childBufValAlpha + ((currentBufVal >> 16) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                 byte green = (byte)(((childBufVal >> 8) & 0xFF) * childBufValAlpha + ((currentBufVal >> 8) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                 byte blue = (byte)(((childBufVal >> 0) & 0xFF) * childBufValAlpha + ((currentBufVal >> 0) & 0xFF) * (255 - childBufValAlpha) >> 8);
-                                
+
                                 Buffer[offsetInThisElement + x] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
                             }
                         }
 
-                        offsetInChild += form.SizeX;
+                        offsetInChild += el.SizeX;
                         offsetInThisElement += sizeX;
                     }
                 }
