@@ -18,6 +18,7 @@
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <ExtractMapFile>True</ExtractMapFile>
     </PropertyGroup>
 
     <ItemGroup>

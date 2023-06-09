@@ -114,6 +114,28 @@ namespace nxtlvlOS.Windowing {
             }
         }
 
+        public void DrawInsetRectFilled(uint x1, uint y1, uint x2, uint y2, uint colorArgb, uint insetColorArgb) {
+            if (x1 > x2) {
+                (x1, x2) = (x2, x1);
+            }
+
+            if (y1 > y2) {
+                (y1, y2) = (y2, y1);
+            }
+
+            for (var x = x1; x < x2; x++) {
+                for (var y = y1; y < y2; y++) {
+                    Buffer[(y * SizeX) + x] = colorArgb;
+                }
+            }
+
+            DrawRectFilled(x1, y1, x1+2, y2, 0xFFFFFFFF);
+            DrawRectFilled(x1, y1, x2, y1+2, 0xFFFFFFFF);
+
+            DrawRectFilled(x2 - 2, 0, x2, y2, insetColorArgb);
+            DrawRectFilled(x1, y2 - 2, x2, y2, insetColorArgb);
+        }
+
         public void DrawStringPSF(PCScreenFont font, uint x, uint y, string str, uint color) {
             var xOffset = x;
 

@@ -16,7 +16,28 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint backgroundColor = 0xFFDEDEDE;
         public uint BackgroundColor => backgroundColor;
 
+        private uint insetColor = 0xFFBBBBBB;
+        public uint InsetColor => insetColor;
+
+        private TextButton closeButton;
+
+        public Form() {
+            closeButton = new TextButton() {
+                RelativePosX = 0,
+                RelativePosY = 6,
+                SizeX = 16,
+                SizeY = 16
+            };
+
+            closeButton.SetText("X");
+
+            closeButton.Parent = this; // Todo: add proper AddChild method
+            Children.Add(closeButton);
+        }
+
         public override void Update() {
+            closeButton.RelativePosX = (int)(SizeX - 22);
+
             base.Update();
         }
 
@@ -35,15 +56,23 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
+        public void SetInsetColor(uint color) {
+            this.insetColor = color;
+            this.SetDirty(true);
+        }
+
         public override void Draw() {
-            if (SizeY < 20) throw new Exception("Form must be at least 20 pixels in height");
+            if (SizeY < 30) throw new Exception("Form must be at least 30 pixels in height");
+            if (SizeX < 30) throw new Exception("Form must be at least 30 pixels in width");
 
             SetDirty(false);
+
+            DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+
             if (titlebarEnabled) {
-                DrawRectFilled(0, 0, SizeX, 20, 0xFF878787);
-                DrawStringPSF(PCScreenFont.Default, 2, 2, title, 0xFF000000);
+                DrawRectFilled(4, 4, SizeX-4, 24, 0xFF000072);
+                DrawStringPSF(PCScreenFont.Default, 6, 6, title, 0xFFFFFFFF);
             }
-            DrawRectFilled(0, (titlebarEnabled ? 20u : 0u), SizeX, SizeY, backgroundColor);
         }
     }
 }

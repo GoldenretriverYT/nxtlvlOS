@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Cosmos.Debug.Kernel;
-using Cosmos.HAL.Drivers.PCI.Video;
+using Cosmos.HAL.Drivers.Video.SVGAII;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 
@@ -15,7 +15,7 @@ namespace nxtlvlOS {
         /// <summary>
         /// Debugger.
         /// </summary>
-        internal Debugger mSVGAIIDebugger = new Debugger("System", "SVGAIIScreen");
+        internal Debugger mSVGAIIDebugger = new Debugger("SystemSVGAIIScreen");
 
         private static readonly Mode _DefaultMode = new Mode(1024, 768, ColorDepth.ColorDepth32);
 
@@ -68,10 +68,6 @@ namespace nxtlvlOS {
             }
         }
 
-        /// <summary>
-        /// Override canvas dufault graphics mode.
-        /// </summary>
-        public override Mode DefaultGraphicMode => _DefaultMode;
 
         /// <summary>
         /// Disables the SVGA driver, parent method returns to VGA text mode
@@ -96,19 +92,6 @@ namespace nxtlvlOS {
         }
 
         /// <summary>
-        /// Draw point.
-        /// Not implemented.
-        /// </summary>
-        /// <param name="aColor">Color to draw with.</param>
-        /// <param name="x">X coordinate.</param>
-        /// <param name="y">Y coordinate.</param>
-        /// <exception cref="NotImplementedException">Thrown always (only int coordinates supported).</exception>
-        public override void DrawPoint(Color aColor, float aX, float aY) {
-            //xSVGAIIDriver.
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Draw filled rectangle.
         /// </summary>
         /// <param name="aColor">color to draw with.</param>
@@ -124,7 +107,7 @@ namespace nxtlvlOS {
 
         public void DrawFilledRectangle(int color, int aX_start, int aY_start, int aWidth, int aHeight) {
             for (int i = aY_start; i < aY_start + aHeight; i++) {
-                _xSVGADriver.VideoMemory.Fill((aX_start * ((int)Mode.ColorDepth / 8) + i * (Mode.Width * ((int)Mode.ColorDepth / 8))) + (int)_xSVGADriver.FrameSize, aWidth, color);
+                _xSVGADriver.videoMemory.Fill((int)((aX_start * ((int)Mode.ColorDepth / 8) + i * (Mode.Width * ((int)Mode.ColorDepth / 8))) + (int)_xSVGADriver.FrameSize), aWidth, color);
             }
         }
 
@@ -263,6 +246,8 @@ namespace nxtlvlOS {
             new Mode(3840, 2400, ColorDepth.ColorDepth32), // WQUXGA
     };
 
+        public override Mode DefaultGraphicsMode => throw new NotImplementedException();
+
         /// <summary>
         /// Set graphics mode.
         /// </summary>
@@ -390,7 +375,7 @@ namespace nxtlvlOS {
 
             for (int cy = 0; cy < aFont.Height; cy++) {
                 for (byte cx = 0; cx < aFont.Width; cx++) {
-                    if (aFont.ConvertByteToBitAddres(aFont.Data[p + cy], cx + 1)) {
+                    if (aFont.ConvertByteToBitAddress(aFont.Data[p + cy], cx + 1)) {
                         uint aX = (ushort)(x + (aFont.Width - cx));
                         uint aY = (ushort)(y + cy);
                         if (color.A < 255) {
@@ -419,7 +404,7 @@ namespace nxtlvlOS {
             int dataXWidth = ((int)Mode.ColorDepth / 8);
 
             for (int i = 0; i < xHeight; i++) {
-                _xSVGADriver.VideoMemory.Copy((aX * dataXWidth + (aY + i) * (Mode.Width * (dataXWidth))) + (int)_xSVGADriver.FrameSize, aImage.rawData, i * xWidth, xWidth);
+                _xSVGADriver.videoMemory.Copy((int)((aX * dataXWidth + (aY + i) * (Mode.Width * (dataXWidth))) + (int)_xSVGADriver.FrameSize), aImage.RawData, i * xWidth, xWidth);
             }
         }
 
