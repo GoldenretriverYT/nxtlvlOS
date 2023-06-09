@@ -12,7 +12,7 @@ namespace nxtlvlOS.Windowing {
         public static uint[] Buffer;
         public static uint[] EmptyBuffer;
 
-        private static List<Form> forms = new();
+        private static List<BufferedElement> forms = new();
         private static uint sizeX, sizeY;
 
         public static void Init() {
@@ -21,7 +21,7 @@ namespace nxtlvlOS.Windowing {
             EmptyBuffer = new uint[sizeX * sizeY];
         }
 
-        public static void Update() {
+        public static void Update(List<WMEvent> events) {
             // Clear buffer
             System.Buffer.BlockCopy(EmptyBuffer, 0, Buffer, 0, Buffer.Length*4);
 
@@ -29,7 +29,7 @@ namespace nxtlvlOS.Windowing {
                 form.Update();
             }
 
-            foreach(var el in forms.Flatten<BufferedElement>((el) => el.Children)) {
+            foreach(var el in IEnumerableHelpers.Flatten(forms)) {
                 #region Copy Buffer
                 var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
 

@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing.Utils {
-    internal static class IEnumerableExtensions {
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> start, Func<T, IEnumerable<T>> on) {
-            List<T> values = new();
+    public static class IEnumerableHelpers {
+        public static List<BufferedElement> Flatten(List<BufferedElement> start) {
+            List<BufferedElement> values = new();
 
             foreach(var item in start) {
                 values.Add(item);
-                values.AddRange(Flatten(on(item), on));
+                values.AddRange(Flatten(item.Children));
             }
 
             return values;

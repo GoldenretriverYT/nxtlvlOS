@@ -41,22 +41,31 @@ namespace nxtlvlOS {
             WindowManager.Target = adapter;
             WindowManager.Init();
 
+            RainbowBgTest();
+
+            Logger.Log(LogLevel.Info, "Initiliazed Window Mananger!");
+        }
+
+        #region testing stuff
+        private void RainbowBgTest() {
             var f1 = new nxtlvlOS.Windowing.Elements.Form();
             f1.RelativePosX = 0;
             f1.RelativePosY = 0;
             f1.SizeX = 1280;
             f1.SizeY = 720;
             f1.SetTitlebarEnabled(true);
+            f1.SetTitle("Wow, Form!");
             f1.SetBackgroundColor(0xFFFF0000);
             WindowManager.AddForm(f1);
 
-            for (var x = 0; x < 2; x++) {
+            for (var x = 0; x < 10; x++) {
                 var form = new nxtlvlOS.Windowing.Elements.Form();
                 form.RelativePosX = (50 + (x * 50));
                 form.RelativePosY = (50 + (x * 50));
                 form.SizeX = 200;
                 form.SizeY = 200;
                 form.SetTitlebarEnabled(true);
+                form.SetTitle("Wow, Form! " + x);
                 form.SetBackgroundColor(0x80DEDEDE);
                 form.DrawMode = BufferDrawMode.PixelByPixel;
 
@@ -84,9 +93,35 @@ namespace nxtlvlOS {
                 hsl.H += 1;
                 if (hsl.H == 360) hsl.H = 0;
             };
-
-            Logger.Log(LogLevel.Info, "Initiliazed Window Mananger!");
         }
+
+        private void SimpleTextTest() {
+            var f1 = new nxtlvlOS.Windowing.Elements.Form {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 1280,
+                SizeY = 720
+            };
+            f1.SetTitlebarEnabled(false);
+            f1.SetBackgroundColor(0xFF000000);
+
+            var lbl = new nxtlvlOS.Windowing.Elements.Label {
+                RelativePosX = 50,
+                RelativePosY = 50,
+                SizeX = 100,
+                SizeY = 30,
+            };
+            lbl.SetColor(0xFFFFFFFF);
+
+            lbl.PostDrawAndChildUpdate = () => {
+                lbl.SetText("ok");
+            };
+
+            f1.Children.Add(lbl);
+
+            WindowManager.AddForm(f1);
+        }
+        #endregion
 
         protected override void Run() {
             WindowManager.Update();
@@ -204,7 +239,7 @@ namespace nxtlvlOS {
         public spagSVGAII Canvas;
 
         public void DrawBuffer(uint xStart, uint yStart, uint w, uint[] buffer, BufferDrawMode mode) {
-            Canvas._xSVGADriver.VideoMemory.Copy((uint)Canvas._xSVGADriver.FrameSize, buffer, 0, buffer.Length);
+            Canvas._xSVGADriver.videoMemory.Copy((uint)Canvas._xSVGADriver.FrameSize, buffer, 0, buffer.Length);
         }
 
         public (uint w, uint h) GetSize() {
