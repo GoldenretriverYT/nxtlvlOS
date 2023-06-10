@@ -13,6 +13,7 @@ namespace nxtlvlOS.Windowing {
 
         public int RelativePosX, RelativePosY;
         public uint SizeX = 100, SizeY = 100;
+        public bool Visible = true;
         public uint[] Buffer;
         private uint _bufSizeX = 0, _bufSizeY = 0;
 

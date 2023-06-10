@@ -1,6 +1,7 @@
 ﻿using Cosmos.Core;
 using Cosmos.Core.Memory;
 using Cosmos.HAL;
+using Cosmos.System;
 using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Console = System.Console;
 using Sys = Cosmos.System;
 
 namespace nxtlvlOS {
@@ -120,6 +122,9 @@ namespace nxtlvlOS {
                 form.SetTitlebarEnabled(true);
                 form.SetTitle("Wow, Form! " + x);
 
+                form.SetBackgroundColor(0x80DEDEDE);
+                form.DrawMode = BufferDrawMode.PixelByPixel;
+
                 if (x == 1) {
                     var toRight = true;
                     form.PreDrawAndChildUpdate = () => {
@@ -165,8 +170,15 @@ namespace nxtlvlOS {
 
         protected override void Run() {
             TimingUtils.Time("RenderFrame");
-            WindowManager.Update();
+
+            var result = WindowManager.Update();
+            
+            if(result.Type == WMResultType.Failure) {
+                Logger.Log(LogLevel.Fail, result.AdditionalData.ToString());
+            }
+
             Canvas.Display();
+
             TimingUtils.EndTime("RenderFrame");
 
             framesRendered++;
