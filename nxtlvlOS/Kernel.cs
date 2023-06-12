@@ -26,6 +26,8 @@ namespace nxtlvlOS {
         private int framesRendered = 0;
         private int previousSecond = -1;
 
+        private Label fpsLabel = null;
+
         protected override void BeforeRun() {
             Instance = this;
 
@@ -114,13 +116,22 @@ namespace nxtlvlOS {
             f1.SetTitlebarEnabled(false);
             f1.SetTitle("Wow, Form!");
 
+            fpsLabel = new nxtlvlOS.Windowing.Elements.Label();
+            fpsLabel.RelativePosX = 5;
+            fpsLabel.RelativePosY = 5;
+            fpsLabel.SizeX = 100;
+            fpsLabel.SizeY = 25;
+            fpsLabel.SetText("FPS: ca. ?");
+
+            f1.AddElement(fpsLabel);
+
             VerticalAlignment[] verticals = new VerticalAlignment[] { VerticalAlignment.Top, VerticalAlignment.Middle, VerticalAlignment.Bottom };
 
             int vertIdx = 0;
             foreach(var vertical in verticals) {
                 var btnOne = new nxtlvlOS.Windowing.Elements.TextButton();
                 btnOne.RelativePosX = 50;
-                btnOne.RelativePosY = 10 + (70 * vertIdx);
+                btnOne.RelativePosY = 30 + (70 * vertIdx);
                 btnOne.SizeX = 150;
                 btnOne.SizeY = 50;
                 btnOne.SetHorizontalAlignment(Windowing.Elements.HorizontalAlignment.Left);
@@ -131,7 +142,7 @@ namespace nxtlvlOS {
 
                 var btnTwo = new nxtlvlOS.Windowing.Elements.TextButton();
                 btnTwo.RelativePosX = 300;
-                btnTwo.RelativePosY = 10 + (70 * vertIdx);
+                btnTwo.RelativePosY = 30 + (70 * vertIdx);
                 btnTwo.SizeX = 150;
                 btnTwo.SizeY = 50;
                 btnTwo.SetHorizontalAlignment(Windowing.Elements.HorizontalAlignment.Center);
@@ -142,7 +153,7 @@ namespace nxtlvlOS {
 
                 var btnThree = new nxtlvlOS.Windowing.Elements.TextButton();
                 btnThree.RelativePosX = 550;
-                btnThree.RelativePosY = 10 + (70 * vertIdx);
+                btnThree.RelativePosY = 30 + (70 * vertIdx);
                 btnThree.SizeX = 150;
                 btnThree.SizeY = 50;
                 btnThree.SetHorizontalAlignment(Windowing.Elements.HorizontalAlignment.Right);
@@ -159,7 +170,7 @@ namespace nxtlvlOS {
             for (var x = 0; x < 10; x++) {
                 var form = new nxtlvlOS.Windowing.Elements.Form();
                 form.RelativePosX = (50 + (x * 50));
-                form.RelativePosY = (200 + (x * 25));
+                form.RelativePosY = (250 + (x * 25));
                 form.SizeX = 200;
                 form.SizeY = 200;
                 form.SetTitlebarEnabled(true);
@@ -233,6 +244,8 @@ namespace nxtlvlOS {
             if(RTC.Second != previousSecond) {
                 previousSecond = RTC.Second;
                 Logger.Log(LogLevel.Info, "FPS: ca. " + framesRendered);
+
+                if (fpsLabel != null) fpsLabel.SetText("FPS: ca. " + framesRendered);
                 framesRendered = 0;
             }
         }
