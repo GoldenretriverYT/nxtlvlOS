@@ -1,7 +1,9 @@
-﻿using nxtlvlOS.Windowing.Fonts;
+﻿using Cosmos.System;
+using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,13 +24,35 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint insetColor = 0xFFBBBBBB;
         public uint InsetColor => insetColor;
 
+        public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left;
+        public HorizontalAlignment HorizontalAlignment => horizontalAlignment;
+
+        public VerticalAlignment verticalAlignment = VerticalAlignment.Top;
+        public VerticalAlignment VerticalAlignment => verticalAlignment;
+
+        public bool IsMouseDown { get; private set; } = false;
+
+
         public TextButton() {
             DrawMode = BufferDrawMode.RawCopy;
         }
 
         public override void Draw() {
-            DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
-            DrawStringPSF(font, 3, 0, text, textColor);
+            SetDirty(false);
+
+            if (IsMouseDown) {
+                DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
+                DrawRectFilled(1, 1, SizeX-2, SizeY-2, backgroundColor);
+            } else {
+                DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+            }
+
+            if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
+                DrawStringPSF(font, 3, 3, text, textColor);
+            }else {
+                var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX - 6, SizeY - 6);
+                DrawStringPSF(font, 3 + offsets.x, 3 + offsets.y, text, textColor);
+            }
         }
 
         public void SetText(string text) {
@@ -55,5 +79,41 @@ namespace nxtlvlOS.Windowing.Elements {
             this.insetColor = color;
             this.SetDirty(true);
         }
+
+        public void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
+            this.horizontalAlignment = horizontalAlignment;
+            this.SetDirty(true);
+        }
+
+        public void SetVerticalAlignment(VerticalAlignment verticalAlignment) {
+            this.verticalAlignment = verticalAlignment;
+            this.SetDirty(true);
+        }
+
+        public override void OnMouseDown(MouseState state) {
+            base.OnMouseDown(state);
+
+            IsMouseDown = true;
+            this.SetDirty(true);
+        }
+
+        public override void OnMouseUp(MouseState state) {
+            base.OnMouseUp(state);
+
+            IsMouseDown = false;
+            this.SetDirty(true);
+        }
+    }
+
+    public enum HorizontalAlignment {
+        Left,
+        Center,
+        Right
+    }
+
+    public enum VerticalAlignment {
+        Top,
+        Middle,
+        Bottom
     }
 }

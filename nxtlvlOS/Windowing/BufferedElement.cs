@@ -1,4 +1,5 @@
-﻿using nxtlvlOS.Windowing.Fonts;
+﻿using Cosmos.System;
+using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,6 +16,7 @@ namespace nxtlvlOS.Windowing {
         public uint SizeX = 100, SizeY = 100;
         public bool Visible = true;
         public uint[] Buffer;
+        
         private uint _bufSizeX = 0, _bufSizeY = 0;
 
         protected bool dirty = false;
@@ -33,6 +35,12 @@ namespace nxtlvlOS.Windowing {
 
         public Action PreDrawAndChildUpdate = () => { };
         public Action PostDrawAndChildUpdate = () => { };
+
+        public Action<MouseState, uint, uint> MouseDown = (MouseState state, uint absoluteX, uint absoluteY) => {
+        };
+
+        public Action<MouseState, uint, uint> MouseUp = (MouseState state, uint absoluteX, uint absoluteY) => {
+        };
 
         public virtual void Update() {
             PreDrawAndChildUpdate();
@@ -58,8 +66,39 @@ namespace nxtlvlOS.Windowing {
             PostDrawAndChildUpdate();
         }
 
+        public virtual void OnMouseDown(MouseState state) {
+            MouseDown(state, MouseManager.X, MouseManager.Y);
+        }
+
+        public virtual void OnMouseUp(MouseState state) {
+            MouseUp(state, MouseManager.X, MouseManager.Y);
+        }
+
+        public virtual void OnHoverStart() {
+            // TODO: Implement this
+        }
+
+        public virtual void OnHoverEnd() {
+            // TODO: Implement this
+        }
+
         public void SetDirty(bool isDirty) {
             this.dirty = isDirty;
+        }
+
+        public void AddElement(BufferedElement el) {
+            el.Parent = this;
+            Children.Add(el);
+        }
+
+        public bool RemoveElement(BufferedElement el) {
+            if(Children.Contains(el)) {
+                Children.Remove(el);
+                el.Parent = null;
+                return true;
+            }
+
+            return false;
         }
 
         public abstract void Draw();
@@ -95,8 +134,8 @@ namespace nxtlvlOS.Windowing {
         public void DrawRect(uint x1, uint y1, uint x2, uint y2, uint colorArgb) {
             DrawLineHorizontal(x1, x2, y1, colorArgb);
             DrawLineVertical(y1, y2, x1, colorArgb);
-            DrawLineHorizontal(x1, x2, y2, colorArgb);
-            DrawLineVertical(y1, y2, x2, colorArgb);
+            DrawLineHorizontal(x1, x2, y2-1, colorArgb);
+            DrawLineVertical(y1, y2, x2-1, colorArgb);
         }
 
         public void DrawRectFilled(uint x1, uint y1, uint x2, uint y2, uint colorArgb) {

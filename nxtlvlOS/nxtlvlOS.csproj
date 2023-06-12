@@ -26,6 +26,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Assets\BackgroundDefault.nxtbmp" />
+      <None Remove="Assets\Cursor.nxtbmp" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Assets\BackgroundDefault.nxtbmp" />
+      <EmbeddedResource Include="Assets\Cursor.nxtbmp" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />

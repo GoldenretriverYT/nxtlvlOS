@@ -1,4 +1,7 @@
-﻿using nxtlvlOS.Windowing.Elements;
+﻿using Cosmos.System;
+using nxtlvlOS.Assets;
+using nxtlvlOS.Loaders;
+using nxtlvlOS.Windowing.Elements;
 using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
@@ -16,29 +19,37 @@ namespace nxtlvlOS.Windowing
         private static List<BufferedElement> forms = new();
         private static uint sizeX, sizeY;
 
-        public static int MouseX = 25, MouseY = 75;
+        private static MouseState previousState = MouseState.None;
+
+        private static BufferedElement currentMouseDownElement;
+
+        //private static BufferedElement currentHoveredElement;
 
         /// <summary>
-        /// The mouse cursor icon; must be 16*16
+        /// The mouse cursor icon; must be 24*24
         /// </summary>
-        private static uint[] mouseCursor = new uint[16*16];
         private static ImageLabel cursorElement = new() {
-            SizeX = 16,
-            SizeY = 16
+            SizeX = 24,
+            SizeY = 24
         };
 
         public static void Init() {
             (sizeX, sizeY) = Target.GetSize();
-            Buffer = new uint[sizeX * sizeY];
-            EmptyBuffer = new uint[sizeX * sizeY];
+            Buffer = new uint[sizeX * (sizeY+24)]; // Allocate 24 extra lines for stuff overflowing, like the cursor
+            EmptyBuffer = new uint[sizeX * (sizeY+24)];
 
             InitCursor();
         }
 
         public static void InitCursor() {
-            cursorElement.SetImage(mouseCursor);
+            NXTBmp cursorBmp = new(AssetManager.CursorBmp);
+
+            cursorElement.SetImage(cursorBmp.Data);
             cursorElement.SetTransparent(true);
             cursorElement.Draw();
+
+            MouseManager.ScreenWidth = sizeX;
+            MouseManager.ScreenHeight = sizeY;
         }
 
         public static WMResult Update() {
@@ -52,12 +63,53 @@ namespace nxtlvlOS.Windowing
 
                 var elements = IEnumerableHelpers.Flatten(forms);
 
-                cursorElement.RelativePosX = MouseX;
-                cursorElement.RelativePosY = MouseY;
+                cursorElement.RelativePosX = (int)MouseManager.X;
+                cursorElement.RelativePosY = (int)MouseManager.Y;
                 elements.Add(cursorElement);
+
+                // mouse stuff
+                BufferedElement elementUnderMouse = null;
+
+                foreach (var el in elements) {
+                    var absolute = el.GetAbsolutePosition();
+
+                    if (MouseManager.X > absolute.x && MouseManager.X < absolute.x + el.SizeX &&
+                        MouseManager.Y > absolute.y && MouseManager.Y < absolute.y + el.SizeY) {
+                        elementUnderMouse = el;
+                        continue;
+                    }
+                }
+
+                if (elementUnderMouse != null) {
+                    if (MouseManager.MouseState != previousState) {
+                        if ((MouseManager.MouseState & MouseState.Left) == MouseState.Left &&
+                            (previousState & MouseState.Left) != MouseState.Left) {
+                            elementUnderMouse.OnMouseDown(MouseManager.MouseState);
+                            currentMouseDownElement = elementUnderMouse;
+                        }else if ((MouseManager.MouseState & MouseState.Left) != MouseState.Left &&
+                            (previousState & MouseState.Left) == MouseState.Left) {
+
+                            currentMouseDownElement.OnMouseUp(MouseManager.MouseState);
+                            currentMouseDownElement = null;
+                        }
+
+                        previousState = MouseManager.MouseState;
+                    }
+                }
+
+                foreach(var el in elements) {
+                    var absolute = el.GetAbsolutePosition();
+
+                    if (MouseManager.X > absolute.x && MouseManager.X < absolute.x + el.SizeX &&
+                        MouseManager.Y > absolute.y && MouseManager.Y < absolute.y + el.SizeY) {
+
+                        continue;
+                    }
+                }
 
                 foreach (var el in elements) {
                     if (!el.Visible) continue;
+
                     #region Copy Buffer
                     var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
 
