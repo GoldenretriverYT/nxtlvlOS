@@ -6,7 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nxtlvlOS.Windowing {
+namespace nxtlvlOS.Windowing
+{
     public static class WindowManager {
         public static IRenderTarget Target;
         public static uint[] Buffer;
@@ -76,8 +77,8 @@ namespace nxtlvlOS.Windowing {
                         for (var y = 0; y < el.SizeY; y++) {
                             for (var x = 0; x < el.SizeX; x++) {
                                 var childBufVal = el.Buffer[offsetInChild + x];
-                                var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
                                 var currentBufVal = Buffer[offsetInThisElement + x];
+                                var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
 
                                 if (childBufValAlpha == 0) continue;
 
@@ -90,6 +91,8 @@ namespace nxtlvlOS.Windowing {
 
                                     Buffer[offsetInThisElement + x] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
                                 }
+
+                                //Buffer[offsetInThisElement + x] = ColorUtils.AlphaBlend(childBufVal, currentBufVal);
                             }
 
                             offsetInChild += el.SizeX;
@@ -152,7 +155,7 @@ namespace nxtlvlOS.Windowing {
     /// <summary>
     /// Reference implementations: Not used to save on method call overhead on unoptimized non-jitted platforms
     /// </summary>
-    public class ColorUtils {
+    public class ColorUtilsA {
         public byte GetA(uint color) {
             return (byte)((color >> 24) & 0xFF);
         }

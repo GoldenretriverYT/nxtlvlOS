@@ -122,8 +122,8 @@ namespace nxtlvlOS {
                 form.SetTitlebarEnabled(true);
                 form.SetTitle("Wow, Form! " + x);
 
-                form.SetBackgroundColor(0x80DEDEDE);
-                form.DrawMode = BufferDrawMode.PixelByPixel;
+                //form.SetBackgroundColor(0x80DEDEDE);
+                //form.DrawMode = BufferDrawMode.PixelByPixel;
 
                 if (x == 1) {
                     var toRight = true;
