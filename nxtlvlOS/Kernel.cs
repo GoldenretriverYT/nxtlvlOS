@@ -110,6 +110,7 @@ namespace nxtlvlOS {
             f1.RelativePosY = 0;
             f1.SizeX = 1280;
             f1.SizeY = 720;
+            f1.DoNotBringToFront = true;
             f1.SetTitlebarEnabled(false);
             f1.SetTitle("Wow, Form!");
 

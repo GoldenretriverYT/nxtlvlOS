@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using nxtlvlOS.Windowing.Elements;
 using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace nxtlvlOS.Windowing {
         public uint SizeX = 100, SizeY = 100;
         public bool Visible = true;
         public uint[] Buffer;
+        public bool DoNotBringToFront = false;
         
         private uint _bufSizeX = 0, _bufSizeY = 0;
 
@@ -67,6 +69,8 @@ namespace nxtlvlOS.Windowing {
         }
 
         public virtual void OnMouseDown(MouseState state) {
+            this.BringToFront();
+
             MouseDown(state, MouseManager.X, MouseManager.Y);
         }
 
@@ -80,6 +84,19 @@ namespace nxtlvlOS.Windowing {
 
         public virtual void OnHoverEnd() {
             // TODO: Implement this
+        }
+
+        public void BringToFront() {
+            if (DoNotBringToFront) return;
+
+            if(Parent != null) {
+                Parent.Children.Remove(this);
+                Parent.Children.Add(this);
+
+                Parent.BringToFront();
+            }else if(this is Form f) { // a form & no parent? should be a root-level form
+                WindowManager.PutToFront(f);
+            }
         }
 
         public void SetDirty(bool isDirty) {

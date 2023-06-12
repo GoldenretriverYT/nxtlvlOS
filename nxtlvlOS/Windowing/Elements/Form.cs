@@ -1,4 +1,5 @@
-﻿using nxtlvlOS.Windowing.Fonts;
+﻿using Cosmos.System;
+using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace nxtlvlOS.Windowing.Elements {
         public uint InsetColor => insetColor;
 
         private TextButton closeButton;
+        private bool isBeingDragged = false;
+        private int dragOffsetX = 0, dragOffsetY = 0;
 
         public Form() {
             closeButton = new TextButton() {
@@ -36,6 +39,11 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public override void Update() {
+            if(isBeingDragged) {
+                RelativePosX = (int)MouseManager.X + dragOffsetX;
+                RelativePosY = (int)MouseManager.Y + dragOffsetY;
+            }
+
             closeButton.RelativePosX = (int)(SizeX - 22);
 
             base.Update();
@@ -59,6 +67,29 @@ namespace nxtlvlOS.Windowing.Elements {
         public void SetInsetColor(uint color) {
             this.insetColor = color;
             this.SetDirty(true);
+        }
+
+        public override void OnMouseDown(MouseState state) {
+            base.OnMouseDown(state);
+
+            if((state & MouseState.Left) == MouseState.Left && titlebarEnabled) {
+                var absolutePos = GetAbsolutePosition();
+
+                // We can be sure about the X pos since the title bar spans across the whole width
+                if(MouseManager.Y > absolutePos.y && MouseManager.Y < absolutePos.y+28) {
+                    isBeingDragged = true;
+                    dragOffsetX = (int)absolutePos.x - (int)MouseManager.X;
+                    dragOffsetY = (int)absolutePos.y - (int)MouseManager.Y;
+
+                    WindowManager.PutToFront(this);
+                }
+            }
+        }
+
+        public override void OnMouseUp(MouseState state) {
+            base.OnMouseUp(state);
+
+            isBeingDragged = false;
         }
 
         public override void Draw() {
