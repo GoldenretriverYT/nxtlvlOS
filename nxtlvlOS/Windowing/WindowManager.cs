@@ -63,7 +63,7 @@ namespace nxtlvlOS.Windowing
                     form.Update();
                 }
 
-                var elements = IEnumerableHelpers.Flatten(forms);
+                var elements = IEnumerableHelpers.FlattenElements(forms);
 
                 cursorElement.RelativePosX = (int)MouseManager.X;
                 cursorElement.RelativePosY = (int)MouseManager.Y;
@@ -76,7 +76,8 @@ namespace nxtlvlOS.Windowing
                     var absolute = el.GetAbsolutePosition();
 
                     if (MouseManager.X > absolute.x && MouseManager.X < absolute.x + el.SizeX &&
-                        MouseManager.Y > absolute.y && MouseManager.Y < absolute.y + el.SizeY) {
+                        MouseManager.Y > absolute.y && MouseManager.Y < absolute.y + el.SizeY &&
+                        el.Visible) {
                         elementUnderMouse = el;
                         continue;
                     }

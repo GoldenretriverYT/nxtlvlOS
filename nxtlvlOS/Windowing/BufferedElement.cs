@@ -45,6 +45,8 @@ namespace nxtlvlOS.Windowing {
         public Action<MouseState, uint, uint> MouseUp = (MouseState state, uint absoluteX, uint absoluteY) => {
         };
 
+        public bool VisibleIncludingParents => Visible && (Parent == null ? true : Parent.VisibleIncludingParents);
+
         public virtual void Update() {
             PreDrawAndChildUpdate();
 

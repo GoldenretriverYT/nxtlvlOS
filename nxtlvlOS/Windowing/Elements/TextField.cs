@@ -119,12 +119,23 @@ namespace nxtlvlOS.Windowing.Elements {
             public int ScrollX => scrollX;
             public int ScrollY => scrollY;
 
+            private string textCache = "";
+            private bool overflowX = false, overflowY = false;
+
 
             public bool IsMouseDown { get; private set; } = false;
 
 
             public ScrollableTextFrame() {
                 DrawMode = BufferDrawMode.RawCopy;
+            }
+
+            public override void Update() {
+                if(text != textCache) {
+                    textCache = text;
+
+                    (overflowX, overflowY) = GetOverflowAxes();
+                }
             }
 
             public override void Draw() {
@@ -169,6 +180,12 @@ namespace nxtlvlOS.Windowing.Elements {
 
             public override void OnMouseUp(MouseState state, bool mouseIsOver) {
                 Parent.OnMouseUp(state, mouseIsOver);
+            }
+
+            private (bool x, bool y) GetOverflowAxes() {
+                var measurement = font.MeasureStringExhaustive(text);
+
+                return (measurement.w > SizeX, measurement.h > SizeY);
             }
         }
     }
