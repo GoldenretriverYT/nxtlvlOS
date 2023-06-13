@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -193,25 +194,89 @@ namespace nxtlvlOS.Windowing {
             DrawRectFilled(x1, y2 - 2, x2, y2, insetColorArgb);
         }
 
-        public void DrawStringPSF(PCScreenFont font, uint x, uint y, string str, uint color) {
+        public void DrawInsetOppositeRectFilled(uint x1, uint y1, uint x2, uint y2, uint colorArgb, uint insetColorArgb) {
+            if (x1 > x2) {
+                (x1, x2) = (x2, x1);
+            }
+
+            if (y1 > y2) {
+                (y1, y2) = (y2, y1);
+            }
+
+            for (var x = x1; x < x2; x++) {
+                for (var y = y1; y < y2; y++) {
+                    Buffer[(y * SizeX) + x] = colorArgb;
+                }
+            }
+
+            DrawRectFilled(x1, y1, x1 + 2, y2, insetColorArgb);
+            DrawRectFilled(x1, y1, x2, y1 + 2, insetColorArgb);
+
+            DrawRectFilled(x2 - 2, 0, x2, y2, 0xFFFFFFFF);
+            DrawRectFilled(x1, y2 - 2, x2, y2, 0xFFFFFFFF);
+        }
+
+        public void DrawStringPSF(PCScreenFont font, int x, int y, string str, uint color, bool safe = false) {
             var xOffset = x;
 
             foreach(var c in str) {
-                DrawCharPSF(font, xOffset, y, c, color);
+                DrawCharPSF(font, xOffset, y, c, color, safe);
                 xOffset += font.Width;
             }
         }
 
-        public void DrawCharPSF(PCScreenFont font, uint x, uint y, char c, uint color) {
-            int p = font.Height * (byte)c;
+        public void DrawStringPSFWithNewLines(PCScreenFont font, int x, int y, string str, uint color, bool safe = false) {
+            var xOffset = x;
+            var yOffset = y;
 
-            for (int cy = 0; cy < font.Height; cy++) {
-                for (byte cx = 0; cx < font.Width; cx++) {
-                    if ((font.Data[p + cy] & (1 << (cx))) != 0) {
-                        var xOff = x + (font.Width - cx);
-                        var yOff = y + cy;
+            foreach (var c in str) {
+                if(c == '\n') {
+                    xOffset = x;
+                    yOffset += font.Height;
+                    continue;
+                }
 
-                        Buffer[(yOff * SizeX) + xOff] = color;
+                DrawCharPSF(font, xOffset, yOffset, c, color, safe);
+                xOffset += font.Width;
+            }
+        }
+
+        /// <summary>
+        /// Draws a character from a PSF font
+        /// </summary>
+        /// <param name="font">The font to use</param>
+        /// <param name="x">The starting x position</param>
+        /// <param name="y">The starting y position</param>
+        /// <param name="c">The character to draw</param>
+        /// <param name="color">The 32-bit ARGB color</param>
+        /// <param name="safe">If this is true, a bounds check will be performed for each pixel. Slower but, well, safe.</param>
+        public void DrawCharPSF(PCScreenFont font, int x, int y, char c, uint color, bool safe) {
+            if (safe) {
+                int p = font.Height * (byte)c;
+
+                for (int cy = 0; cy < font.Height; cy++) {
+                    for (byte cx = 0; cx < font.Width; cx++) {
+                        if ((font.Data[p + cy] & (1 << (cx))) != 0) {
+                            var xOff = x + (font.Width - cx);
+                            var yOff = y + cy;
+
+                            if (xOff > (int)SizeX && xOff < 0) continue;
+                            if (yOff > (int)SizeY && yOff < 0) continue;
+                            Buffer[(yOff * SizeX) + xOff] = color;
+                        }
+                    }
+                }
+            } else { // lots of duplicated code, but well, performance is more important
+                int p = font.Height * (byte)c;
+
+                for (int cy = 0; cy < font.Height; cy++) {
+                    for (byte cx = 0; cx < font.Width; cx++) {
+                        if ((font.Data[p + cy] & (1 << (cx))) != 0) {
+                            var xOff = x + (font.Width - cx);
+                            var yOff = y + cy;
+
+                            Buffer[(yOff * SizeX) + xOff] = color;
+                        }
                     }
                 }
             }

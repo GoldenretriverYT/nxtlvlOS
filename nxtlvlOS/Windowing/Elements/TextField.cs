@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing.Elements {
-    public class TextButton : BufferedElement {
-        private string text = "Button Text";
+    public class TextField : BufferedElement {
+        private string text = "TextField";
         public string Text => text;
 
         private PCScreenFont font = PCScreenFont.Default;
@@ -24,16 +24,17 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint insetColor = 0xFF808080;
         public uint InsetColor => insetColor;
 
-        public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left;
-        public HorizontalAlignment HorizontalAlignment => horizontalAlignment;
+        private int scrollX = 0;
+        private int scrollY = 0;
 
-        public VerticalAlignment verticalAlignment = VerticalAlignment.Top;
-        public VerticalAlignment VerticalAlignment => verticalAlignment;
+        public int ScrollX => scrollX;
+        public int ScrollY => scrollY;
+
 
         public bool IsMouseDown { get; private set; } = false;
 
 
-        public TextButton() {
+        public TextField() {
             DrawMode = BufferDrawMode.RawCopy;
         }
 
@@ -42,17 +43,12 @@ namespace nxtlvlOS.Windowing.Elements {
 
             if (IsMouseDown) {
                 DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
-                DrawRectFilled(1, 1, SizeX-2, SizeY-2, backgroundColor);
+                DrawRectFilled(1, 1, SizeX - 2, SizeY - 2, backgroundColor);
             } else {
-                DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+                DrawInsetOppositeRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
             }
 
-            if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
-                DrawStringPSF(font, 3, 3, text, textColor);
-            }else {
-                var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX - 6, SizeY - 6);
-                DrawStringPSF(font, (int)(3 + offsets.x), (int)(3 + offsets.y), text, textColor);
-            }
+            DrawStringPSFWithNewLines(font, 3, 3, text, textColor, true);
         }
 
         public void SetText(string text) {
@@ -80,13 +76,13 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        public void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
-            this.horizontalAlignment = horizontalAlignment;
+        public void SetScrollX(int scrollX) {
+            this.scrollX = scrollX;
             this.SetDirty(true);
         }
 
-        public void SetVerticalAlignment(VerticalAlignment verticalAlignment) {
-            this.verticalAlignment = verticalAlignment;
+        public void SetScrollY(int scrollY) {
+            this.scrollY = scrollY;
             this.SetDirty(true);
         }
 
@@ -103,17 +99,5 @@ namespace nxtlvlOS.Windowing.Elements {
             IsMouseDown = false;
             this.SetDirty(true);
         }
-    }
-
-    public enum HorizontalAlignment {
-        Left,
-        Center,
-        Right
-    }
-
-    public enum VerticalAlignment {
-        Top,
-        Middle,
-        Bottom
     }
 }

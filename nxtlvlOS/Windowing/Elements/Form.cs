@@ -17,7 +17,7 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint backgroundColor = 0xFFDEDEDE;
         public uint BackgroundColor => backgroundColor;
 
-        private uint insetColor = 0xFFBBBBBB;
+        private uint insetColor = 0xFF808080;
         public uint InsetColor => insetColor;
 
         private TextButton closeButton;

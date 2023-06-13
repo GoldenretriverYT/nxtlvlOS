@@ -127,6 +127,33 @@ namespace nxtlvlOS {
 
             f1.AddElement(fpsLabel);
 
+            var txtfldOne = new nxtlvlOS.Windowing.Elements.TextField();
+            txtfldOne.RelativePosX = 800;
+            txtfldOne.RelativePosY = 30;
+            txtfldOne.SizeX = 300;
+            txtfldOne.SizeY = 50;
+            txtfldOne.SetText("Wow, an example text field!\nDoes multiline work?\nWow i think this line will overflow, and I want to see what will happen!");
+
+            f1.AddElement(txtfldOne);
+
+            var btnScrollRight = new nxtlvlOS.Windowing.Elements.TextButton();
+            btnScrollRight.RelativePosX = 1200;
+            btnScrollRight.RelativePosY = 30;
+            btnScrollRight.SizeX = 50;
+            btnScrollRight.SizeY = 50;
+            btnScrollRight.SetText(">");
+
+            f1.AddElement(btnScrollRight);
+
+            var btnScrollLeft = new nxtlvlOS.Windowing.Elements.TextButton();
+            btnScrollLeft.RelativePosX = 1140;
+            btnScrollLeft.RelativePosY = 30;
+            btnScrollLeft.SizeX = 50;
+            btnScrollLeft.SizeY = 50;
+            btnScrollLeft.SetText("<");
+
+            f1.AddElement(btnScrollLeft);
+
             VerticalAlignment[] verticals = new VerticalAlignment[] { VerticalAlignment.Top, VerticalAlignment.Middle, VerticalAlignment.Bottom };
 
             int vertIdx = 0;

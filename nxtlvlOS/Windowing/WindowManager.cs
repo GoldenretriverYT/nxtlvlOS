@@ -21,7 +21,7 @@ namespace nxtlvlOS.Windowing
 
         private static MouseState previousState = MouseState.None;
 
-        private static BufferedElement currentMouseDownElement;
+        private static BufferedElement currentlyFocusedElement;
 
         //private static BufferedElement currentHoveredElement;
 
@@ -85,12 +85,12 @@ namespace nxtlvlOS.Windowing
                         if ((MouseManager.MouseState & MouseState.Left) == MouseState.Left &&
                             (previousState & MouseState.Left) != MouseState.Left) {
                             elementUnderMouse.OnMouseDown(MouseManager.MouseState);
-                            currentMouseDownElement = elementUnderMouse;
+                            currentlyFocusedElement = elementUnderMouse;
                         }else if ((MouseManager.MouseState & MouseState.Left) != MouseState.Left &&
                             (previousState & MouseState.Left) == MouseState.Left) {
 
-                            currentMouseDownElement.OnMouseUp(MouseManager.MouseState);
-                            currentMouseDownElement = null;
+                            currentlyFocusedElement.OnMouseUp(MouseManager.MouseState);
+                            currentlyFocusedElement = null;
                         }
 
                         previousState = MouseManager.MouseState;
