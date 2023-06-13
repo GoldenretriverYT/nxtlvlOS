@@ -16,6 +16,8 @@ namespace nxtlvlOS.Windowing
         public static uint[] Buffer;
         public static uint[] EmptyBuffer;
 
+        public static (uint w, uint h) ScreenSize => (sizeX, sizeY);
+
         private static List<BufferedElement> forms = new();
         private static uint sizeX, sizeY;
 
@@ -89,7 +91,7 @@ namespace nxtlvlOS.Windowing
                         }else if ((MouseManager.MouseState & MouseState.Left) != MouseState.Left &&
                             (previousState & MouseState.Left) == MouseState.Left) {
 
-                            currentlyFocusedElement.OnMouseUp(MouseManager.MouseState);
+                            currentlyFocusedElement.OnMouseUp(MouseManager.MouseState, elementUnderMouse == currentlyFocusedElement);
                             currentlyFocusedElement = null;
                         }
 

@@ -46,6 +46,13 @@ namespace nxtlvlOS.Windowing.Elements {
 
             closeButton.RelativePosX = (int)(SizeX - 22);
 
+            var parentSize = Parent == null ? WindowManager.ScreenSize : (w: Parent.SizeX, h: Parent.SizeY);
+
+            if (RelativePosX < 0) RelativePosX = 0;
+            if (RelativePosY < 0) RelativePosY = 0;
+            if (RelativePosX + SizeX > parentSize.w) RelativePosX = (int)(parentSize.w - SizeX);
+            if (RelativePosY + SizeY > parentSize.h) RelativePosY = (int)(parentSize.h - SizeY);
+
             base.Update();
         }
 
@@ -86,8 +93,8 @@ namespace nxtlvlOS.Windowing.Elements {
             }
         }
 
-        public override void OnMouseUp(MouseState state) {
-            base.OnMouseUp(state);
+        public override void OnMouseUp(MouseState state, bool mouseIsOver) {
+            base.OnMouseUp(state, mouseIsOver);
 
             isBeingDragged = false;
         }

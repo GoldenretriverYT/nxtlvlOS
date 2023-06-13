@@ -19,7 +19,7 @@
         <PxeInterface>192.168.0.8</PxeInterface>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <ExtractMapFile>True</ExtractMapFile>
-        <DebugEnabled>False</DebugEnabled>
+        <DebugEnabled>True</DebugEnabled>
         <OptimizationLevel>2</OptimizationLevel>
     </PropertyGroup>
 

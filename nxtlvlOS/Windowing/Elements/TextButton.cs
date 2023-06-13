@@ -31,6 +31,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public VerticalAlignment VerticalAlignment => verticalAlignment;
 
         public bool IsMouseDown { get; private set; } = false;
+        public Action<MouseState, uint, uint> Click = (MouseState state, uint absoluteX, uint absoluteY) => { };
 
 
         public TextButton() {
@@ -97,8 +98,12 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        public override void OnMouseUp(MouseState state) {
-            base.OnMouseUp(state);
+        public override void OnMouseUp(MouseState state, bool isMouseOver) {
+            base.OnMouseUp(state, isMouseOver);
+
+            if(isMouseOver) {
+                Click(state, MouseManager.X, MouseManager.Y);
+            }
 
             IsMouseDown = false;
             this.SetDirty(true);

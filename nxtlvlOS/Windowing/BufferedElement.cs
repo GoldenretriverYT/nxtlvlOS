@@ -48,11 +48,12 @@ namespace nxtlvlOS.Windowing {
         public virtual void Update() {
             PreDrawAndChildUpdate();
 
-            if (_bufSizeX != SizeX || _bufSizeY != SizeY) { // TODO: Implement copy of all children buffers
+            if (_bufSizeX != SizeX || _bufSizeY != SizeY) {
                 _bufSizeX = SizeX;
                 _bufSizeY = SizeY;
 
                 Buffer = new uint[SizeY * SizeX];
+                SetDirty(true);
             }
 
 
@@ -75,7 +76,7 @@ namespace nxtlvlOS.Windowing {
             MouseDown(state, MouseManager.X, MouseManager.Y);
         }
 
-        public virtual void OnMouseUp(MouseState state) {
+        public virtual void OnMouseUp(MouseState state, bool mouseIsOver) {
             MouseUp(state, MouseManager.X, MouseManager.Y);
         }
 
@@ -220,12 +221,12 @@ namespace nxtlvlOS.Windowing {
             var xOffset = x;
 
             foreach(var c in str) {
-                DrawCharPSF(font, xOffset, y, c, color, safe);
+                DrawCharPSF(font, xOffset, y, c, color, safe, false);
                 xOffset += font.Width;
             }
         }
 
-        public void DrawStringPSFWithNewLines(PCScreenFont font, int x, int y, string str, uint color, bool safe = false) {
+        public void DrawStringPSFWithNewLines(PCScreenFont font, int x, int y, string str, uint color, bool safe = false, bool dbg = false) {
             var xOffset = x;
             var yOffset = y;
 
@@ -236,7 +237,9 @@ namespace nxtlvlOS.Windowing {
                     continue;
                 }
 
-                DrawCharPSF(font, xOffset, yOffset, c, color, safe);
+                if (char.IsControl(c)) continue;
+
+                DrawCharPSF(font, xOffset, yOffset, c, color, safe, dbg);
                 xOffset += font.Width;
             }
         }
@@ -250,19 +253,23 @@ namespace nxtlvlOS.Windowing {
         /// <param name="c">The character to draw</param>
         /// <param name="color">The 32-bit ARGB color</param>
         /// <param name="safe">If this is true, a bounds check will be performed for each pixel. Slower but, well, safe.</param>
-        public void DrawCharPSF(PCScreenFont font, int x, int y, char c, uint color, bool safe) {
+        public void DrawCharPSF(PCScreenFont font, int x, int y, char c, uint color, bool safe, bool dbg) {
             if (safe) {
                 int p = font.Height * (byte)c;
+
+                if (dbg) Kernel.Instance.Logger.Log(LogLevel.Verb, "x is " + x + " and y is " + y + " with char being (byte)" + (byte)c);
 
                 for (int cy = 0; cy < font.Height; cy++) {
                     for (byte cx = 0; cx < font.Width; cx++) {
                         if ((font.Data[p + cy] & (1 << (cx))) != 0) {
                             var xOff = x + (font.Width - cx);
                             var yOff = y + cy;
+                            var off = (yOff * SizeX) + xOff;
 
-                            if (xOff > (int)SizeX && xOff < 0) continue;
-                            if (yOff > (int)SizeY && yOff < 0) continue;
-                            Buffer[(yOff * SizeX) + xOff] = color;
+                            if (xOff >= SizeX || xOff < 0) continue;
+                            if (yOff >= SizeY || yOff < 0) continue;
+                            if (off >= Buffer.Length || off < 0) continue;
+                            Buffer[off] = color;
                         }
                     }
                 }

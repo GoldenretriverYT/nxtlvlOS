@@ -109,6 +109,8 @@ namespace nxtlvlOS {
         private void SimpleMultiForm() {
             // TODO: Fix the weird issue where forms completely break apart as soon as they are too far over the upper edge of the screen
             // GUESS: Might be related to heavy usage of uints and inputs just breaking apart because the uint value is like 4 billion then
+            // FIX: Forms now are forced to stay within the bounds, not optimal but we can change that in the future. This is why this block of comments remains.
+
             var f1 = new nxtlvlOS.Windowing.Elements.Form();
             f1.RelativePosX = 0;
             f1.RelativePosY = 0;
@@ -121,7 +123,7 @@ namespace nxtlvlOS {
             fpsLabel = new nxtlvlOS.Windowing.Elements.Label();
             fpsLabel.RelativePosX = 5;
             fpsLabel.RelativePosY = 5;
-            fpsLabel.SizeX = 100;
+            fpsLabel.SizeX = 300;
             fpsLabel.SizeY = 25;
             fpsLabel.SetText("FPS: ca. ?");
 
@@ -132,7 +134,7 @@ namespace nxtlvlOS {
             txtfldOne.RelativePosY = 30;
             txtfldOne.SizeX = 300;
             txtfldOne.SizeY = 50;
-            txtfldOne.SetText("Wow, an example text field!\nDoes multiline work?\nWow i think this line will overflow, and I want to see what will happen!");
+            txtfldOne.SetText("Wow, an example text field yes!\nDoes multiline work?\nWow i think this line will overflow, and I want to see what will happen!");
 
             f1.AddElement(txtfldOne);
 
@@ -142,6 +144,10 @@ namespace nxtlvlOS {
             btnScrollRight.SizeX = 50;
             btnScrollRight.SizeY = 50;
             btnScrollRight.SetText(">");
+            btnScrollRight.Click = (MouseState state, uint absoluteX, uint absoluteY) => {
+                txtfldOne.SetScrollX(txtfldOne.ScrollX + 5);
+                Logger.Log(LogLevel.Info, txtfldOne.ScrollX + " is new ScrollX");
+            };
 
             f1.AddElement(btnScrollRight);
 
@@ -151,6 +157,10 @@ namespace nxtlvlOS {
             btnScrollLeft.SizeX = 50;
             btnScrollLeft.SizeY = 50;
             btnScrollLeft.SetText("<");
+            btnScrollLeft.Click = (MouseState state, uint absoluteX, uint absoluteY) => {
+                txtfldOne.SetScrollX(txtfldOne.ScrollX - 5);
+                Logger.Log(LogLevel.Info, txtfldOne.ScrollX + " is new ScrollX");
+            };
 
             f1.AddElement(btnScrollLeft);
 
@@ -274,7 +284,7 @@ namespace nxtlvlOS {
                 previousSecond = RTC.Second;
                 Logger.Log(LogLevel.Info, "FPS: ca. " + framesRendered);
 
-                if (fpsLabel != null) fpsLabel.SetText("FPS: ca. " + framesRendered);
+                if (fpsLabel != null) fpsLabel.SetText("FPS: ca. " + framesRendered + "; Memory: " + Math.Floor((GCImplementation.GetUsedRAM() / 1024f / 1024f)) + "mb / " + GCImplementation.GetAvailableRAM() + "mb");
                 framesRendered = 0;
             }
         }
