@@ -86,9 +86,15 @@ namespace nxtlvlOS {
 
     public class DebuggerLoggerTarget : LoggerTarget {
         public Debugger dbg;
+        string letHimCook = "";
 
         public override void Write(string msg, Color colorNorm, ConsoleColor consoleColor) {
-            dbg.Send(msg);
+            letHimCook += msg;
+
+            if(msg.Contains("\n")) {
+                dbg.Send(letHimCook);
+                letHimCook = "";
+            }
         }
     }
 }

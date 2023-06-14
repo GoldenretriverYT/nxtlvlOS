@@ -40,6 +40,7 @@ namespace nxtlvlOS.Windowing {
         public Action PostDrawAndChildUpdate = () => { };
 
         public Action SizeChanged = () => { };
+        public Action VisibilityChanged = () => { };
 
         public Action<MouseState, uint, uint> MouseDown = (MouseState state, uint absoluteX, uint absoluteY) => {
         };
@@ -48,6 +49,7 @@ namespace nxtlvlOS.Windowing {
         };
 
         public bool VisibleIncludingParents => Visible && (Parent == null ? true : Parent.VisibleIncludingParents);
+        public bool PreviousVisibility = false;
 
         public virtual void Update() {
             PreDrawAndChildUpdate();
@@ -59,6 +61,11 @@ namespace nxtlvlOS.Windowing {
                 Buffer = new uint[SizeY * SizeX];
                 SetDirty(true);
                 SizeChanged();
+            }
+
+            if(PreviousVisibility != VisibleIncludingParents) {
+                PreviousVisibility = VisibleIncludingParents;
+                VisibilityChanged();
             }
 
 
@@ -91,6 +98,10 @@ namespace nxtlvlOS.Windowing {
 
         public virtual void OnHoverEnd() {
             // TODO: Implement this
+        }
+
+        public virtual void OnKey(KeyEvent ev) {
+
         }
 
         public void BringToFront() {

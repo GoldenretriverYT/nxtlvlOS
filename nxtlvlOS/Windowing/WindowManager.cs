@@ -23,7 +23,7 @@ namespace nxtlvlOS.Windowing
 
         private static MouseState previousState = MouseState.None;
 
-        private static BufferedElement currentlyFocusedElement;
+        public static BufferedElement FocusedElement;
 
         //private static BufferedElement currentHoveredElement;
 
@@ -87,16 +87,21 @@ namespace nxtlvlOS.Windowing
                     if (MouseManager.MouseState != previousState) {
                         if ((MouseManager.MouseState & MouseState.Left) == MouseState.Left &&
                             (previousState & MouseState.Left) != MouseState.Left) {
+                            FocusedElement = elementUnderMouse;
                             elementUnderMouse.OnMouseDown(MouseManager.MouseState);
-                            currentlyFocusedElement = elementUnderMouse;
                         }else if ((MouseManager.MouseState & MouseState.Left) != MouseState.Left &&
                             (previousState & MouseState.Left) == MouseState.Left) {
 
-                            currentlyFocusedElement?.OnMouseUp(MouseManager.MouseState, elementUnderMouse == currentlyFocusedElement);
-                            currentlyFocusedElement = null;
+                            FocusedElement?.OnMouseUp(MouseManager.MouseState, elementUnderMouse == FocusedElement);
                         }
 
                         previousState = MouseManager.MouseState;
+                    }
+                }
+
+                while(KeyboardManager.KeyAvailable) {
+                    if(KeyboardManager.TryReadKey(out var key)) {
+                        FocusedElement?.OnKey(key);
                     }
                 }
 

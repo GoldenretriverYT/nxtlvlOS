@@ -1,4 +1,8 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core;
+using Cosmos.Core.Memory;
+using Cosmos.HAL;
+using Cosmos.System;
+using nxtlvlOS.Windowing.Elements.Shapes;
 using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
@@ -23,11 +27,21 @@ namespace nxtlvlOS.Windowing.Elements {
         public int ScrollX => frame.ScrollX;
         public int ScrollY => frame.ScrollY;
 
+        public int CursorPos = 0;
+
         public bool IsMouseDown { get; private set; } = false;
-        private ScrollableTextFrame frame = new(); 
+
+        private ScrollableTextFrame frame = new();
+        private Rect cursor = new() {
+            SizeX = 4,
+            SizeY = 16
+        };
 
         public TextField() {
             DrawMode = BufferDrawMode.RawCopy;
+
+            cursor.BackgroundColor = 0xFF000000; // TODO: Migrate other elements to properties as well lol
+            cursor.Visible = false;
 
             frame.SetBackgroundColor(backgroundColor);
             UpdateFrameSizing();
@@ -36,7 +50,13 @@ namespace nxtlvlOS.Windowing.Elements {
                 UpdateFrameSizing();
             };
 
+            VisibilityChanged = () => {
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Visibility changed");
+                UpdateFrameSizing(); // FIXME: This is a hack! Required due to GC issues in Cosmos
+            };
+
             AddElement(frame);
+            AddElement(cursor);
         }
 
         public override void Draw() {
@@ -50,12 +70,77 @@ namespace nxtlvlOS.Windowing.Elements {
             }
         }
 
+        public override void Update() {
+            if(WindowManager.FocusedElement == this && RTC.Second % 2 == 0) {
+                cursor.Visible = true;
+
+                var textPos = GetTextPosition(CursorPos);
+                var relPos = GetRelativePositionFromTextPosition(textPos.x, textPos.y);
+
+                cursor.RelativePosX = relPos.x + 3;
+                cursor.RelativePosY = relPos.y + 3;
+            } else {
+                cursor.Visible = false;
+            }
+
+            base.Update();
+        }
+
         private void UpdateFrameSizing() {
             frame.SizeX = SizeX - 6;
             frame.SizeY = SizeY - 6;
             frame.RelativePosX = 3;
             frame.RelativePosY = 3;
             frame.SetDirty(true);
+        }
+
+        private (int x, int y) GetTextPosition(int offset) {
+            int x = 0;
+            int y = 0;
+
+            string[] lines = Text.Split(Environment.NewLine);
+
+            for(int i = 0; i < offset; i++) {
+                if (lines[y].Length <= x) {
+                    x = 0;
+                    y++;
+                }else {
+                    x++;
+                }
+            }
+
+            return (x, y);
+        }
+
+        private (int x, int y) GetRelativePositionFromTextPosition(int textX, int textY) {
+            int x = textX * Font.Width;
+            int y = textY * Font.Height;
+
+            return (x - ScrollX, y - ScrollY);
+        }
+
+        public override void OnKey(KeyEvent ev) {
+            if(char.IsControl(ev.KeyChar)) {
+                switch(ev.Key) {
+                    case ConsoleKeyEx.Backspace:
+                        if (CursorPos > 0 && Text.Length > 0) {
+                            SetText(Text.Remove(CursorPos - 1, 1));
+                            CursorPos--;
+                        }
+                        break;
+                    case ConsoleKeyEx.LeftArrow:
+                        CursorPos--;
+                        if (CursorPos < 0) CursorPos = 0;
+                        break;
+                    case ConsoleKeyEx.RightArrow:
+                        CursorPos++;
+                        if (CursorPos > Text.Length) CursorPos = Text.Length;
+                        break;
+                }
+            }else {
+                SetText(Text.Insert(CursorPos, ev.KeyChar.ToString()));
+                CursorPos++;
+            }
         }
 
         public void SetText(string text) {
@@ -99,6 +184,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public override void OnMouseUp(MouseState state, bool mouseIsOver) {
             base.OnMouseUp(state, mouseIsOver);
 
+            CursorPos = Text.Length;
             IsMouseDown = false;
             this.SetDirty(true);
         }
@@ -185,6 +271,7 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             public override void OnMouseDown(MouseState state) {
+                WindowManager.FocusedElement = Parent;
                 Parent.OnMouseDown(state);
             }
 
