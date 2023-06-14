@@ -55,6 +55,7 @@ namespace nxtlvlOS {
             WindowManager.Init();
             Logger.Log(LogLevel.Info, "Initiliazed Window Mananger!");
 
+            ProcessManager.CreateProcess(new UACService(), "UACService");
             ProcessManager.CreateProcess(new OOBE(), "OOBE");
         }
 

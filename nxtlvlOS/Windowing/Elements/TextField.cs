@@ -52,7 +52,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
             VisibilityChanged = () => {
                 Kernel.Instance.Logger.Log(LogLevel.Info, "Visibility changed");
-                UpdateFrameSizing(); // FIXME: This is a hack! Required due to GC issues in Cosmos
+                UpdateFrameSizing(); // HACK: This is a hack! Required due to GC issues in Cosmos
             };
 
             AddElement(frame);
@@ -158,6 +158,9 @@ namespace nxtlvlOS.Windowing.Elements {
                 offset += textX;
             else
                 offset = Text.Length;
+
+            if (offset < 0) offset = 0;
+            if (offset > Text.Length) offset = Text.Length;
 
             return offset;
         }

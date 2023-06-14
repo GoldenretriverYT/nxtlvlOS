@@ -59,7 +59,7 @@ namespace nxtlvlOS.Windowing
                 // Clear buffer
                 System.Buffer.BlockCopy(EmptyBuffer, 0, Buffer, 0, Buffer.Length * 4);
 
-                foreach (var form in forms) {
+                foreach (var form in forms.ToList()) {
                     form.Update();
                 }
 

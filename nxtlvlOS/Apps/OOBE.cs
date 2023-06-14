@@ -21,8 +21,12 @@ namespace nxtlvlOS.Apps {
             ("Turkish, TR", new TRStandardLayout())
         };
 
+        private Form oobeForm;
+
         public override void Exit() {
-            
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Exiting OOBE");
+            if(oobeForm != null) WindowManager.RemoveForm(oobeForm);
+            ProcessManager.CreateProcess(new LoginApp(), "UAC Login");
         }
 
         public override void Init() {
@@ -30,7 +34,7 @@ namespace nxtlvlOS.Apps {
                 Directory.CreateDirectory(@"0:\System");
             }
 
-            if (File.Exists(@"0:\System\oobedone")) {
+            if (File.Exists(@"0:\System\isoobedone")) {
                 if(File.Exists(@"0:\System\kblyt.cfg")) { // TODO: Offload this to a KeyboardService
                     var kbLayout = File.ReadAllText(@"0:\System\kblyt.cfg");
 
@@ -43,9 +47,10 @@ namespace nxtlvlOS.Apps {
                 }
 
                 ProcessManager.KillProcess(SelfProcess);
+                return;
             }
 
-            Form oobeForm = new();
+            oobeForm = new();
             oobeForm.RelativePosX = 0;
             oobeForm.RelativePosY = 0;
             oobeForm.SizeX = 1280;
@@ -138,6 +143,15 @@ namespace nxtlvlOS.Apps {
             accountNextStep.SetText("Next step");
             accountNextStep.SetHorizontalAlignment(HorizontalAlignment.Center);
             accountNextStep.SetVerticalAlignment(VerticalAlignment.Middle);
+
+            accountNextStep.Click = (MouseState state, uint absoluteX, uint absoluteY) => {
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Creating user");
+                UACService.Instance.CreateUser(accountUsername.Text, accountPassword.Text);
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Creating file isoobedone");
+                File.WriteAllText(@"0:\System\isoobedone", "1");
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Killing oobe process");
+                ProcessManager.KillProcess(SelfProcess);
+            };
 
             stepCreateAccountContainer.AddElement(accountTitle);
             stepCreateAccountContainer.AddElement(accountUsername);

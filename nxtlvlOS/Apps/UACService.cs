@@ -16,7 +16,7 @@ namespace nxtlvlOS.Apps {
         private List<User> users = new();
         public User CurrentUser { get; private set; }
 
-        public const string UserDatabasePath = @"0:\System\users.bin";
+        public const string UserDatabasePath = @"0:\System\users.db";
 
         public override void Exit() {
             throw new Exception("UAC should not be killed.");
@@ -25,6 +25,8 @@ namespace nxtlvlOS.Apps {
         public override void Init() {
             if (Instance != null)
                 throw new Exception("UAC should not be started twice.");
+
+            Instance = this;
 
             if(!Directory.Exists(@"0:\System")) {
                 Directory.CreateDirectory(@"0:\System");
