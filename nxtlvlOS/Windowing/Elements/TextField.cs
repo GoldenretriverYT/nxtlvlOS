@@ -119,6 +119,28 @@ namespace nxtlvlOS.Windowing.Elements {
             return (x - ScrollX, y - ScrollY);
         }
 
+        private (int x, int y) GetTextPositionFromRelativePosition(int relativeX, int relativeY) {
+            int textX = (relativeX + ScrollX) / Font.Width;
+            int textY = (relativeY + ScrollY) / Font.Height;
+
+            return (textX, textY);
+        }
+
+        private int GetOffsetFromTextPosition(int textX, int textY) {
+            int offset = 0;
+            string[] lines = Text.Split(Environment.NewLine);
+
+            for (int y = 0; y < textY; y++) {
+                if (y >= lines.Length)
+                    break;
+
+                offset += lines[y].Length + Environment.NewLine.Length;
+            }
+
+            offset += textX;
+            return offset;
+        }
+
         public override void OnKey(KeyEvent ev) {
             if(char.IsControl(ev.KeyChar)) {
                 switch(ev.Key) {
@@ -184,7 +206,10 @@ namespace nxtlvlOS.Windowing.Elements {
         public override void OnMouseUp(MouseState state, bool mouseIsOver) {
             base.OnMouseUp(state, mouseIsOver);
 
-            CursorPos = Text.Length;
+            var relativeMouse = GetRelativeFromAbsolutePosition((int)MouseManager.X, (int)MouseManager.Y);
+            var textPos = GetTextPositionFromRelativePosition(relativeMouse.x, relativeMouse.y);
+
+            CursorPos = GetOffsetFromTextPosition(textPos.x, textPos.y);
             IsMouseDown = false;
             this.SetDirty(true);
         }

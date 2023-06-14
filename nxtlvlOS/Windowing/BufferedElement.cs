@@ -138,6 +138,14 @@ namespace nxtlvlOS.Windowing {
 
         public abstract void Draw();
 
+        public (int x, int y) GetRelativeFromAbsolutePosition(int absoluteX, int absoluteY) {
+            var thisAbsolute = GetAbsolutePosition();
+            absoluteX -= (int)thisAbsolute.x;
+            absoluteY -= (int)thisAbsolute.y;
+
+            return (absoluteX, absoluteY);
+        }
+
         public void Clear(uint colorArgb = 0x00000000) {
             for(var x = 0; x < SizeX; x++) {
                 for(var y = 0; y < SizeY; y++) {
