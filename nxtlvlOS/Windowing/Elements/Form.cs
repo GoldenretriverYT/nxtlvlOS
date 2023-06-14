@@ -34,8 +34,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
             closeButton.SetText("X");
 
-            closeButton.Parent = this; // Todo: add proper AddChild method
-            Children.Add(closeButton);
+            AddElement(closeButton);
         }
 
         public override void Update() {
