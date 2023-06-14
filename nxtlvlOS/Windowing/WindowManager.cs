@@ -35,6 +35,9 @@ namespace nxtlvlOS.Windowing
             SizeY = 24
         };
 
+        /// <summary>
+        /// Initiliazes the window manager
+        /// </summary>
         public static void Init() {
             (sizeX, sizeY) = Target.GetSize();
             Buffer = new uint[sizeX * (sizeY+24)]; // Allocate 24 extra lines for stuff overflowing, like the cursor
@@ -43,7 +46,7 @@ namespace nxtlvlOS.Windowing
             InitCursor();
         }
 
-        public static void InitCursor() {
+        private static void InitCursor() {
             NXTBmp cursorBmp = new(AssetManager.CursorBmp);
 
             cursorElement.SetImage(cursorBmp.Data);
@@ -160,14 +163,26 @@ namespace nxtlvlOS.Windowing
             }
         }
 
+        /// <summary>
+        /// Adds a form to the WindowManager.
+        /// </summary>
+        /// <param name="form"></param>
         public static void AddForm(Form form) {
             forms.Add(form);
         }
 
+        /// <summary>
+        /// Removes a form from the WindowManager.
+        /// </summary>
+        /// <param name="form"></param>
         public static void RemoveForm(Form form) {
             forms.Remove(form);
         }
 
+        /// <summary>
+        /// Puts a form at the front.
+        /// </summary>
+        /// <param name="form"></param>
         public static void PutToFront(Form form) {
             forms.Remove(form);
             forms.Add(form);
