@@ -45,6 +45,7 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             closeButton.RelativePosX = (int)(SizeX - 22);
+            closeButton.Visible = titlebarEnabled;
 
             var parentSize = Parent == null ? WindowManager.ScreenSize : (w: Parent.SizeX, h: Parent.SizeY);
 

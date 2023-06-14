@@ -17,7 +17,7 @@ namespace nxtlvlOS.Windowing {
         public int RelativePosX, RelativePosY;
         public uint SizeX = 100, SizeY = 100;
         public bool Visible = true;
-        public uint[] Buffer;
+        public uint[] Buffer = new uint[0];
         public bool DoNotBringToFront = false;
         
         private uint _bufSizeX = 0, _bufSizeY = 0;
@@ -39,6 +39,8 @@ namespace nxtlvlOS.Windowing {
         public Action PreDrawAndChildUpdate = () => { };
         public Action PostDrawAndChildUpdate = () => { };
 
+        public Action SizeChanged = () => { };
+
         public Action<MouseState, uint, uint> MouseDown = (MouseState state, uint absoluteX, uint absoluteY) => {
         };
 
@@ -56,6 +58,7 @@ namespace nxtlvlOS.Windowing {
 
                 Buffer = new uint[SizeY * SizeX];
                 SetDirty(true);
+                SizeChanged();
             }
 
 

@@ -32,12 +32,15 @@ namespace nxtlvlOS.Windowing.Elements {
             frame.SetBackgroundColor(backgroundColor);
             UpdateFrameSizing();
 
+            SizeChanged = () => {
+                UpdateFrameSizing();
+            };
+
             AddElement(frame);
         }
 
         public override void Draw() {
             SetDirty(false);
-            UpdateFrameSizing();
 
             if (IsMouseDown) {
                 DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
@@ -100,7 +103,7 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        private class ScrollableTextFrame : BufferedElement {
+        public class ScrollableTextFrame : BufferedElement {
             private string text = "TextField";
             public string Text => text;
 
@@ -128,6 +131,9 @@ namespace nxtlvlOS.Windowing.Elements {
 
             public ScrollableTextFrame() {
                 DrawMode = BufferDrawMode.RawCopy;
+                SizeChanged = () => {
+                    Kernel.Instance.Logger.Log(LogLevel.Info, "Size changed for ScrollableTextFrame with text " + text);
+                };
             }
 
             public override void Update() {
@@ -136,9 +142,13 @@ namespace nxtlvlOS.Windowing.Elements {
 
                     (overflowX, overflowY) = GetOverflowAxes();
                 }
+
+                base.Update();
             }
 
             public override void Draw() {
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Drawing ScrollableTextFrame with text " + text + "; buffer size is " + Buffer.Length);
+
                 SetDirty(false);
                 DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor); // see note in SetBackgroundColor of TextField
                 DrawStringPSFWithNewLines(font, -ScrollX, -ScrollY, text, textColor, true, false);

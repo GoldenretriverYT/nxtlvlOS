@@ -77,7 +77,7 @@ namespace nxtlvlOS.Windowing
 
                     if (MouseManager.X > absolute.x && MouseManager.X < absolute.x + el.SizeX &&
                         MouseManager.Y > absolute.y && MouseManager.Y < absolute.y + el.SizeY &&
-                        el.Visible) {
+                        el.VisibleIncludingParents) {
                         elementUnderMouse = el;
                         continue;
                     }
@@ -92,7 +92,7 @@ namespace nxtlvlOS.Windowing
                         }else if ((MouseManager.MouseState & MouseState.Left) != MouseState.Left &&
                             (previousState & MouseState.Left) == MouseState.Left) {
 
-                            currentlyFocusedElement.OnMouseUp(MouseManager.MouseState, elementUnderMouse == currentlyFocusedElement);
+                            currentlyFocusedElement?.OnMouseUp(MouseManager.MouseState, elementUnderMouse == currentlyFocusedElement);
                             currentlyFocusedElement = null;
                         }
 
@@ -100,18 +100,8 @@ namespace nxtlvlOS.Windowing
                     }
                 }
 
-                foreach(var el in elements) {
-                    var absolute = el.GetAbsolutePosition();
-
-                    if (MouseManager.X > absolute.x && MouseManager.X < absolute.x + el.SizeX &&
-                        MouseManager.Y > absolute.y && MouseManager.Y < absolute.y + el.SizeY) {
-
-                        continue;
-                    }
-                }
-
                 foreach (var el in elements) {
-                    if (!el.Visible) continue;
+                    if (!el.VisibleIncludingParents) continue;
 
                     #region Copy Buffer
                     var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();

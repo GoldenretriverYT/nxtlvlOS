@@ -16,13 +16,25 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint color = 0xFF000000;
         public uint Color => color;
 
+        public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left;
+        public HorizontalAlignment HorizontalAlignment => horizontalAlignment;
+
+        public VerticalAlignment verticalAlignment = VerticalAlignment.Top;
+        public VerticalAlignment VerticalAlignment => verticalAlignment;
+
         public Label() {
             DrawMode = BufferDrawMode.PixelByPixel;
         }
 
         public override void Draw() {
             Clear(0x00000000);
-            DrawStringPSF(font, 0, 0, text, color);
+
+            if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
+                DrawStringPSF(font, 0, 0, text, color);
+            } else {
+                var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX, SizeY);
+                DrawStringPSF(font, (int)offsets.x, (int)offsets.y, text, color);
+            }
         }
 
         public void SetText(string text) {
@@ -37,6 +49,16 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public void SetColor(uint color) {
             this.color = color;
+            this.SetDirty(true);
+        }
+
+        public void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
+            this.horizontalAlignment = horizontalAlignment;
+            this.SetDirty(true);
+        }
+
+        public void SetVerticalAlignment(VerticalAlignment verticalAlignment) {
+            this.verticalAlignment = verticalAlignment;
             this.SetDirty(true);
         }
     }
