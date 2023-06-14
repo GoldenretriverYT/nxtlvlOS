@@ -50,10 +50,10 @@ namespace nxtlvlOS.Windowing.Elements {
                 UpdateFrameSizing();
             };
 
-            VisibilityChanged = () => {
+            /*VisibilityChanged = () => {
                 Kernel.Instance.Logger.Log(LogLevel.Info, "Visibility changed");
                 UpdateFrameSizing(); // HACK: This is a hack! Required due to GC issues in Cosmos
-            };
+            };*/
 
             AddElement(frame);
             AddElement(cursor);

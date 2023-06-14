@@ -53,6 +53,7 @@ namespace nxtlvlOS {
             adapter.Canvas = Canvas;
             WindowManager.Target = adapter;
             WindowManager.Init();
+
             Logger.Log(LogLevel.Info, "Initiliazed Window Mananger!");
 
             ProcessManager.CreateProcess(new UACService(), "UACService");
@@ -80,9 +81,11 @@ namespace nxtlvlOS {
 
             if(RTC.Second != previousSecond) {
                 previousSecond = RTC.Second;
-                Logger.Log(LogLevel.Info, "FPS: ca. " + framesRendered);
 
-                if (fpsLabel != null) fpsLabel.SetText("FPS: ca. " + framesRendered + "; Memory: " + Math.Floor((GCImplementation.GetUsedRAM() / 1024f / 1024f)) + "mb / " + GCImplementation.GetAvailableRAM() + "mb");
+                var perfInfo = "FPS: ca. " + framesRendered + "; Memory: " + Math.Floor((GCImplementation.GetUsedRAM() / 1024f / 1024f)) + "mb / " + GCImplementation.GetAvailableRAM() + "mb";
+                Logger.Log(LogLevel.Info, perfInfo);
+                if (fpsLabel != null) fpsLabel.SetText(perfInfo);
+
                 framesRendered = 0;
             }
         }
