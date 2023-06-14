@@ -126,7 +126,7 @@ namespace nxtlvlOS.Windowing.Elements {
             return (textX, textY);
         }
 
-        private int GetOffsetFromTextPosition(int textX, int textY) {
+        /*private int GetOffsetFromTextPosition(int textX, int textY) {
             int offset = 0;
             string[] lines = Text.Split(Environment.NewLine);
 
@@ -138,6 +138,27 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             offset += textX;
+            return offset;
+        }*/
+
+        private int GetOffsetFromTextPosition(int textX, int textY) {
+            int offset = 0;
+            string[] lines = Text.Split(Environment.NewLine);
+
+            for (int y = 0; y < textY; y++) {
+                if (y >= lines.Length)
+                    break;
+
+                offset += lines[y].Length + Environment.NewLine.Length;
+            }
+
+            if (textY < lines.Length)
+                offset += textX;
+            else if (textY == lines.Length && textX <= lines[textY - 1].Length)
+                offset += textX;
+            else
+                offset = Text.Length;
+
             return offset;
         }
 
