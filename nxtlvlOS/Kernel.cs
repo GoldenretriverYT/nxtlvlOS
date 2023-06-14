@@ -82,7 +82,7 @@ namespace nxtlvlOS {
             if(RTC.Second != previousSecond) {
                 previousSecond = RTC.Second;
 
-                var perfInfo = "FPS: ca. " + framesRendered + "; Memory: " + Math.Floor((GCImplementation.GetUsedRAM() / 1024f / 1024f)) + "mb / " + GCImplementation.GetAvailableRAM() + "mb";
+                var perfInfo = "FPS: ca. " + framesRendered + "; Memory: " + Math.Floor((GCImplementation.GetUsedRAM() / 1024f)) + "kb / " + GCImplementation.GetAvailableRAM()*1024 + "kb";
                 Logger.Log(LogLevel.Info, perfInfo);
                 if (fpsLabel != null) fpsLabel.SetText(perfInfo);
 
