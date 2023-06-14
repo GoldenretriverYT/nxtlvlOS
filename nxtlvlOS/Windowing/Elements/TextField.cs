@@ -40,7 +40,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public TextField() {
             DrawMode = BufferDrawMode.RawCopy;
 
-            cursor.BackgroundColor = 0xFF000000; // TODO: Migrate other elements to properties as well lol
+            cursor.BackgroundColor = 0xFF000000;
             cursor.Visible = false;
 
             frame.SetBackgroundColor(backgroundColor);
