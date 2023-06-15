@@ -14,6 +14,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public Container() {
             SizeX = 0;
             SizeY = 0;
+            ShouldBeDrawnToScreen = false;
         }
 
         public override void Draw() {
@@ -47,19 +48,26 @@ namespace nxtlvlOS.Windowing.Elements {
             return (left, top, right, bottom);
         }
 
-        public void AdjustToBoundingBox(HorizontalAlignment horizontal = HorizontalAlignment.Left, VerticalAlignment vertical = VerticalAlignment.Top) {
+        public void AdjustToBoundingBox(HorizontalAlignment horizontal = HorizontalAlignment.Left, VerticalAlignment vertical = VerticalAlignment.Top, int paddingX = 0, int paddingY = 0) {
             var boundingBox = GetRelativeBoundingBox();
+            var parentSize = (x: Parent.SizeX - paddingX * 2, y: Parent.SizeY - paddingY * 2);
+            SizeX = (uint)(boundingBox.right - boundingBox.left);
+            SizeY = (uint)(boundingBox.bottom - boundingBox.top);
 
             if (horizontal == HorizontalAlignment.Left) {
-                RelativePosX = boundingBox.left;
+                RelativePosX = paddingX;
             }else if(horizontal == HorizontalAlignment.Center) {
-                RelativePosX = (int)(Parent.SizeX - (boundingBox.right - boundingBox.left)) / 2;
+                RelativePosX = (int)(parentSize.x - (boundingBox.right - boundingBox.left)) / 2;
+            } else if (horizontal == HorizontalAlignment.Right) {
+                RelativePosX = (int)(parentSize.x - (boundingBox.right - boundingBox.left));
             }
 
             if (vertical == VerticalAlignment.Top) {
-                RelativePosY = boundingBox.top;
+                RelativePosY = paddingY;
             } else if (vertical == VerticalAlignment.Middle) {
-                RelativePosY = (int)(Parent.SizeY - (boundingBox.bottom - boundingBox.top)) / 2;
+                RelativePosY = (int)(parentSize.y - (boundingBox.bottom - boundingBox.top)) / 2;
+            }else if(vertical == VerticalAlignment.Bottom) {
+                RelativePosY = (int)(parentSize.y - (boundingBox.bottom - boundingBox.top));
             }
         }
     }

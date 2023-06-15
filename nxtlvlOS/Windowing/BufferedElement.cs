@@ -19,6 +19,12 @@ namespace nxtlvlOS.Windowing {
         public bool Visible = true;
         public uint[] Buffer = new uint[0];
         public bool DoNotBringToFront = false;
+
+        /// <summary>
+        /// This does not affect child elements, unlike <see cref="Visible"/> does - use this for layout elements
+        /// Also prevents a buffer from being created, which <see cref="Visible"/> does not.
+        /// </summary>
+        public bool ShouldBeDrawnToScreen = true;
         
         private uint _bufSizeX = 0, _bufSizeY = 0;
 
@@ -54,7 +60,7 @@ namespace nxtlvlOS.Windowing {
         public virtual void Update() {
             PreDrawAndChildUpdate();
 
-            if (_bufSizeX != SizeX || _bufSizeY != SizeY) {
+            if (ShouldBeDrawnToScreen && (_bufSizeX != SizeX || _bufSizeY != SizeY)) {
                 _bufSizeX = SizeX;
                 _bufSizeY = SizeY;
 

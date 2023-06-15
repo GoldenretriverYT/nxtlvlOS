@@ -20,7 +20,6 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint insetColor = 0xFF808080;
         public uint InsetColor => insetColor;
 
-
         public string Text => frame.Text;
         public uint TextColor => frame.TextColor;
         public PCScreenFont Font => frame.Font;

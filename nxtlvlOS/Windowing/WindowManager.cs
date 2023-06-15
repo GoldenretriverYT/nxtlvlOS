@@ -1,4 +1,5 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core;
+using Cosmos.System;
 using nxtlvlOS.Assets;
 using nxtlvlOS.Loaders;
 using nxtlvlOS.Windowing.Elements;
@@ -18,7 +19,7 @@ namespace nxtlvlOS.Windowing
 
         public static (uint w, uint h) ScreenSize => (sizeX, sizeY);
 
-        private static List<BufferedElement> forms = new();
+        public static List<BufferedElement> Forms = new();
         private static uint sizeX, sizeY;
 
         private static MouseState previousState = MouseState.None;
@@ -40,6 +41,8 @@ namespace nxtlvlOS.Windowing
             Buffer = new uint[sizeX * (sizeY+24)]; // Allocate 24 extra lines for stuff overflowing, like the cursor
             EmptyBuffer = new uint[sizeX * (sizeY+24)];
 
+            MemoryOperations.Fill(EmptyBuffer, 0xFF358F65);
+
             InitCursor();
         }
 
@@ -59,11 +62,11 @@ namespace nxtlvlOS.Windowing
                 // Clear buffer
                 System.Buffer.BlockCopy(EmptyBuffer, 0, Buffer, 0, Buffer.Length * 4);
 
-                foreach (var form in forms.ToList()) {
+                foreach (var form in Forms.ToList()) {
                     form.Update();
                 }
 
-                var elements = IEnumerableHelpers.FlattenElements(forms);
+                var elements = IEnumerableHelpers.FlattenElements(Forms);
 
                 cursorElement.RelativePosX = (int)MouseManager.X;
                 cursorElement.RelativePosY = (int)MouseManager.Y;
@@ -106,7 +109,7 @@ namespace nxtlvlOS.Windowing
                 }
 
                 foreach (var el in elements) {
-                    if (!el.VisibleIncludingParents) continue;
+                    if (!el.VisibleIncludingParents || !el.ShouldBeDrawnToScreen) continue;
 
                     #region Copy Buffer
                     var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
@@ -161,16 +164,16 @@ namespace nxtlvlOS.Windowing
         }
 
         public static void AddForm(Form form) {
-            forms.Add(form);
+            Forms.Add(form);
         }
 
         public static void RemoveForm(Form form) {
-            forms.Remove(form);
+            Forms.Remove(form);
         }
 
         public static void PutToFront(Form form) {
-            forms.Remove(form);
-            forms.Add(form);
+            Forms.Remove(form);
+            Forms.Add(form);
         }
 
 

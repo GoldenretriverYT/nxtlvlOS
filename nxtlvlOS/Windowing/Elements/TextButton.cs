@@ -30,6 +30,9 @@ namespace nxtlvlOS.Windowing.Elements {
         public VerticalAlignment verticalAlignment = VerticalAlignment.Top;
         public VerticalAlignment VerticalAlignment => verticalAlignment;
 
+        public bool safeDrawEnabled = false;
+        public bool SafeDrawEnabled => safeDrawEnabled;
+
         public bool IsMouseDown { get; private set; } = false;
         public Action<MouseState, uint, uint> Click = (MouseState state, uint absoluteX, uint absoluteY) => { };
 
@@ -49,10 +52,10 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
-                DrawStringPSF(font, 3, 3, text, textColor);
+                DrawStringPSF(font, 3, 3, text, textColor, safeDrawEnabled);
             }else {
                 var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX - 6, SizeY - 6);
-                DrawStringPSF(font, (int)(3 + offsets.x), (int)(3 + offsets.y), text, textColor);
+                DrawStringPSF(font, (int)(3 + offsets.x), (int)(3 + offsets.y), text, textColor, safeDrawEnabled);
             }
         }
 
@@ -106,6 +109,11 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             IsMouseDown = false;
+            this.SetDirty(true);
+        }
+
+        public void SetSafeDrawEnabled(bool safeDrawEnabled) {
+            this.safeDrawEnabled = safeDrawEnabled;
             this.SetDirty(true);
         }
     }

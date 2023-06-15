@@ -34,7 +34,7 @@ namespace nxtlvlOS.Apps {
                 Directory.CreateDirectory(@"0:\System");
             }
 
-            if (File.Exists(@"0:\System\isoobedone")) {
+            if (File.Exists(@"0:\System\oobedone")) {
                 if(File.Exists(@"0:\System\kblyt.cfg")) { // TODO: Offload this to a KeyboardService
                     var kbLayout = File.ReadAllText(@"0:\System\kblyt.cfg");
 
@@ -50,7 +50,7 @@ namespace nxtlvlOS.Apps {
                 return;
             }
 
-            oobeForm = new();
+            oobeForm = new(SelfProcess);
             oobeForm.RelativePosX = 0;
             oobeForm.RelativePosY = 0;
             oobeForm.SizeX = 1280;
@@ -147,8 +147,8 @@ namespace nxtlvlOS.Apps {
             accountNextStep.Click = (MouseState state, uint absoluteX, uint absoluteY) => {
                 Kernel.Instance.Logger.Log(LogLevel.Info, "Creating user");
                 UACService.Instance.CreateUser(accountUsername.Text, accountPassword.Text);
-                Kernel.Instance.Logger.Log(LogLevel.Info, "Creating file isoobedone");
-                File.WriteAllText(@"0:\System\isoobedone", "1");
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Creating file oobedone");
+                File.WriteAllText(@"0:\System\oobedone", "1");
                 Kernel.Instance.Logger.Log(LogLevel.Info, "Killing oobe process");
                 ProcessManager.KillProcess(SelfProcess);
             };

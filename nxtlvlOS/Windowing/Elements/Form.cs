@@ -1,4 +1,5 @@
 ﻿using Cosmos.System;
+using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,11 @@ namespace nxtlvlOS.Windowing.Elements {
         private bool isBeingDragged = false;
         private int dragOffsetX = 0, dragOffsetY = 0;
 
-        public Form() {
+        private Process owner;
+        public Process Owner => owner;
+
+        public Form(Process owner) {
+            this.owner = owner;
             closeButton = new TextButton() {
                 RelativePosX = 0,
                 RelativePosY = 6,
@@ -100,6 +105,7 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public override void Draw() {
+            if (!ShouldBeDrawnToScreen) return; // We want to support this to allow root-level overlays in the WM
             if (SizeY < 30) throw new Exception("Form must be at least 30 pixels in height");
             if (SizeX < 30) throw new Exception("Form must be at least 30 pixels in width");
 

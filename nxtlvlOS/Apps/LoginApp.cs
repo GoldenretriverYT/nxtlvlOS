@@ -17,52 +17,57 @@ namespace nxtlvlOS.Apps {
 
         public override void Exit() {
             if(loginForm != null) WindowManager.RemoveForm(loginForm);
+            ProcessManager.CreateProcess(new Bootstrapper(), "Bootstrapper");
         }
 
         public override void Init() {
-            loginForm = new();
-            loginForm.RelativePosX = 0;
-            loginForm.RelativePosY = 0;
+            loginForm = new(SelfProcess);
+            loginForm.RelativePosX = (1280-600)/2;
+            loginForm.RelativePosY = (720-170)/2;
             loginForm.SizeX = 600;
-            loginForm.SizeY = 400;
+            loginForm.SizeY = 170;
             loginForm.SetTitlebarEnabled(true);
             loginForm.SetTitle("Login - nxtlvlOS");
 
             #region Create container
-            Container loginContainer = new();
-            loginContainer.RelativePosX = 0;
-            loginContainer.RelativePosY = 0;
+            Container loginInputContainer = new();
+            loginInputContainer.RelativePosX = 0;
+            loginInputContainer.RelativePosY = 0;
+
+            Container actionsContainer = new();
+            actionsContainer.RelativePosX = 0;
+            actionsContainer.RelativePosY = 0;
             #endregion
 
             #region Create login elements
             Label accountTitle = new();
-            accountTitle.SizeX = 500;
-            accountTitle.SizeY = 24;
+            accountTitle.SizeX = 400;
+            accountTitle.SizeY = 16;
             accountTitle.RelativePosX = 0;
             accountTitle.RelativePosY = 0;
             accountTitle.SetText("Login");
-            accountTitle.SetHorizontalAlignment(HorizontalAlignment.Center);
+            accountTitle.SetHorizontalAlignment(HorizontalAlignment.Left);
             accountTitle.SetVerticalAlignment(VerticalAlignment.Middle);
 
             TextField accountUsername = new();
-            accountUsername.SizeX = 500;
+            accountUsername.SizeX = 400;
             accountUsername.SizeY = 24;
             accountUsername.RelativePosX = 0;
-            accountUsername.RelativePosY = 50;
-            accountUsername.SetText("Username");
+            accountUsername.RelativePosY = 30;
+            accountUsername.SetText("");
 
             TextField accountPassword = new();
-            accountPassword.SizeX = 500;
+            accountPassword.SizeX = 400;
             accountPassword.SizeY = 24;
             accountPassword.RelativePosX = 0;
-            accountPassword.RelativePosY = 100;
-            accountPassword.SetText("Password");
+            accountPassword.RelativePosY = 65;
+            accountPassword.SetText("");
 
             TextButton accountLogin = new();
-            accountLogin.SizeX = 500;
+            accountLogin.SizeX = 150;
             accountLogin.SizeY = 24;
             accountLogin.RelativePosX = 0;
-            accountLogin.RelativePosY = 150;
+            accountLogin.RelativePosY = 0;
             accountLogin.SetText("Login");
             accountLogin.SetHorizontalAlignment(HorizontalAlignment.Center);
             accountLogin.SetVerticalAlignment(VerticalAlignment.Middle);
@@ -75,13 +80,17 @@ namespace nxtlvlOS.Apps {
                 }
             };
 
-            loginContainer.AddElement(accountTitle);
-            loginContainer.AddElement(accountUsername);
-            loginContainer.AddElement(accountPassword);
-            loginContainer.AddElement(accountLogin);
+            loginInputContainer.AddElement(accountTitle);
+            loginInputContainer.AddElement(accountUsername);
+            loginInputContainer.AddElement(accountPassword);
+            actionsContainer.AddElement(accountLogin);
 
-            loginForm.AddElement(loginContainer);
-            loginContainer.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+            loginForm.AddElement(loginInputContainer);
+            loginForm.AddElement(actionsContainer);
+
+            loginInputContainer.AdjustToBoundingBox(HorizontalAlignment.Left, VerticalAlignment.Top, 10, 30 + 10); // we have to add 30 to the y padding due to the title bar
+            actionsContainer.AdjustToBoundingBox(HorizontalAlignment.Right, VerticalAlignment.Top, 10, 30 + 10);
+
             #endregion
 
             WindowManager.AddForm(loginForm);

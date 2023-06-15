@@ -9,5 +9,8 @@ namespace nxtlvlOS.Assets {
     public class AssetManager {
         [ManifestResourceStream(ResourceName = "nxtlvlOS.Assets.Cursor.nxtbmp")]
         public static byte[] CursorBmp;
+
+        [ManifestResourceStream(ResourceName = "nxtlvlOS.Assets.FileIconGeneric.nxtbmp")]
+        public static byte[] FileIconGeneric;
     }
 }

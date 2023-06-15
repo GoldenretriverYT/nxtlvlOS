@@ -22,6 +22,10 @@ namespace nxtlvlOS.Windowing.Elements {
         public VerticalAlignment verticalAlignment = VerticalAlignment.Top;
         public VerticalAlignment VerticalAlignment => verticalAlignment;
 
+        public bool safeDrawEnabled = false;
+        public bool SafeDrawEnabled => safeDrawEnabled;
+
+
         public Label() {
             DrawMode = BufferDrawMode.PixelByPixel;
         }
@@ -30,10 +34,10 @@ namespace nxtlvlOS.Windowing.Elements {
             Clear(0x00000000);
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
-                DrawStringPSF(font, 0, 0, text, color);
+                DrawStringPSF(font, 0, 0, text, color, safeDrawEnabled);
             } else {
                 var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX, SizeY);
-                DrawStringPSF(font, (int)offsets.x, (int)offsets.y, text, color);
+                DrawStringPSF(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled);
             }
         }
 
@@ -59,6 +63,11 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public void SetVerticalAlignment(VerticalAlignment verticalAlignment) {
             this.verticalAlignment = verticalAlignment;
+            this.SetDirty(true);
+        }
+
+        public void SetSafeDrawEnabled(bool safeDrawEnabled) {
+            this.safeDrawEnabled = safeDrawEnabled;
             this.SetDirty(true);
         }
     }

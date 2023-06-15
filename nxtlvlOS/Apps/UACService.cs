@@ -15,8 +15,10 @@ namespace nxtlvlOS.Apps {
 
         private List<User> users = new();
         public User CurrentUser { get; private set; }
+        public static string UserDir => @"0:\Users\" + Instance.CurrentUser.Username + "\\";
 
         public const string UserDatabasePath = @"0:\System\users.db";
+
 
         public override void Exit() {
             throw new Exception("UAC should not be killed.");
