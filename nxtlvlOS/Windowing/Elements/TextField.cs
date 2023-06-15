@@ -21,7 +21,9 @@ namespace nxtlvlOS.Windowing.Elements {
         public uint InsetColor => insetColor;
 
         public string Text => frame.Text;
+        public string Placeholder => frame.Placeholder;
         public uint TextColor => frame.TextColor;
+        public uint PlaceholderColor => frame.PlaceholderColor;
         public PCScreenFont Font => frame.Font;
         public int ScrollX => frame.ScrollX;
         public int ScrollY => frame.ScrollY;
@@ -192,12 +194,20 @@ namespace nxtlvlOS.Windowing.Elements {
             this.frame.SetText(text);
         }
 
+        public void SetPlaceholder(string text) {
+            this.frame.SetPlaceholder(text);
+        }
+
         public void SetFont(PCScreenFont font) {
             this.frame.SetFont(font);
         }
 
         public void SetTextColor(uint color) {
             this.frame.SetTextColor(color);
+        }
+
+        public void SetPlaceholderColor(uint color) {
+            this.frame.SetPlaceholderColor(color);
         }
 
         public void SetBackgroundColor(uint color) {
@@ -238,14 +248,19 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public class ScrollableTextFrame : BufferedElement {
-            private string text = "TextField";
+            private string text = "";
             public string Text => text;
+            private string placeholder = "Placeholder";
+            public string Placeholder => placeholder;
 
             private PCScreenFont font = PCScreenFont.Default;
             public PCScreenFont Font => font;
 
             private uint textColor = 0xFF000000;
             public uint TextColor => textColor;
+
+            private uint placeholderColor = 0xFF545454;
+            public uint PlaceholderColor => placeholderColor;
 
             private uint backgroundColor = 0xFFDEDEDE;
             private uint BackgroundColor => backgroundColor;
@@ -285,11 +300,23 @@ namespace nxtlvlOS.Windowing.Elements {
 
                 SetDirty(false);
                 DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor); // see note in SetBackgroundColor of TextField
-                DrawStringPSFWithNewLines(font, -ScrollX, -ScrollY, text, textColor, true, false);
+                DrawStringPSFWithNewLines(
+                    font,
+                    -ScrollX,
+                    -ScrollY,
+                    text.Length != 0 ? text : placeholder,
+                    text.Length != 0 ? textColor : placeholderColor,
+                    true,
+                    false);
             }
 
             public void SetText(string text) {
                 this.text = text;
+                this.SetDirty(true);
+            }
+
+            public void SetPlaceholder(string placeholder) {
+                this.placeholder = placeholder;
                 this.SetDirty(true);
             }
 
@@ -300,6 +327,11 @@ namespace nxtlvlOS.Windowing.Elements {
 
             public void SetTextColor(uint color) {
                 this.textColor = color;
+                this.SetDirty(true);
+            }
+
+            public void SetPlaceholderColor(uint color) {
+                this.placeholderColor = color;
                 this.SetDirty(true);
             }
 

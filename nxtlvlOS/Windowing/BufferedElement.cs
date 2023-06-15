@@ -17,6 +17,7 @@ namespace nxtlvlOS.Windowing {
         public int RelativePosX, RelativePosY;
         public uint SizeX = 100, SizeY = 100;
         public bool Visible = true;
+        public bool MousePassThrough = false;
         public uint[] Buffer = new uint[0];
         public bool DoNotBringToFront = false;
 

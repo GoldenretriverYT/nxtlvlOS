@@ -1,11 +1,13 @@
 ﻿using Cosmos.Core;
 using Cosmos.HAL;
+using Cosmos.System;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +46,8 @@ namespace nxtlvlOS.Apps {
                 UpdateTasks();
                 frames = 0;
             }
+            
+            WindowManager.PutToFront(taskbarForm);
         }
 
         public void UpdateTasks() {
@@ -64,6 +68,10 @@ namespace nxtlvlOS.Apps {
                 btn.SizeY = 24;
                 btn.SetText(form.Title);
                 btn.SetSafeDrawEnabled(true);
+
+                btn.Click = (MouseState s, uint absoluteX, uint absoluteY) => {
+                    WindowManager.PutToFront(form);
+                };
 
                 tasksContainer.AddElement(btn);
                 xOffset += 100;

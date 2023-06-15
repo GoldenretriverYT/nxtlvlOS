@@ -54,14 +54,14 @@ namespace nxtlvlOS.Apps {
             accountUsername.SizeY = 24;
             accountUsername.RelativePosX = 0;
             accountUsername.RelativePosY = 30;
-            accountUsername.SetText("");
+            accountUsername.SetPlaceholder("Username");
 
             TextField accountPassword = new();
             accountPassword.SizeX = 400;
             accountPassword.SizeY = 24;
             accountPassword.RelativePosX = 0;
             accountPassword.RelativePosY = 65;
-            accountPassword.SetText("");
+            accountPassword.SetPlaceholder("Password");
 
             TextButton accountLogin = new();
             accountLogin.SizeX = 150;
