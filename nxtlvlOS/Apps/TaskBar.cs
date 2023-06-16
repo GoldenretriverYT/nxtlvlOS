@@ -40,14 +40,14 @@ namespace nxtlvlOS.Apps {
             taskbarForm.AddElement(infoContainer);
 
             timeLabel = new();
-            timeLabel.SizeX = 144;
+            timeLabel.SizeX = 100;
             timeLabel.SizeY = 16;
             timeLabel.SetText("00:00");
             timeLabel.SetHorizontalAlignment(HorizontalAlignment.Center);
             infoContainer.AddElement(timeLabel);
 
             dateLabel = new();
-            dateLabel.SizeX = 144;
+            dateLabel.SizeX = 100;
             dateLabel.SizeY = 16;
             dateLabel.RelativePosY = 16;
             dateLabel.SetText("2023-01-01");
@@ -86,7 +86,17 @@ namespace nxtlvlOS.Apps {
                 GCImplementation.Free(child); // i am not sure why we need this...
             }
 
-            var xOffset = 4;
+            var startButton = new TextButton();
+            startButton.RelativePosX = 4;
+            startButton.RelativePosY = 3;
+            startButton.SizeX = 24;
+            startButton.SizeY = 24;
+            startButton.SetText("NX");
+            startButton.SetHorizontalAlignment(HorizontalAlignment.Left);
+            startButton.SetVerticalAlignment(VerticalAlignment.Middle);
+            tasksContainer.AddElement(startButton);
+
+            var xOffset = 30;
             var yOffset = 3;
             var formCount = 0;
 

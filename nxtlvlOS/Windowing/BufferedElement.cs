@@ -52,7 +52,7 @@ namespace nxtlvlOS.Windowing {
         public Action<MouseState, uint, uint> MouseDown = (MouseState state, uint absoluteX, uint absoluteY) => {
         };
 
-        public Action<MouseState, uint, uint> MouseUp = (MouseState state, uint absoluteX, uint absoluteY) => {
+        public Action<MouseState, MouseState, uint, uint> MouseUp = (MouseState state, MouseState prev, uint absoluteX, uint absoluteY) => {
         };
 
         public Action<KeyEvent> KeyPress = (KeyEvent) => { };
@@ -97,8 +97,8 @@ namespace nxtlvlOS.Windowing {
             MouseDown(state, MouseManager.X, MouseManager.Y);
         }
 
-        public virtual void OnMouseUp(MouseState state, bool mouseIsOver) {
-            MouseUp(state, MouseManager.X, MouseManager.Y);
+        public virtual void OnMouseUp(MouseState state, MouseState prev, bool mouseIsOver) {
+            MouseUp(state, prev, MouseManager.X, MouseManager.Y);
         }
 
         public virtual void OnHoverStart() {

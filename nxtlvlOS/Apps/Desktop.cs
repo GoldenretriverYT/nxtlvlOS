@@ -42,6 +42,26 @@ namespace nxtlvlOS.Apps {
                 }
             };
 
+            desktopForm.MouseUp = (MouseState state, MouseState prev, uint absoluteX, uint absoluteY) => {
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Desktop mouse up " + (int)(prev & MouseState.Right));
+                if ((prev & MouseState.Right) == MouseState.Right) {
+                    Kernel.Instance.Logger.Log(LogLevel.Info, "Desktop right clicked");
+                    ContextMenuService.Instance.ShowContextMenu(new() {
+                        ("Create new file", () => {
+                            CreateNewFile();
+                            ReloadFiles();
+                        }),
+                        ("Create new directory", () => {
+                            CreateNewDirectory();
+                            ReloadFiles();
+                        }),
+                        ("Refresh (F5)", () => {
+                            ReloadFiles();
+                        }),
+                    });
+                }
+            };
+            
             fileContainer = new Container();
             desktopForm.AddElement(fileContainer);
 
@@ -60,6 +80,33 @@ namespace nxtlvlOS.Apps {
             //    ReloadFiles();
             //}
         }
+
+        public void CreateNewFile() {
+            string[] alreadyExistingFiles = Directory.GetFiles(desktopDir);
+
+            string newName = "NewFile";
+            int i = 0;
+
+            while (alreadyExistingFiles.Contains(newName)) {
+                newName = "NewFile" + i++;
+            }
+
+            File.Create(desktopDir + newName).Close();
+        }
+
+        public void CreateNewDirectory() {
+            string[] alreadyExistingDirs = Directory.GetDirectories(desktopDir);
+
+            string newName = "NewDir";
+            int i = 0;
+
+            while(alreadyExistingDirs.Contains(newName)) {
+                newName = "NewDir" + i++;
+            }
+
+            Directory.CreateDirectory(desktopDir + newName);
+        }
+
 
         public void ReloadFiles() {
             foreach(var child in fileContainer.Children.ToList()) {

@@ -236,8 +236,8 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        public override void OnMouseUp(MouseState state, bool mouseIsOver) {
-            base.OnMouseUp(state, mouseIsOver);
+        public override void OnMouseUp(MouseState state, MouseState prev, bool mouseIsOver) {
+            base.OnMouseUp(state, prev, mouseIsOver);
 
             var relativeMouse = GetRelativeFromAbsolutePosition((int)MouseManager.X, (int)MouseManager.Y);
             var textPos = GetTextPositionFromRelativePosition(relativeMouse.x, relativeMouse.y);
@@ -355,8 +355,8 @@ namespace nxtlvlOS.Windowing.Elements {
                 Parent.OnMouseDown(state);
             }
 
-            public override void OnMouseUp(MouseState state, bool mouseIsOver) {
-                Parent.OnMouseUp(state, mouseIsOver);
+            public override void OnMouseUp(MouseState state, MouseState prev, bool mouseIsOver) {
+                Parent.OnMouseUp(state, prev, mouseIsOver);
             }
 
             private (bool x, bool y) GetOverflowAxes() {

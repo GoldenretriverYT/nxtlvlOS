@@ -101,8 +101,8 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        public override void OnMouseUp(MouseState state, bool isMouseOver) {
-            base.OnMouseUp(state, isMouseOver);
+        public override void OnMouseUp(MouseState state, MouseState prev, bool isMouseOver) {
+            base.OnMouseUp(state, prev, isMouseOver);
 
             if(isMouseOver) {
                 Click(state, MouseManager.X, MouseManager.Y);

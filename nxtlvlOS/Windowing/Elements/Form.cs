@@ -100,8 +100,8 @@ namespace nxtlvlOS.Windowing.Elements {
             }
         }
 
-        public override void OnMouseUp(MouseState state, bool mouseIsOver) {
-            base.OnMouseUp(state, mouseIsOver);
+        public override void OnMouseUp(MouseState state, MouseState prev, bool mouseIsOver) {
+            base.OnMouseUp(state, prev, mouseIsOver);
 
             isBeingDragged = false;
         }

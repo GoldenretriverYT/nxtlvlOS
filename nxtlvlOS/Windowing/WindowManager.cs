@@ -26,6 +26,9 @@ namespace nxtlvlOS.Windowing
 
         public static BufferedElement FocusedElement;
 
+        public static Event<(MouseState state, uint x, uint y)> GlobalMouseDownEvent = new();
+        public static Event<(MouseState state, uint x, uint y)> GlobalMouseUpEvent = new();
+
         //private static BufferedElement currentHoveredElement;
 
         /// <summary>
@@ -78,9 +81,9 @@ namespace nxtlvlOS.Windowing
                 foreach (var el in elements) {
                     var absolute = el.GetAbsolutePosition();
 
-                    if (MouseManager.X > absolute.x && MouseManager.X < absolute.x + el.SizeX &&
-                        MouseManager.Y > absolute.y && MouseManager.Y < absolute.y + el.SizeY &&
-                        el.VisibleIncludingParents) {
+                    if(ShapeCollisions.RectIntersectsWithPoint(
+                        absolute.y, absolute.x, absolute.y + el.SizeY, absolute.x + el.SizeX,
+                        MouseManager.X, MouseManager.Y) && el.VisibleIncludingParents) {
                         elementUnderMouse = el;
                         continue;
                     }
@@ -91,11 +94,23 @@ namespace nxtlvlOS.Windowing
                         if ((MouseManager.MouseState & MouseState.Left) == MouseState.Left &&
                             (previousState & MouseState.Left) != MouseState.Left) {
                             FocusedElement = elementUnderMouse;
+
                             elementUnderMouse.OnMouseDown(MouseManager.MouseState);
+                            GlobalMouseDownEvent.Invoke((MouseManager.MouseState, MouseManager.X, MouseManager.Y));
                         }else if ((MouseManager.MouseState & MouseState.Left) != MouseState.Left &&
                             (previousState & MouseState.Left) == MouseState.Left) {
+                            FocusedElement?.OnMouseUp(MouseManager.MouseState, previousState, elementUnderMouse == FocusedElement);
+                            GlobalMouseUpEvent.Invoke((MouseManager.MouseState, MouseManager.X, MouseManager.Y));
+                        }
 
-                            FocusedElement?.OnMouseUp(MouseManager.MouseState, elementUnderMouse == FocusedElement);
+                        if ((MouseManager.MouseState & MouseState.Right) == MouseState.Right &&
+                            (previousState & MouseState.Right) != MouseState.Right) {
+                            FocusedElement = elementUnderMouse;
+                            elementUnderMouse.OnMouseDown(MouseManager.MouseState);
+                        } else if ((MouseManager.MouseState & MouseState.Right) != MouseState.Right &&
+                            (previousState & MouseState.Right) == MouseState.Right) {
+
+                            FocusedElement?.OnMouseUp(MouseManager.MouseState, previousState, elementUnderMouse == FocusedElement);
                         }
 
                         previousState = MouseManager.MouseState;
