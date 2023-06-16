@@ -63,6 +63,10 @@ namespace nxtlvlOS {
         protected override void Run() {
             TimingUtils.Time("RenderFrame");
 
+            foreach(var proc in ProcessManager.Processes) {
+                proc.AttachedApp.Update();
+            }
+
             var result = WindowManager.Update();
             
             if(result.Type == WMResultType.Failure) {

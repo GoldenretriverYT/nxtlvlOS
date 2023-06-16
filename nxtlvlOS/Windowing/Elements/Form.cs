@@ -21,6 +21,8 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint insetColor = 0xFF808080;
         public uint InsetColor => insetColor;
 
+        public bool ShouldBeShownInTaskbar = true;
+
         private TextButton closeButton;
         private bool isBeingDragged = false;
         private int dragOffsetX = 0, dragOffsetY = 0;

@@ -1,5 +1,6 @@
 ﻿using Cosmos.Core;
 using Cosmos.HAL;
+using Cosmos.System;
 using nxtlvlOS.Loaders;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing;
@@ -35,15 +36,17 @@ namespace nxtlvlOS.Apps {
             desktopForm.SetTitlebarEnabled(false);
             desktopForm.SetTitle("Desktop");
 
+            desktopForm.KeyPress = (KeyEvent ev) => {
+                if (ev.Key == ConsoleKeyEx.F5) {
+                    ReloadFiles();
+                }
+            };
+
             fileContainer = new Container();
             desktopForm.AddElement(fileContainer);
 
             if(!Directory.Exists(desktopDir)) {
                 Directory.CreateDirectory(desktopDir);
-                
-                for(int i = 0; i < 10; i++) { // TODO: Remove this testing functionality
-                    File.WriteAllText(desktopDir + "test" + i + ".txt", "This is the test file 'test" + i + ".txt'!");
-                }
             }
 
             ReloadFiles();
@@ -52,15 +55,15 @@ namespace nxtlvlOS.Apps {
         }
 
         public override void Update() {
-            if(RTC.Second % 5 == 0) {
-                ReloadFiles();
-            }
+            // Listing files is super slow, lets just skip that and only do it on user request
+            //if(RTC.Second % 5 == 0) {
+            //    ReloadFiles();
+            //}
         }
 
         public void ReloadFiles() {
             foreach(var child in fileContainer.Children.ToList()) {
                 fileContainer.RemoveElement(child);
-                GCImplementation.Free(child); // i am not sure why we need this...
             }
 
             int offsetX = 0, offsetY = 0;

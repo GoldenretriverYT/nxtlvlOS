@@ -55,6 +55,8 @@ namespace nxtlvlOS.Windowing {
         public Action<MouseState, uint, uint> MouseUp = (MouseState state, uint absoluteX, uint absoluteY) => {
         };
 
+        public Action<KeyEvent> KeyPress = (KeyEvent) => { };
+
         public bool VisibleIncludingParents => Visible && (Parent == null ? true : Parent.VisibleIncludingParents);
         public bool PreviousVisibility = false;
 
@@ -108,7 +110,7 @@ namespace nxtlvlOS.Windowing {
         }
 
         public virtual void OnKey(KeyEvent ev) {
-
+            KeyPress(ev);
         }
 
         public void BringToFront() {
