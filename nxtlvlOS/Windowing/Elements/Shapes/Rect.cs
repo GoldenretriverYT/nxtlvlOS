@@ -22,7 +22,7 @@ namespace nxtlvlOS.Windowing.Elements.Shapes {
         }
 
         public override void Draw() {
-            DrawRect(0, 0, SizeX, SizeY, backgroundColor);
+            DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
         }
     }
 }

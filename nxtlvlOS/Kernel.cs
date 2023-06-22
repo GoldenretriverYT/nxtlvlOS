@@ -2,16 +2,19 @@
 using Cosmos.Core.Memory;
 using Cosmos.HAL;
 using Cosmos.System;
-using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
 using nxtlvlOS.Apps;
 using nxtlvlOS.Processing;
+using nxtlvlOS.RAMFS;
+using nxtlvlOS.Services;
 using nxtlvlOS.Utils;
 using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Console = System.Console;
@@ -20,9 +23,10 @@ using Sys = Cosmos.System;
 namespace nxtlvlOS {
     public class Kernel : Sys.Kernel {
         public static Kernel Instance;
+        public static FileSystem FS = new();
 
         public NXTLogger Logger = new();
-        public CosmosVFS VFS = new();
+        public Sys.FileSystem.CosmosVFS VFS = new();
         public spagSVGAII Canvas;
 
         private int framesRendered = 0;
@@ -44,6 +48,7 @@ namespace nxtlvlOS {
 
             Logger.Log(LogLevel.Info, $"Initiliazing file system");
             VFSManager.RegisterVFS(VFS, false);
+            FS = new();
             Logger.Log(LogLevel.Info, "Initiliazed file system!");
 
             Logger.Log(LogLevel.Info, "Initiliazing Window Manager");
@@ -64,7 +69,7 @@ namespace nxtlvlOS {
         protected override void Run() {
             TimingUtils.Time("RenderFrame");
 
-            foreach(var proc in ProcessManager.Processes) {
+            foreach (var proc in ProcessManager.Processes.ToList()) {
                 proc.AttachedApp.Update();
             }
 
@@ -93,6 +98,31 @@ namespace nxtlvlOS {
 
                 framesRendered = 0;
             }
+        }
+
+        public void Panic(string msg) {
+            Logger.Log(LogLevel.Crit, "PANIC! Error: " + msg);
+            
+            if (Canvas == null) {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.BackgroundColor = ConsoleColor.Black;
+
+                Console.SetCursorPosition(0, 0);
+                Console.WriteLine("Kernel Panic! :(");
+                Console.WriteLine("Something went wrong and nxtlvlOS will have to be restarted.");
+                Console.WriteLine();
+                Console.WriteLine("Error: " + msg);
+            } else {
+                unchecked {
+                    Canvas.Clear((int)0xFFFF0000);
+                    Canvas.DrawString("Kernel Panic! :(", Sys.Graphics.Fonts.PCScreenFont.Default, Color.Black, 0, 16);
+                    Canvas.DrawString("Something went wrong and nxtlvlOS will have to be restarted.", Sys.Graphics.Fonts.PCScreenFont.Default, Color.Black, 0, 32);
+                    Canvas.DrawString("Error: " + msg, Sys.Graphics.Fonts.PCScreenFont.Default, Color.Black, 0, 64);
+                    Canvas.Display();
+                }
+            }
+
+            while (true) ;
         }
     }
 

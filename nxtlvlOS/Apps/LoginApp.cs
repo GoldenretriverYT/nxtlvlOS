@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using Cosmos.System.ScanMaps;
+using nxtlvlOS.Services;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
@@ -11,23 +12,28 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nxtlvlOS.Apps {
-    public class LoginApp : App {
+namespace nxtlvlOS.Apps
+{
+    public class LoginApp : App
+    {
         private Form loginForm;
 
-        public override void Exit() {
-            if(loginForm != null) WindowManager.RemoveForm(loginForm);
+        public override void Exit()
+        {
+            if (loginForm != null) WindowManager.RemoveForm(loginForm);
             ProcessManager.CreateProcess(new Bootstrapper(), "Bootstrapper");
         }
 
-        public override void Init() {
+        public override void Init(string[] args)
+        {
             loginForm = new(SelfProcess);
-            loginForm.RelativePosX = (1280-600)/2;
-            loginForm.RelativePosY = (720-170)/2;
+            loginForm.RelativePosX = (1280 - 600) / 2;
+            loginForm.RelativePosY = (720 - 170) / 2;
             loginForm.SizeX = 600;
             loginForm.SizeY = 170;
             loginForm.SetTitlebarEnabled(true);
             loginForm.SetTitle("Login - nxtlvlOS");
+            loginForm.SetCloseButtonEnabled(false);
 
             #region Create container
             Container loginInputContainer = new();
@@ -72,21 +78,25 @@ namespace nxtlvlOS.Apps {
             accountLogin.SetHorizontalAlignment(HorizontalAlignment.Center);
             accountLogin.SetVerticalAlignment(VerticalAlignment.Middle);
 
-            accountLogin.Click = (MouseState state, uint absoluteX, uint absoluteY) => {
-                if(UACService.Instance.Authenticate(accountUsername.Text, accountPassword.Text)) {
+            accountLogin.Click = (state, absoluteX, absoluteY) =>
+            {
+                if (UACService.Instance.Authenticate(accountUsername.Text, accountPassword.Text))
+                {
                     ProcessManager.KillProcess(SelfProcess);
-                }else {
+                }
+                else
+                {
                     accountTitle.SetText("Authentication failed!");
                 }
             };
 
-            loginInputContainer.AddElement(accountTitle);
-            loginInputContainer.AddElement(accountUsername);
-            loginInputContainer.AddElement(accountPassword);
-            actionsContainer.AddElement(accountLogin);
+            loginInputContainer.AddChild(accountTitle);
+            loginInputContainer.AddChild(accountUsername);
+            loginInputContainer.AddChild(accountPassword);
+            actionsContainer.AddChild(accountLogin);
 
-            loginForm.AddElement(loginInputContainer);
-            loginForm.AddElement(actionsContainer);
+            loginForm.AddChild(loginInputContainer);
+            loginForm.AddChild(actionsContainer);
 
             loginInputContainer.AdjustToBoundingBox(HorizontalAlignment.Left, VerticalAlignment.Top, 10, 30 + 10); // we have to add 30 to the y padding due to the title bar
             actionsContainer.AdjustToBoundingBox(HorizontalAlignment.Right, VerticalAlignment.Top, 10, 30 + 10);
@@ -96,8 +106,9 @@ namespace nxtlvlOS.Apps {
             WindowManager.AddForm(loginForm);
         }
 
-        public override void Update() {
-            
+        public override void Update()
+        {
+
         }
     }
 }

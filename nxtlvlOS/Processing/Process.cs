@@ -16,7 +16,7 @@ namespace nxtlvlOS.Processing {
 
         public static List<Process> Processes = new();
 
-        public static Process CreateProcess(App app, string name) {
+        public static Process CreateProcess(App app, string name, string[] args) {
             var proc = new Process() {
                 AttachedApp = app,
                 Pid = _pidCounter++,
@@ -25,8 +25,12 @@ namespace nxtlvlOS.Processing {
 
             Processes.Add(proc);
             proc.AttachedApp.SelfProcess = proc;
-            proc.AttachedApp.Init();
+            proc.AttachedApp.Init(args);
             return proc;
+        }
+
+        public static Process CreateProcess(App app, string name) {
+            return CreateProcess(app, name, new string[] { });
         }
 
         public static Process? GetProcessByPid(int pid) {

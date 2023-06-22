@@ -33,6 +33,12 @@ namespace nxtlvlOS.Windowing.Elements {
         public bool safeDrawEnabled = false;
         public bool SafeDrawEnabled => safeDrawEnabled;
 
+        public bool enabled = true;
+        /// <summary>
+        /// Whether or not the button can be interacted with.
+        /// </summary>
+        public bool Enabled => enabled;
+
         public bool IsMouseDown { get; private set; } = false;
         public Action<MouseState, uint, uint> Click = (MouseState state, uint absoluteX, uint absoluteY) => { };
 
@@ -44,11 +50,16 @@ namespace nxtlvlOS.Windowing.Elements {
         public override void Draw() {
             SetDirty(false);
 
-            if (IsMouseDown) {
+            if (IsMouseDown && enabled) {
                 DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
                 DrawRectFilled(1, 1, SizeX-2, SizeY-2, backgroundColor);
             } else {
-                DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+                if (enabled) {
+                    DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+                } else {
+                    // todo: make a better style for disabled buttons, it looks horrible rn
+                    DrawInsetOppositeRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+                }
             }
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
@@ -94,6 +105,11 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
+        public void SetEnabled(bool enabled) {
+            this.enabled = enabled;
+            this.SetDirty(true);
+        }
+
         public override void OnMouseDown(MouseState state) {
             base.OnMouseDown(state);
 
@@ -104,7 +120,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public override void OnMouseUp(MouseState state, MouseState prev, bool isMouseOver) {
             base.OnMouseUp(state, prev, isMouseOver);
 
-            if(isMouseOver) {
+            if(isMouseOver && enabled) {
                 Click(state, MouseManager.X, MouseManager.Y);
             }
 

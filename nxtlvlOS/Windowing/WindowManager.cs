@@ -95,12 +95,12 @@ namespace nxtlvlOS.Windowing
                             (previousState & MouseState.Left) != MouseState.Left) {
                             FocusedElement = elementUnderMouse;
 
-                            elementUnderMouse.OnMouseDown(MouseManager.MouseState);
                             GlobalMouseDownEvent.Invoke((MouseManager.MouseState, MouseManager.X, MouseManager.Y));
+                            elementUnderMouse.OnMouseDown(MouseManager.MouseState);
                         }else if ((MouseManager.MouseState & MouseState.Left) != MouseState.Left &&
                             (previousState & MouseState.Left) == MouseState.Left) {
-                            FocusedElement?.OnMouseUp(MouseManager.MouseState, previousState, elementUnderMouse == FocusedElement);
                             GlobalMouseUpEvent.Invoke((MouseManager.MouseState, MouseManager.X, MouseManager.Y));
+                            FocusedElement?.OnMouseUp(MouseManager.MouseState, previousState, elementUnderMouse == FocusedElement);
                         }
 
                         if ((MouseManager.MouseState & MouseState.Right) == MouseState.Right &&

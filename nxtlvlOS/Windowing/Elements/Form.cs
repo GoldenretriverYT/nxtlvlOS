@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing.Fonts;
+using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,15 @@ namespace nxtlvlOS.Windowing.Elements {
         private Process owner;
         public Process Owner => owner;
 
+        /// <summary>
+        /// Invoked right before the form closes. Closing means to completely delete the form - not just to hide it.
+        /// </summary>
+        public Event BeforeClose = new();
+        /// <summary>
+        /// Invoked right after the form was closed.
+        /// </summary>
+        public Event Closed = new();
+
         public Form(Process owner) {
             this.owner = owner;
             closeButton = new TextButton() {
@@ -41,7 +51,11 @@ namespace nxtlvlOS.Windowing.Elements {
 
             closeButton.SetText("X");
 
-            AddElement(closeButton);
+            closeButton.Click = (MouseState _, uint _, uint _) => {
+                Close();
+            };
+
+            AddChild(closeButton);
         }
 
         public override void Update() {
@@ -83,6 +97,10 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
+        public void SetCloseButtonEnabled(bool enabled) {
+            closeButton.SetEnabled(enabled);
+        }
+
         public override void OnMouseDown(MouseState state) {
             base.OnMouseDown(state);
 
@@ -108,8 +126,8 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public override void Draw() {
             if (!ShouldBeDrawnToScreen) return; // We want to support this to allow root-level overlays in the WM
-            if (SizeY < 30) throw new Exception("Form must be at least 30 pixels in height");
-            if (SizeX < 30) throw new Exception("Form must be at least 30 pixels in width");
+            if ((titlebarEnabled && SizeY < 30) || SizeY < 10) throw new Exception("Form must be at least 30 pixels in height if title bar is enabled, or 10 if not.");
+            if ((titlebarEnabled && SizeX < 30) || SizeX < 10) throw new Exception("Form must be at least 30 pixels in width if title bar is enabled, or 10 if not.");
 
             SetDirty(false);
 
@@ -119,6 +137,21 @@ namespace nxtlvlOS.Windowing.Elements {
                 DrawRectFilled(4, 4, SizeX-4, 24, 0xFF000072);
                 DrawStringPSF(PCScreenFont.Default, 6, 6, title, 0xFFFFFFFF);
             }
+        }
+
+        /// <summary>
+        /// Close the form - this removes it from its parent or the window manager as well.
+        /// </summary>
+        public void Close() {
+            BeforeClose.Invoke();
+
+            if (Parent != null) {
+                Parent.RemoveElement(this);
+            } else {
+                WindowManager.RemoveForm(this);
+            }
+
+            Closed.Invoke();
         }
     }
 }

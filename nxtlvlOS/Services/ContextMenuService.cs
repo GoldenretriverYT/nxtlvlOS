@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nxtlvlOS.Apps {
+namespace nxtlvlOS.Services {
     public class ContextMenuService : App {
         public static ContextMenuService Instance;
         public Form ContextMenuForm;
@@ -18,7 +18,7 @@ namespace nxtlvlOS.Apps {
             throw new Exception("ContextMenuService should not be killed.");
         }
 
-        public override void Init() {
+        public override void Init(string[] args) {
             if (Instance != null)
                 throw new Exception("ContextMenuService should not be started twice.");
 
@@ -47,7 +47,7 @@ namespace nxtlvlOS.Apps {
         public override void Update() {
         }
 
-        public void ShowContextMenu(List<(string title, Action action)> items) {
+        public void ShowContextMenu(List<(string title, Action action)> items, int customX = -1, int customY = -1) {
             foreach (var child in ContextMenuForm.Children.ToList()) {
                 ContextMenuForm.RemoveElement(child);
             }
@@ -66,13 +66,14 @@ namespace nxtlvlOS.Apps {
                     ContextMenuForm.Visible = false;
                 };
 
-                ContextMenuForm.AddElement(button);
+                ContextMenuForm.AddChild(button);
                 yOffset += 22;
             }
 
             ContextMenuForm.SizeY = (uint)(yOffset + 6);
-            ContextMenuForm.RelativePosX = (int)MouseManager.X;
-            ContextMenuForm.RelativePosY = (int)MouseManager.Y;
+            
+            ContextMenuForm.RelativePosX = (customX == -1 ? (int)MouseManager.X : customX);
+            ContextMenuForm.RelativePosY = (customY == -1 ? (int)MouseManager.Y : customY);
 
             if(ContextMenuForm.RelativePosY + ContextMenuForm.SizeY > 720) {
                 ContextMenuForm.RelativePosY = (int)(720 - ContextMenuForm.SizeY);
@@ -82,6 +83,7 @@ namespace nxtlvlOS.Apps {
                 ContextMenuForm.RelativePosX = (int)(1280 - ContextMenuForm.SizeX);
             }
 
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Showing context menu with sizex=" + ContextMenuForm.SizeX + " sizey=" + ContextMenuForm.SizeY + " relx=" + ContextMenuForm.RelativePosX + " rely=" + ContextMenuForm.RelativePosY);
             ContextMenuForm.Visible = true;
             WindowManager.PutToFront(ContextMenuForm);
         }

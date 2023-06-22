@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nxtlvlOS.Apps {
+namespace nxtlvlOS.Services {
     /// <summary>
     /// TODO: Properly secure this, probably using ACLs
     /// </summary>
@@ -15,27 +15,31 @@ namespace nxtlvlOS.Apps {
 
         private List<User> users = new();
         public User CurrentUser { get; private set; }
-        public static string UserDir => @"0:\Users\" + Instance.CurrentUser.Username + "\\";
+        public static string UserDir => @"/Users/" + Instance.CurrentUser.Username + "/";
 
-        public const string UserDatabasePath = @"0:\System\users.db";
+        public const string UserDatabasePath = @"/System/users.db";
 
 
         public override void Exit() {
             throw new Exception("UAC should not be killed.");
         }
 
-        public override void Init() {
+        public override void Init(string[] args) {
             if (Instance != null)
                 throw new Exception("UAC should not be started twice.");
 
             Instance = this;
 
-            if(!Directory.Exists(@"0:\System")) {
-                Directory.CreateDirectory(@"0:\System");
+            if (!Kernel.FS.DirectoryExists(@"/System")) {
+                Kernel.FS.CreateDirectory(@"/System");
             }
 
-            if(!File.Exists(UserDatabasePath)) {
-                File.Create(UserDatabasePath);
+            if (!Kernel.FS.DirectoryExists(@"/Users/")) {
+                Kernel.FS.CreateDirectory(@"/Users/");
+            }
+
+            if (!Kernel.FS.FileExists(UserDatabasePath)) {
+                Kernel.FS.WriteAllText(UserDatabasePath, "");
             }
 
             LoadUsers();
@@ -48,6 +52,11 @@ namespace nxtlvlOS.Apps {
             foreach(var user in users) {
                 if(user.Username == username && user.Password == password) {
                     CurrentUser = user;
+
+                    if (!Kernel.FS.DirectoryExists(UserDir)) {
+                        Kernel.FS.CreateDirectory(UserDir);
+                    }
+
                     return true;
                 }
             }
@@ -67,7 +76,7 @@ namespace nxtlvlOS.Apps {
         public void LoadUsers() {
             users.Clear();
 
-            string[] lines = File.ReadAllText(UserDatabasePath)
+            string[] lines = Kernel.FS.ReadAllText(UserDatabasePath).Data
                 .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             foreach(var line in lines) {
@@ -97,7 +106,7 @@ namespace nxtlvlOS.Apps {
                 lines[i] = $"{(user.IsRootUser ? "yes" : "no")};{user.Username};{user.Password}";
             }
 
-            File.WriteAllText(UserDatabasePath,
+            Kernel.FS.WriteAllText(UserDatabasePath,
                 string.Join(Environment.NewLine, lines));
         }
 

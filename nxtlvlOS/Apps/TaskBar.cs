@@ -1,6 +1,7 @@
 ﻿using Cosmos.Core;
 using Cosmos.HAL;
 using Cosmos.System;
+using nxtlvlOS.Services;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
@@ -11,19 +12,23 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nxtlvlOS.Apps {
-    public class TaskBar : App {
+namespace nxtlvlOS.Apps
+{
+    public class TaskBar : App
+    {
         private Form taskbarForm;
         private Container tasksContainer, infoContainer;
         private Label timeLabel, dateLabel;
 
         private int frames = 0;
 
-        public override void Exit() {
+        public override void Exit()
+        {
             if (taskbarForm != null) WindowManager.RemoveForm(taskbarForm);
         }
 
-        public override void Init() {
+        public override void Init(string[] args)
+        {
             taskbarForm = new Form(SelfProcess);
             taskbarForm.RelativePosX = 0;
             taskbarForm.RelativePosY = 690;
@@ -34,17 +39,17 @@ namespace nxtlvlOS.Apps {
             taskbarForm.SetTitle("Taskbar");
 
             tasksContainer = new();
-            taskbarForm.AddElement(tasksContainer);
+            taskbarForm.AddChild(tasksContainer);
 
             infoContainer = new();
-            taskbarForm.AddElement(infoContainer);
+            taskbarForm.AddChild(infoContainer);
 
             timeLabel = new();
             timeLabel.SizeX = 100;
             timeLabel.SizeY = 16;
             timeLabel.SetText("00:00");
             timeLabel.SetHorizontalAlignment(HorizontalAlignment.Center);
-            infoContainer.AddElement(timeLabel);
+            infoContainer.AddChild(timeLabel);
 
             dateLabel = new();
             dateLabel.SizeX = 100;
@@ -52,7 +57,7 @@ namespace nxtlvlOS.Apps {
             dateLabel.RelativePosY = 16;
             dateLabel.SetText("2023-01-01");
             dateLabel.SetHorizontalAlignment(HorizontalAlignment.Center);
-            infoContainer.AddElement(dateLabel);
+            infoContainer.AddChild(dateLabel);
 
             UpdateTasks();
             UpdateDateAndTime();
@@ -60,28 +65,34 @@ namespace nxtlvlOS.Apps {
             WindowManager.AddForm(taskbarForm);
         }
 
-        public override void Update() {
+        public override void Update()
+        {
             frames++;
 
-            if(RTC.Second % 2 == 0) {
+            if (RTC.Second % 2 == 0)
+            {
                 UpdateTasks();
                 frames = 0;
             }
 
-            if(RTC.Second == 0) {
+            if (RTC.Second == 0)
+            {
                 UpdateDateAndTime();
             }
-            
+
             WindowManager.PutToFront(taskbarForm);
         }
 
-        public void UpdateDateAndTime() {
-            timeLabel.SetText(RTC.Hour + ":" + RTC.Minute);
+        public void UpdateDateAndTime()
+        {
+            timeLabel.SetText(RTC.Hour.ToString().PadLeft(2, '0') + ":" + RTC.Minute.ToString().PadLeft(2, '0'));
             dateLabel.SetText(RTC.Century.ToString() + RTC.Year.ToString() + "-" + RTC.Month + "-" + RTC.DayOfTheMonth);
         }
 
-        public void UpdateTasks() {
-            foreach (var child in tasksContainer.Children.ToList()) {
+        public void UpdateTasks()
+        {
+            foreach (var child in tasksContainer.Children.ToList())
+            {
                 tasksContainer.RemoveElement(child);
                 GCImplementation.Free(child); // i am not sure why we need this...
             }
@@ -94,13 +105,28 @@ namespace nxtlvlOS.Apps {
             startButton.SetText("NX");
             startButton.SetHorizontalAlignment(HorizontalAlignment.Left);
             startButton.SetVerticalAlignment(VerticalAlignment.Middle);
-            tasksContainer.AddElement(startButton);
+
+            startButton.Click = (_, _, _) =>
+            {
+                // For now, lets show a context menu as start menu
+                ContextMenuService.Instance.ShowContextMenu(new() {
+                    ("Store RAMFS (slow)", () => {
+                        Kernel.FS.StoreFS();
+                    }),
+                    ("Shutdown", () => {
+                        Cosmos.HAL.Power.ACPIShutdown();
+                    }),
+                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 2)); // 6 (base) + 22 (height per item) * 2 (item count)
+            };
+
+            tasksContainer.AddChild(startButton);
 
             var xOffset = 30;
             var yOffset = 3;
             var formCount = 0;
 
-            foreach(var formElement in WindowManager.Forms) {
+            foreach (var formElement in WindowManager.Forms)
+            {
                 if (formElement is not Form form || !form.ShouldBeShownInTaskbar) continue;
                 formCount++;
 
@@ -112,20 +138,22 @@ namespace nxtlvlOS.Apps {
                 btn.SetText(form.Title);
                 btn.SetSafeDrawEnabled(true);
 
-                btn.Click = (MouseState s, uint absoluteX, uint absoluteY) => {
+                btn.Click = (s, absoluteX, absoluteY) =>
+                {
                     WindowManager.PutToFront(form);
                 };
 
-                tasksContainer.AddElement(btn);
+                tasksContainer.AddChild(btn);
                 xOffset += 150;
 
-                if(xOffset > 1050) {
+                if (xOffset > 1050)
+                {
                     xOffset = 4;
                     yOffset += 24;
                 }
             }
 
-            taskbarForm.SizeY = (uint)(6 + (24 * Math.Max(1, formCount / 7)));
+            taskbarForm.SizeY = (uint)(6 + 24 * Math.Max(1, formCount / 7));
             taskbarForm.RelativePosY = (int)(720 - taskbarForm.SizeY);
 
             infoContainer.AdjustToBoundingBox(HorizontalAlignment.Right, VerticalAlignment.Middle, 10, 0);

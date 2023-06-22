@@ -22,4 +22,22 @@ namespace nxtlvlOS.Windowing.Utils {
             foreach (var handler in handlers) handler(data);
         }
     }
+
+    public class Event {
+        private List<Action> handlers = new();
+
+        public void Subscribe(Action action) {
+            handlers.Add(action);
+        }
+
+        public void Unsubscribe(Action action) {
+            if (handlers.Contains(action)) {
+                handlers.Remove(action);
+            }
+        }
+
+        public void Invoke() {
+            foreach (var handler in handlers) handler();
+        }
+    }
 }

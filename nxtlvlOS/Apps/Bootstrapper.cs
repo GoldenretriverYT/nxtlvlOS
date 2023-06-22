@@ -1,4 +1,5 @@
 ﻿using nxtlvlOS.Processing;
+using nxtlvlOS.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,12 @@ namespace nxtlvlOS.Apps {
             
         }
 
-        public override void Init() {
+        public override void Init(string[] args) {
+            ProcessManager.CreateProcess(new FileAssociationService(), "FileAssocService");
+
             ProcessManager.CreateProcess(new Desktop(), "Desktop");
             ProcessManager.CreateProcess(new TaskBar(), "TaskBar");
+
             ProcessManager.KillProcess(SelfProcess);
         }
 

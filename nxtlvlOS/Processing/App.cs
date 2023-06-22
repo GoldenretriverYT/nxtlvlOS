@@ -9,7 +9,7 @@ namespace nxtlvlOS.Processing {
         public AppType Type;
         public Process SelfProcess;
 
-        public abstract void Init();
+        public abstract void Init(string[] args);
         public abstract void Update();
         public abstract void Exit();
     }

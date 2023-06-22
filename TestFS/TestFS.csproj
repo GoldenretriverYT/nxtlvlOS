@@ -17,41 +17,12 @@
         <Profile>VMware</Profile>
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <ExtractMapFile>True</ExtractMapFile>
-        <DebugEnabled>True</DebugEnabled>
-        <OptimizationLevel>2</OptimizationLevel>
     </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <Optimize>False</Optimize>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <None Remove="Assets\BackgroundDefault.nxtbmp" />
-      <None Remove="Assets\Cursor.nxtbmp" />
-      <None Remove="Assets\FileIconGeneric.nxtbmp" />
-    </ItemGroup>
-
-
-    <ItemGroup>
-      <EmbeddedResource Include="Assets\BackgroundDefault.nxtbmp" />
-      <EmbeddedResource Include="Assets\Cursor.nxtbmp" />
-      <EmbeddedResource Include="Assets\FileIconGeneric.nxtbmp" />
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
-        <PackageReference Include="GoldenretriverYT.SimpleINI" Version="1.0.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="isoFiles\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="Apps\NotepadApp.cs" />
-    </ItemGroup>
 </Project>

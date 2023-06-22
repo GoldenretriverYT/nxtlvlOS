@@ -1,6 +1,8 @@
 ﻿using Cosmos.System;
 using Cosmos.System.ScanMaps;
+using nxtlvlOS.Services;
 using nxtlvlOS.Processing;
+using nxtlvlOS.Utils;
 using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
 using System;
@@ -10,9 +12,12 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using nxtlvlOS.Assets;
 
-namespace nxtlvlOS.Apps {
-    public class OOBE : App {
+namespace nxtlvlOS.Apps
+{
+    public class OOBE : App
+    {
         static List<(string, ScanMapBase)> KeyboardLayouts = new() {
             ("English, US", new USStandardLayout()),
             ("German, DE", new DEStandardLayout()),
@@ -23,23 +28,30 @@ namespace nxtlvlOS.Apps {
 
         private Form oobeForm;
 
-        public override void Exit() {
+        public override void Exit()
+        {
             Kernel.Instance.Logger.Log(LogLevel.Info, "Exiting OOBE");
-            if(oobeForm != null) WindowManager.RemoveForm(oobeForm);
+            if (oobeForm != null) WindowManager.RemoveForm(oobeForm);
             ProcessManager.CreateProcess(new LoginApp(), "UAC Login");
         }
 
-        public override void Init() {
-            if (!Directory.Exists(@"0:\System")) {
-                Directory.CreateDirectory(@"0:\System");
+        public override void Init(string[] args)
+        {
+            if (!Kernel.FS.DirectoryExists(@"/System"))
+            {
+                Kernel.FS.CreateDirectory(@"/System");
             }
 
-            if (File.Exists(@"0:\System\oobedone")) {
-                if(File.Exists(@"0:\System\kblyt.cfg")) { // TODO: Offload this to a KeyboardService
-                    var kbLayout = File.ReadAllText(@"0:\System\kblyt.cfg");
+            if (Kernel.FS.FileExists(@"/System/oobedone"))
+            {
+                if (Kernel.FS.FileExists(@"/System/kblyt.cfg"))
+                { // TODO: Offload this to a KeyboardService
+                    var kbLayout = Kernel.FS.ReadAllText(@"/System/kblyt.cfg").Data;
 
-                    foreach(var layout in KeyboardLayouts) {
-                        if(layout.Item1 == kbLayout) {
+                    foreach (var layout in KeyboardLayouts)
+                    {
+                        if (layout.Item1 == kbLayout)
+                        {
                             KeyboardManager.SetKeyLayout(layout.Item2);
                             break;
                         }
@@ -59,14 +71,13 @@ namespace nxtlvlOS.Apps {
 
             #region Create step containers here for referencing purposes
             Container stepSelectKeyboardLayout = new();
-            stepSelectKeyboardLayout.RelativePosX = 0;
-            stepSelectKeyboardLayout.RelativePosY = 0;
             stepSelectKeyboardLayout.Visible = true;
 
             Container stepCreateAccountContainer = new();
-            stepCreateAccountContainer.RelativePosX = 0;
-            stepCreateAccountContainer.RelativePosY = 0;
             stepCreateAccountContainer.Visible = false;
+
+            Container stepCopyFilesContainer = new();
+            stepCopyFilesContainer.Visible = false;
             #endregion
 
             #region Step 1 - Select a keyboard layout
@@ -79,11 +90,12 @@ namespace nxtlvlOS.Apps {
             kbTitle.SetText("Select a keyboard layout to start the OOBE experience!");
             kbTitle.SetHorizontalAlignment(HorizontalAlignment.Center);
             kbTitle.SetVerticalAlignment(VerticalAlignment.Middle);
-            stepSelectKeyboardLayout.AddElement(kbTitle);
+            stepSelectKeyboardLayout.AddChild(kbTitle);
 
             var offset = 50;
 
-            foreach (var kbLayout in KeyboardLayouts) {
+            foreach (var kbLayout in KeyboardLayouts)
+            {
                 var _layout = kbLayout;
 
                 TextButton layoutButton = new();
@@ -95,19 +107,20 @@ namespace nxtlvlOS.Apps {
                 layoutButton.SetHorizontalAlignment(HorizontalAlignment.Center);
                 layoutButton.SetVerticalAlignment(VerticalAlignment.Middle);
 
-                layoutButton.Click = (MouseState state, uint absoluteX, uint absoluteY) => {
+                layoutButton.Click = (state, absoluteX, absoluteY) =>
+                {
                     stepSelectKeyboardLayout.Visible = false;
                     stepCreateAccountContainer.Visible = true;
 
                     KeyboardManager.SetKeyLayout(_layout.Item2); // TODO: Offload this to a KeyboardService
-                    File.WriteAllText(@"0:\System\kblyt.cfg", _layout.Item1);
+                    Kernel.FS.WriteAllText(@"/System/kblyt.cfg", _layout.Item1);
                 };
 
                 offset += 30;
-                stepSelectKeyboardLayout.AddElement(layoutButton);
+                stepSelectKeyboardLayout.AddChild(layoutButton);
             }
 
-            oobeForm.AddElement(stepSelectKeyboardLayout); // IMPORTANT: AdjustToBoundingBox needs a parent first!
+            oobeForm.AddChild(stepSelectKeyboardLayout); // IMPORTANT: AdjustToBoundingBox needs a parent first!
             stepSelectKeyboardLayout.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
             #endregion
 
@@ -144,29 +157,63 @@ namespace nxtlvlOS.Apps {
             accountNextStep.SetHorizontalAlignment(HorizontalAlignment.Center);
             accountNextStep.SetVerticalAlignment(VerticalAlignment.Middle);
 
-            accountNextStep.Click = (MouseState state, uint absoluteX, uint absoluteY) => {
+            accountNextStep.Click = (state, absoluteX, absoluteY) =>
+            {
                 Kernel.Instance.Logger.Log(LogLevel.Info, "Creating user");
                 UACService.Instance.CreateUser(accountUsername.Text, accountPassword.Text);
-                Kernel.Instance.Logger.Log(LogLevel.Info, "Creating file oobedone");
-                File.WriteAllText(@"0:\System\oobedone", "1");
-                Kernel.Instance.Logger.Log(LogLevel.Info, "Killing oobe process");
+
+                stepCreateAccountContainer.Visible = false;
+                stepCopyFilesContainer.Visible = true;
+            };
+
+            stepCreateAccountContainer.AddChild(accountTitle);
+            stepCreateAccountContainer.AddChild(accountUsername);
+            stepCreateAccountContainer.AddChild(accountPassword);
+            stepCreateAccountContainer.AddChild(accountNextStep);
+
+            oobeForm.AddChild(stepCreateAccountContainer);
+            stepCreateAccountContainer.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+            #endregion
+
+            #region Step 3 - Copy files
+            Label copyFilesTitle = new();
+            copyFilesTitle.SizeX = 500;
+            copyFilesTitle.SizeY = 24;
+            copyFilesTitle.RelativePosX = 0;
+            copyFilesTitle.RelativePosY = 0;
+            copyFilesTitle.SetText("We will now have to copy a files. This may take a while.");
+            copyFilesTitle.SetHorizontalAlignment(HorizontalAlignment.Center);
+            copyFilesTitle.SetVerticalAlignment(VerticalAlignment.Middle);
+
+            TextButton copyFilesButton = new();
+            copyFilesButton.SizeX = 500;
+            copyFilesButton.SizeY = 24;
+            copyFilesButton.RelativePosX = 0;
+            copyFilesButton.RelativePosY = 50;
+            copyFilesButton.SetText("Copy files & finish OOBE");
+            copyFilesButton.SetHorizontalAlignment(HorizontalAlignment.Center);
+            copyFilesButton.SetVerticalAlignment(VerticalAlignment.Middle);
+
+            copyFilesButton.Click = (state, absoluteX, absoluteY) =>
+            {
+                AssetManager.IncludeFiles();
+                Kernel.FS.WriteAllText(@"/System/oobedone", "1");
                 ProcessManager.KillProcess(SelfProcess);
             };
 
-            stepCreateAccountContainer.AddElement(accountTitle);
-            stepCreateAccountContainer.AddElement(accountUsername);
-            stepCreateAccountContainer.AddElement(accountPassword);
-            stepCreateAccountContainer.AddElement(accountNextStep);
+            stepCopyFilesContainer.AddChild(copyFilesTitle);
+            stepCopyFilesContainer.AddChild(copyFilesButton);
 
-            oobeForm.AddElement(stepCreateAccountContainer);
-            stepCreateAccountContainer.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+            oobeForm.AddChild(stepCopyFilesContainer);
+            stepCopyFilesContainer.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
             #endregion
 
             WindowManager.AddForm(oobeForm);
         }
 
-        public override void Update() {
-            
+        public override void Update()
+        {
+
         }
     }
 }

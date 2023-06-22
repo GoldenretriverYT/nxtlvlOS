@@ -34,7 +34,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
         private ScrollableTextFrame frame = new();
         private Rect cursor = new() {
-            SizeX = 4,
+            SizeX = 2,
             SizeY = 16
         };
 
@@ -56,8 +56,8 @@ namespace nxtlvlOS.Windowing.Elements {
                 UpdateFrameSizing(); // HACK: This is a hack! Required due to GC issues in Cosmos
             };*/
 
-            AddElement(frame);
-            AddElement(cursor);
+            AddChild(frame);
+            AddChild(cursor);
         }
 
         public override void Draw() {

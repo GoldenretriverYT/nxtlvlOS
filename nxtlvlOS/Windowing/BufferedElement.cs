@@ -26,9 +26,8 @@ namespace nxtlvlOS.Windowing {
         /// Also prevents a buffer from being created, which <see cref="Visible"/> does not.
         /// </summary>
         public bool ShouldBeDrawnToScreen = true;
-        
-        private uint _bufSizeX = 0, _bufSizeY = 0;
 
+        private uint _bufSizeX = 0, _bufSizeY = 0;
         protected bool dirty = false;
 
         public BufferDrawMode DrawMode = BufferDrawMode.RawCopy;
@@ -130,7 +129,7 @@ namespace nxtlvlOS.Windowing {
             this.dirty = isDirty;
         }
 
-        public void AddElement(BufferedElement el) {
+        public void AddChild(BufferedElement el) {
             el.Parent = this;
             Children.Add(el);
         }
