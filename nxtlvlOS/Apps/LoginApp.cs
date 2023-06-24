@@ -20,7 +20,7 @@ namespace nxtlvlOS.Apps
 
         public override void Exit()
         {
-            if (loginForm != null) WindowManager.RemoveForm(loginForm);
+            if (loginForm != null) loginForm.Close();
             ProcessManager.CreateProcess(new Bootstrapper(), "Bootstrapper");
         }
 

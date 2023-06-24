@@ -141,9 +141,7 @@ namespace nxtlvlOS.Apps
             foreach (var file in Kernel.FS.GetFiles(desktopDir).Data.GetNames())
             {
                 void FileClicked(MouseState state, uint absX, uint absY) {
-                    var pathInfo = FileSystem.ParsePath(file);
-
-                    
+                    FileAssociationService.Instance.StartAppFromPath(desktopDir + file, new string[] {});
                 }
 
                 ImageLabel img = new();
@@ -153,6 +151,7 @@ namespace nxtlvlOS.Apps
                 img.SizeY = 64;
                 img.SetTransparent(true);
                 img.SetImage(iconBmp.Data);
+                img.Click = FileClicked;
                 fileContainer.AddChild(img);
 
                 Label lbl = new();
@@ -163,6 +162,7 @@ namespace nxtlvlOS.Apps
                 lbl.SetText(file);
                 lbl.SetHorizontalAlignment(HorizontalAlignment.Center);
                 lbl.SetSafeDrawEnabled(true);
+                lbl.Click = FileClicked;
                 fileContainer.AddChild(lbl);
 
                 offsetY += 80;

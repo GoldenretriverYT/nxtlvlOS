@@ -33,14 +33,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public bool safeDrawEnabled = false;
         public bool SafeDrawEnabled => safeDrawEnabled;
 
-        public bool enabled = true;
-        /// <summary>
-        /// Whether or not the button can be interacted with.
-        /// </summary>
-        public bool Enabled => enabled;
-
         public bool IsMouseDown { get; private set; } = false;
-        public Action<MouseState, uint, uint> Click = (MouseState state, uint absoluteX, uint absoluteY) => { };
 
 
         public TextButton() {
@@ -119,10 +112,6 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public override void OnMouseUp(MouseState state, MouseState prev, bool isMouseOver) {
             base.OnMouseUp(state, prev, isMouseOver);
-
-            if(isMouseOver && enabled) {
-                Click(state, MouseManager.X, MouseManager.Y);
-            }
 
             IsMouseDown = false;
             this.SetDirty(true);

@@ -14,6 +14,19 @@ namespace nxtlvlOS.Assets {
         public static byte[] FileIconGeneric;
 
         public static void IncludeFiles() {
+            if (!Kernel.FS.DirectoryExists("/System/")) {
+                Kernel.FS.CreateDirectory("/System/");
+            }
+
+            if (!Kernel.FS.DirectoryExists("/System/FileExts/")) {
+                Kernel.FS.CreateDirectory("/System/FileExts/");
+            }
+
+            if (!Kernel.FS.DirectoryExists("/System/FileExts/Assoc/")) {
+                Kernel.FS.CreateDirectory("/System/FileExts/Assoc/");
+            }
+
+
             Kernel.FS.WriteAllText("/System/FileExts/Assoc/asc.asc",
             @"[assoc]
 Name=Association File

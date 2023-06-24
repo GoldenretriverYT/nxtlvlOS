@@ -32,6 +32,16 @@ namespace nxtlvlOS.Windowing {
 
         public BufferDrawMode DrawMode = BufferDrawMode.RawCopy;
 
+        public bool enabled = true;
+        /// <summary>
+        /// Elements can choose to use the property as they please. Built-in interactive elements use this
+        /// to decide whether or not the element should be interactive. WARNING! CHANGING FORCES A REDRAW!
+        /// 
+        /// Note: As not all elements need this, a SetEnabled method is up to the element itself to implement.
+        /// (THIS MIGHT CHANGE IN THE FUTURE)
+        /// </summary>
+        public bool Enabled => enabled;
+
         /// <summary>
         /// If the buffer was updated since the last time this was set to false.
         /// This will be used as follows:
@@ -47,6 +57,8 @@ namespace nxtlvlOS.Windowing {
 
         public Action SizeChanged = () => { };
         public Action VisibilityChanged = () => { };
+
+        public Action<MouseState, uint, uint> Click = (MouseState state, uint absoluteX, uint absoluteY) => { };
 
         public Action<MouseState, uint, uint> MouseDown = (MouseState state, uint absoluteX, uint absoluteY) => {
         };
@@ -98,6 +110,10 @@ namespace nxtlvlOS.Windowing {
 
         public virtual void OnMouseUp(MouseState state, MouseState prev, bool mouseIsOver) {
             MouseUp(state, prev, MouseManager.X, MouseManager.Y);
+
+            if (mouseIsOver && enabled) {
+                Click(state, MouseManager.X, MouseManager.Y);
+            }
         }
 
         public virtual void OnHoverStart() {

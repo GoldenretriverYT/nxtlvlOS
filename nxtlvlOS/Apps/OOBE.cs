@@ -31,7 +31,7 @@ namespace nxtlvlOS.Apps
         public override void Exit()
         {
             Kernel.Instance.Logger.Log(LogLevel.Info, "Exiting OOBE");
-            if (oobeForm != null) WindowManager.RemoveForm(oobeForm);
+            if (oobeForm != null) oobeForm.Close();
             ProcessManager.CreateProcess(new LoginApp(), "UAC Login");
         }
 

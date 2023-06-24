@@ -13,12 +13,18 @@ namespace nxtlvlOS.Apps {
         }
 
         public override void Init(string[] args) {
-            ProcessManager.CreateProcess(new FileAssociationService(), "FileAssocService");
+            try {
+                ProcessManager.CreateProcess(new FileAssociationService(), "FileAssocService");
 
-            ProcessManager.CreateProcess(new Desktop(), "Desktop");
-            ProcessManager.CreateProcess(new TaskBar(), "TaskBar");
+                ProcessManager.CreateProcess(new Desktop(), "Desktop");
+                ProcessManager.CreateProcess(new TaskBar(), "TaskBar");
 
-            ProcessManager.KillProcess(SelfProcess);
+                FileAssociationService.Instance.RegisterApp("NotepadApp", () => new NotepadApp());
+
+                ProcessManager.KillProcess(SelfProcess);
+            }catch(Exception ex) {
+                Kernel.Instance.Panic("Bootstrapping failed: " + ex.Message);
+            }
         }
 
         public override void Update() {

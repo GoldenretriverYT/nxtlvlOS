@@ -1,4 +1,5 @@
 ﻿using nxtlvlOS.Processing;
+using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace nxtlvlOS.Apps
         private Form form;
 
         public override void Exit() {
-            
+            if (form != null) form.Close();
         }
 
         public override void Init(string[] args) {
@@ -25,6 +26,8 @@ namespace nxtlvlOS.Apps
 
             form.SetTitle("Notepad");
             form.SetTitlebarEnabled(true);
+
+            WindowManager.AddForm(form);
         }
 
         public override void Update() {
