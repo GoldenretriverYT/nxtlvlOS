@@ -5,6 +5,7 @@ using Cosmos.System;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
 using nxtlvlOS.Apps;
+using nxtlvlOS.Assets;
 using nxtlvlOS.Processing;
 using nxtlvlOS.RAMFS;
 using nxtlvlOS.Services;
@@ -35,6 +36,7 @@ namespace nxtlvlOS {
         private Label fpsLabel = null;
 
         protected override void BeforeRun() {
+            Console.WriteLine(Console.OutputEncoding);
             Instance = this;
 
             Console.Clear();

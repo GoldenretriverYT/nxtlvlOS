@@ -30,6 +30,11 @@ namespace nxtlvlOS.Services {
             ContextMenuForm.ShouldBeShownInTaskbar = false;
 
             WindowManager.GlobalMouseUpEvent.Subscribe((eventData) => {
+                if(ContextMenuForm == null) {
+                    Kernel.Instance.Logger.Log(LogLevel.Warn, "ContextMenuForm is null; should not be null.");
+                    return;
+                }
+                
                 if (!ContextMenuForm.Visible) return;
 
                 var absPos = ContextMenuForm.GetAbsolutePosition();

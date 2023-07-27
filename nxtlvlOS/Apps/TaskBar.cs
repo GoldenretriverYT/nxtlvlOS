@@ -94,7 +94,7 @@ namespace nxtlvlOS.Apps
             foreach (var child in tasksContainer.Children.ToList())
             {
                 tasksContainer.RemoveElement(child);
-                GCImplementation.Free(child); // i am not sure why we need this...
+                //GCImplementation.Free(child); // i am not sure why we need this...
             }
 
             var startButton = new TextButton();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,11 @@ namespace nxtlvlOS.Windowing.Utils {
             }
         }
 
-        public void Invoke(T data) {
-            foreach (var handler in handlers) handler(data);
+        public unsafe void Invoke(T data) {
+            foreach (var handler in handlers) {
+                if (handler == null) continue;
+                handler(data);
+            }
         }
     }
 
@@ -36,8 +40,11 @@ namespace nxtlvlOS.Windowing.Utils {
             }
         }
 
-        public void Invoke() {
-            foreach (var handler in handlers) handler();
+        public unsafe void Invoke() {
+            foreach (var handler in handlers) {
+                if (handler == null) continue;
+                handler();
+            }
         }
     }
 }

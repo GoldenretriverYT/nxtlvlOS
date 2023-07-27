@@ -13,6 +13,9 @@ namespace nxtlvlOS.Assets {
         [ManifestResourceStream(ResourceName = "nxtlvlOS.Assets.FileIconGeneric.nxtbmp")]
         public static byte[] FileIconGeneric;
 
+        [ManifestResourceStream(ResourceName = "nxtlvlOS.Assets.BackgroundDefault.nxtbmp")]
+        public static byte[] DefaultBackground;
+
         public static void IncludeFiles() {
             if (!Kernel.FS.DirectoryExists("/System/")) {
                 Kernel.FS.CreateDirectory("/System/");
