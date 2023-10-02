@@ -37,7 +37,7 @@ namespace nxtlvlOS.Windowing.Fonts {
         }
 
         public (uint w, uint h) MeasureStringExhaustive(string str) {
-            string[] lines = str.Split(Environment.NewLine);
+            string[] lines = str.Split('\n');
 
             int wMax = 0;
             uint height = (uint)(lines.Length * Height);

@@ -52,18 +52,20 @@ namespace nxtlvlOS.Services {
         public override void Update() {
         }
 
-        public void ShowContextMenu(List<(string title, Action action)> items, int customX = -1, int customY = -1) {
+        public void ShowContextMenu(List<(string title, Action action)> items, int customX = -1, int customY = -1, int customWidth = 300) {
             foreach (var child in ContextMenuForm.Children.ToList()) {
                 ContextMenuForm.RemoveElement(child);
             }
-            
+
+            ContextMenuForm.SizeX = (uint)customWidth;
+
             var yOffset = 0;
 
             foreach(var item in items) {
                 var button = new TextButton();
                 button.RelativePosX = 3;
                 button.RelativePosY = 3 + yOffset;
-                button.SizeX = 294;
+                button.SizeX = ContextMenuForm.SizeX - 6;
                 button.SizeY = 22;
                 button.SetText(item.title);
                 button.Click = (MouseState state, uint absX, uint absY) => {

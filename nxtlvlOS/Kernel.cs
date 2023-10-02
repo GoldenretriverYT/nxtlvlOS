@@ -26,7 +26,7 @@ namespace nxtlvlOS {
         public static Kernel Instance;
         public static FileSystem FS = new();
 
-        public NXTLogger Logger = new();
+        public NXTLogger Logger = new("Kernel");
         public Sys.FileSystem.CosmosVFS VFS = new();
         public spagSVGAII Canvas;
 
@@ -87,7 +87,7 @@ namespace nxtlvlOS {
 
             framesRendered++;
 
-            if(framesRendered % 10 == 0) {
+            if(framesRendered % 60 == 0) {
                 Heap.Collect();
             }
 

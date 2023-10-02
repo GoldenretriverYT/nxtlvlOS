@@ -43,6 +43,7 @@
     <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="Cosmos.Debug.Kernel" Version="0-*" NoWarn="NU1604" />
+        <PackageReference Include="Cosmos.Plugs" Version="0.1.0-localbuild20230922092952" />
         <PackageReference Include="Cosmos.System2" Version="0-*" NoWarn="NU1604" />
         <PackageReference Include="GoldenretriverYT.SimpleINI" Version="1.0.0" />
     </ItemGroup>

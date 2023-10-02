@@ -77,7 +77,7 @@ namespace nxtlvlOS.Services {
             users.Clear();
 
             string[] lines = Kernel.FS.ReadAllText(UserDatabasePath).Data
-                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             foreach(var line in lines) {
                 string[] parts = line.Split(';');
@@ -107,7 +107,7 @@ namespace nxtlvlOS.Services {
             }
 
             Kernel.FS.WriteAllText(UserDatabasePath,
-                string.Join(Environment.NewLine, lines));
+                string.Join('\n', lines));
         }
 
         public class User {

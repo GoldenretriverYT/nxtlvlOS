@@ -20,6 +20,7 @@ namespace nxtlvlOS.Windowing {
         public bool MousePassThrough = false;
         public uint[] Buffer = new uint[0];
         public bool DoNotBringToFront = false;
+        public string CustomId = "NoId";
 
         /// <summary>
         /// This does not affect child elements, unlike <see cref="Visible"/> does - use this for layout elements

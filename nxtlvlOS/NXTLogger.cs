@@ -12,10 +12,12 @@ using System.Threading.Tasks;
 
 namespace nxtlvlOS {
     public class NXTLogger {
+        public string LoggerName { get; set; }
         public LogLevel MinOutputLevel { get; set; }
         private readonly List<LoggerTarget> loggerTargets = new();
 
-        public NXTLogger(LogLevel minOutputLevel = LogLevel.Info) {
+        public NXTLogger(string loggerName, LogLevel minOutputLevel = LogLevel.Info) {
+            this.LoggerName = loggerName;
             this.MinOutputLevel = minOutputLevel;
         }
 
@@ -32,9 +34,23 @@ namespace nxtlvlOS {
             var tag = LogLevelHelpers.GetTag(level);
 
             foreach(var target in loggerTargets) {
+                target.Write("[" + LoggerName + "] ", Color.White, ConsoleColor.White);
                 target.Write(tag, colors.Item1, colors.Item2);
                 target.Write(msg + "\n", Color.White, ConsoleColor.White);
             }
+        }
+
+        public static NXTLogger Create(string name, bool debuggerLog = true) {
+            var logger = new NXTLogger(name, LogLevel.Info);
+
+            if (debuggerLog) {
+                var target = new DebuggerLoggerTarget();
+                target.dbg = Kernel.Instance.mDebugger;
+
+                logger.AddLoggerTarget(target);
+            }
+
+            return logger;
         }
     }
 
@@ -92,7 +108,7 @@ namespace nxtlvlOS {
             letHimCook += msg;
 
             if(msg.Contains("\n")) {
-                dbg.Send(letHimCook);
+                dbg.Send(letHimCook.Substring(0, letHimCook.Length - 1));
                 letHimCook = "";
             }
         }

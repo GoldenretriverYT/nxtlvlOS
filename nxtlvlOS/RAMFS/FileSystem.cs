@@ -180,7 +180,7 @@ namespace nxtlvlOS.RAMFS {
             var currentNode = RootNode;
             var currentPartIdx = 0;
 
-            Kernel.Instance.Logger.Log(LogLevel.Sill, "GetDirectory called with " + path + "; got " + parts.Length + " parts from that");
+            //Kernel.Instance.Logger.Log(LogLevel.Sill, "GetDirectory called with " + path + "; got " + parts.Length + " parts from that");
 
             while(currentPartIdx < parts.Length) {
                 var result = GetNodeIn(currentNode, FSNodeType.Directory, parts[currentPartIdx]);
@@ -343,7 +343,7 @@ namespace nxtlvlOS.RAMFS {
                     RootNode = DeserializeFSNode(obj);
 
                     Kernel.Instance.Logger.Log(LogLevel.Info, "Restored RAMFS!");
-                    DumpFSNode(RootNode);
+                    //DumpFSNode(RootNode);
                 }catch(Exception ex) {
                     Kernel.Instance.Logger.Log(LogLevel.Fail, "Could not restore FS: invalid json! " + ex.Message + "       " + finalJsonString);
                 }

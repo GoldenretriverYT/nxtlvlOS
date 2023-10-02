@@ -99,7 +99,7 @@ namespace nxtlvlOS.Windowing.Elements {
             int x = 0;
             int y = 0;
 
-            string[] lines = Text.Split(Environment.NewLine);
+            string[] lines = Text.Split('\n');
 
             for(int i = 0; i < offset; i++) {
                 if (lines[y].Length <= x) {
@@ -129,13 +129,13 @@ namespace nxtlvlOS.Windowing.Elements {
 
         /*private int GetOffsetFromTextPosition(int textX, int textY) {
             int offset = 0;
-            string[] lines = Text.Split(Environment.NewLine);
+            string[] lines = Text.Split('\n');
 
             for (int y = 0; y < textY; y++) {
                 if (y >= lines.Length)
                     break;
 
-                offset += lines[y].Length + Environment.NewLine.Length;
+                offset += lines[y].Length + '\n'.Length;
             }
 
             offset += textX;
@@ -144,13 +144,13 @@ namespace nxtlvlOS.Windowing.Elements {
 
         private int GetOffsetFromTextPosition(int textX, int textY) {
             int offset = 0;
-            string[] lines = Text.Split(Environment.NewLine);
+            string[] lines = Text.Split('\n');
 
             for (int y = 0; y < textY; y++) {
                 if (y >= lines.Length)
                     break;
 
-                offset += lines[y].Length + Environment.NewLine.Length;
+                offset += lines[y].Length + 1;
             }
 
             if (textY < lines.Length)
@@ -182,6 +182,21 @@ namespace nxtlvlOS.Windowing.Elements {
                     case ConsoleKeyEx.RightArrow:
                         CursorPos++;
                         if (CursorPos > Text.Length) CursorPos = Text.Length;
+                        break;
+                    case ConsoleKeyEx.Enter:
+                        SetText(Text.Insert(CursorPos, "\n"));
+                        CursorPos++;
+                        break;
+                    case ConsoleKeyEx.UpArrow:
+                        var textPos = GetTextPosition(CursorPos);
+                        textPos.y--;
+                        if (textPos.y < 0) textPos.y = 0;
+                        CursorPos = GetOffsetFromTextPosition(textPos.x, textPos.y);
+                        break;
+                    case ConsoleKeyEx.DownArrow:
+                        textPos = GetTextPosition(CursorPos);
+                        textPos.y++;
+                        CursorPos = GetOffsetFromTextPosition(textPos.x, textPos.y);
                         break;
                 }
             }else {
