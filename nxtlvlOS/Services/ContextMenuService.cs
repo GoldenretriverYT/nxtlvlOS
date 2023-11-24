@@ -50,6 +50,9 @@ namespace nxtlvlOS.Services {
         }
 
         public override void Update() {
+            if(ContextMenuForm.Visible) {
+                WindowManager.PutToFront(ContextMenuForm);
+            }
         }
 
         public void ShowContextMenu(List<(string title, Action action)> items, int customX = -1, int customY = -1, int customWidth = 300) {

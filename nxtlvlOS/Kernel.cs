@@ -2,6 +2,7 @@
 using Cosmos.Core.Memory;
 using Cosmos.HAL;
 using Cosmos.System;
+using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
 using nxtlvlOS.Apps;
@@ -24,10 +25,9 @@ using Sys = Cosmos.System;
 namespace nxtlvlOS {
     public class Kernel : Sys.Kernel {
         public static Kernel Instance;
-        public static FileSystem FS = new();
 
         public NXTLogger Logger = new("Kernel");
-        public Sys.FileSystem.CosmosVFS VFS = new();
+        public CosmosVFS VFS = new();
         public spagSVGAII Canvas;
 
         private int framesRendered = 0;
@@ -50,7 +50,6 @@ namespace nxtlvlOS {
 
             Logger.Log(LogLevel.Info, $"Initiliazing file system");
             VFSManager.RegisterVFS(VFS, false);
-            FS = new();
             Logger.Log(LogLevel.Info, "Initiliazed file system!");
 
             Logger.Log(LogLevel.Info, "Initiliazing Window Manager");

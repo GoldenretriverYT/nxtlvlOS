@@ -38,6 +38,15 @@ namespace nxtlvlOS.Utils {
         }
     }
 
+    public class ErrorOr {
+        public static bool Resolve<T>(ErrorOr<T> obj, out T data, T defaultVal = default(T)) {
+            data = defaultVal;
+            if (obj.IsError) return false;
+            data = obj.Data;
+            return true;
+        }
+    }
+
     public class ErrorOrNothing {
         public bool IsError = false;
         public string Error = "";

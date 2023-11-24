@@ -5,6 +5,7 @@ using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -79,7 +80,7 @@ namespace nxtlvlOS.Apps
             helpMenu.SetText("Help");
             helpMenu.Click = (state, x, y) => {
                 ContextMenuService.Instance.ShowContextMenu(new() {
-                    ("About Notepad", () => {})
+                    ("About Notepad", () => { About(); })
                 }, (int)(helpMenu.GetAbsolutePosition().x), (int)(helpMenu.GetAbsolutePosition().y + helpMenu.SizeY), 200);
             };
 
@@ -110,16 +111,8 @@ namespace nxtlvlOS.Apps
         }
 
         private void LoadFromCurrentFile() {
-            var res = Kernel.FS.ReadAllText(CurrentFilePath);
-
-            if(res.IsError) {
-                logger.Log(LogLevel.Fail, "Failed to load file: " + res.Error);
-                // TODO: When we have a system to show message boxes, tell them the error.
-                CurrentFilePath = null;
-                return;
-            }
-
-            textField.SetText(res.Data);
+            var res = File.ReadAllText(CurrentFilePath);
+            textField.SetText(res);
         }
 
         public override void Update() {
@@ -143,6 +136,63 @@ namespace nxtlvlOS.Apps
         }
         
         private void SaveAs() { }
-        private void SaveDirectly() { }
+        
+        private void SaveDirectly() {
+            if(CurrentFilePath == null) {
+                return;
+            }
+
+            File.WriteAllText(CurrentFilePath, textField.Text);
+        }
+
+        private void About() {
+            Form aboutForm = new(SelfProcess);
+            aboutForm.RelativePosX = form.RelativePosX + 50;
+            aboutForm.RelativePosY = form.RelativePosY + 50;
+
+            aboutForm.SizeX = 200;
+            aboutForm.SizeY = 200;
+
+            aboutForm.SetTitle("About - Notepad");
+            aboutForm.SetTitlebarEnabled(true);
+
+            Container container = new();
+
+            Label appName = new();
+
+            appName.SetText("Notepad");
+            appName.RelativePosX = 0;
+            appName.RelativePosY = 0;
+            appName.SetHorizontalAlignment(HorizontalAlignment.Center);
+            appName.SizeY = 20;
+            appName.SizeX = 150;
+
+            Label authorName = new();
+
+            authorName.SetText("by GoldenretriverYT");
+            authorName.RelativePosX = 0;
+            authorName.RelativePosY = 40;
+            authorName.SetHorizontalAlignment(HorizontalAlignment.Center);
+            authorName.SizeY = 20;
+            authorName.SizeX = 160;
+
+            Label authorNameLine2 = new();
+
+            authorNameLine2.SetText("& Contributors");
+            authorNameLine2.RelativePosX = 0;
+            authorNameLine2.RelativePosY = 60;
+            authorNameLine2.SetHorizontalAlignment(HorizontalAlignment.Center);
+            authorNameLine2.SizeY = 20;
+            authorNameLine2.SizeX = 150;
+
+            container.AddChild(appName);
+            container.AddChild(authorName);
+            container.AddChild(authorNameLine2);
+
+            aboutForm.AddChild(container);
+            container.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+
+            WindowManager.AddForm(aboutForm);
+        }
     }
 }

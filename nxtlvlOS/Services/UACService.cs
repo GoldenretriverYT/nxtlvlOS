@@ -15,9 +15,9 @@ namespace nxtlvlOS.Services {
 
         private List<User> users = new();
         public User CurrentUser { get; private set; }
-        public static string UserDir => @"/Users/" + Instance.CurrentUser.Username + "/";
+        public static string UserDir => @"0:/Users/" + Instance.CurrentUser.Username + "/";
 
-        public const string UserDatabasePath = @"/System/users.db";
+        public const string UserDatabasePath = @"0:/System/users.db";
 
 
         public override void Exit() {
@@ -30,16 +30,16 @@ namespace nxtlvlOS.Services {
 
             Instance = this;
 
-            if (!Kernel.FS.DirectoryExists(@"/System")) {
-                Kernel.FS.CreateDirectory(@"/System");
+            if (!Directory.Exists(@"/System")) {
+                Directory.CreateDirectory(@"0:/System");
             }
 
-            if (!Kernel.FS.DirectoryExists(@"/Users/")) {
-                Kernel.FS.CreateDirectory(@"/Users/");
+            if (!Directory.Exists(@"0:/Users/")) {
+                Directory.CreateDirectory(@"0:/Users/");
             }
 
-            if (!Kernel.FS.FileExists(UserDatabasePath)) {
-                Kernel.FS.WriteAllText(UserDatabasePath, "");
+            if (!File.Exists(UserDatabasePath)) {
+                File.WriteAllText(UserDatabasePath, "");
             }
 
             LoadUsers();
@@ -53,8 +53,8 @@ namespace nxtlvlOS.Services {
                 if(user.Username == username && user.Password == password) {
                     CurrentUser = user;
 
-                    if (!Kernel.FS.DirectoryExists(UserDir)) {
-                        Kernel.FS.CreateDirectory(UserDir);
+                    if (!Directory.Exists(UserDir)) {
+                        Directory.CreateDirectory(UserDir);
                     }
 
                     return true;
@@ -76,7 +76,7 @@ namespace nxtlvlOS.Services {
         public void LoadUsers() {
             users.Clear();
 
-            string[] lines = Kernel.FS.ReadAllText(UserDatabasePath).Data
+            string[] lines = File.ReadAllText(UserDatabasePath)
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
             foreach(var line in lines) {
@@ -106,7 +106,7 @@ namespace nxtlvlOS.Services {
                 lines[i] = $"{(user.IsRootUser ? "yes" : "no")};{user.Username};{user.Password}";
             }
 
-            Kernel.FS.WriteAllText(UserDatabasePath,
+            File.WriteAllText(UserDatabasePath,
                 string.Join('\n', lines));
         }
 

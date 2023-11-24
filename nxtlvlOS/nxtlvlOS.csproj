@@ -49,10 +49,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="isoFiles\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Include="Apps\NotepadApp.cs" />
     </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@ using nxtlvlOS.RAMFS;
 using nxtlvlOS.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace nxtlvlOS.Services {
         private Dictionary<string, AssociationFile> associationFiles = new();
         private Dictionary<string, Func<App>> nativeAppRegistry = new();
 
-        private const string AssocFilesRoot = @"/System/FileExts/Assoc/";
+        private const string AssocFilesRoot = @"0:/System/FileExts/Assoc/";
 
         public override void Exit() {
             throw new Exception("FileAssociationService should not be killed.");
@@ -34,13 +35,13 @@ namespace nxtlvlOS.Services {
         }
 
         public void StartAppFromPath(string path, string[] args) {
-            PathInfo pathInfo = FileSystem.ParsePath(path);
-
-            if(!associationFiles.ContainsKey(pathInfo.Extension)) {
+            var extension = Path.GetExtension(path);
+            
+            if (!associationFiles.ContainsKey(extension)) {
                 return; // TODO: Implement "Choose an app to open this file" dialog
             }
 
-            var association = associationFiles[pathInfo.Extension];
+            var association = associationFiles[extension];
             StartAppFromAssociation(association, path, args);
         }
 
@@ -55,12 +56,12 @@ namespace nxtlvlOS.Services {
             string[] startArgs = assocFile.StartArgs.Split(' ');
             List<string> finalStartArgs = new();
 
-            foreach(var str in startArgs) {
-                if(str == "{fullpath}") {
+            foreach (var str in startArgs) {
+                if (str == "{fullpath}") {
                     finalStartArgs.Add(path);
-                }else if(str == "{args}") {
+                } else if (str == "{args}") {
                     foreach (var arg in args) finalStartArgs.Add(arg);
-                }else {
+                } else {
                     finalStartArgs.Add(str);
                 }
             }
@@ -73,17 +74,28 @@ namespace nxtlvlOS.Services {
         }
 
         private void LoadAssocFiles() {
-            foreach(var file in Kernel.FS.GetFiles(AssocFilesRoot).Data.GetNames()) {
+            foreach (var file in Directory.GetFiles(AssocFilesRoot)) {
                 ErrorOr<AssociationFile> result = AssociationFile.LoadFrom(AssocFilesRoot + file);
-                PathInfo fileNameInfo = FileSystem.ParsePath(file);
 
-                if(result.IsError) {
+                if (result.IsError) {
                     Kernel.Instance.Logger.Log(LogLevel.Fail, "Was not able to load association file " + file + ": " + result.Error);
                     continue;
                 }
 
-                associationFiles.Add(fileNameInfo.Name, result.Data);
+                associationFiles.Add(Path.GetFileName(file), result.Data);
             }
+        }
+
+        public ErrorOr<AssociationFile> GetAssocFromPath(string path) {
+            return GetAssocFromExt(Path.GetExtension(path));
+        }
+
+        public ErrorOr<AssociationFile> GetAssocFromExt(string ext) {
+            if (associationFiles.ContainsKey(ext)) {
+                return ErrorOr<AssociationFile>.MakeResult(associationFiles[ext]);
+            }
+
+            return ErrorOr<AssociationFile>.MakeError("No association file found for extension " + ext);
         }
     }
 }

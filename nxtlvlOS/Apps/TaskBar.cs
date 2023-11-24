@@ -110,9 +110,6 @@ namespace nxtlvlOS.Apps
             {
                 // For now, lets show a context menu as start menu
                 ContextMenuService.Instance.ShowContextMenu(new() {
-                    ("Store RAMFS (slow)", () => {
-                        Kernel.FS.StoreFS();
-                    }),
                     ("Shutdown", () => {
                         Cosmos.HAL.Power.ACPIShutdown();
                     }),

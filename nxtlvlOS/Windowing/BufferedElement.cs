@@ -113,7 +113,7 @@ namespace nxtlvlOS.Windowing {
             MouseUp(state, prev, MouseManager.X, MouseManager.Y);
 
             if (mouseIsOver && enabled) {
-                Click(state, MouseManager.X, MouseManager.Y);
+                Click(prev, MouseManager.X, MouseManager.Y); // we need to provide prev so the mouse button can get fetched from it
             }
         }
 

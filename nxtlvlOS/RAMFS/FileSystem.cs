@@ -15,13 +15,14 @@ namespace nxtlvlOS.RAMFS {
     // Maybe take a look at how we could possibly serialize this into a byte array so we can like store on a BlockDevice
     // Paths are structured like this: /mydir/eedgd/test123.txt
     //                                  ^dir ^dir   ^name   ^ext
-    public class FileSystem {
+    // Due to recent improvements in Cosmos, we no longer need to use a RAMFS to maintain stability.
+    public class FileSystemObsolete {
         public FSNode RootNode = new() {
             Type = FSNodeType.Directory,
             Name = "RootDirectory__DO__NOT__INCLUDE__IN__PATH"
         };
 
-        public FileSystem() {
+        public FileSystemObsolete() {
             LoadFS();
         }
 
@@ -97,6 +98,88 @@ namespace nxtlvlOS.RAMFS {
             return ErrorOr<string>.MakeResult(encoding.GetString(res.Data));
         }
 
+        public ErrorOrNothing DeleteFile(string path) {
+            if(!ErrorOr.Resolve(GetDirectory(ParsePath(path).Directory), out FSNode directory)) {
+                return ErrorOrNothing.MakeError("DeleteFile: Resolving directory failed!");
+            }
+
+            var file = GetNodeIn(directory, FSNodeType.File, ParsePath(path).FullName);
+
+            if (file.IsError) {
+                return ErrorOrNothing.MakeError("DeleteFile: Resolving file failed: " + file.Error);
+            }
+
+            directory.ChildNodes.Remove(file.Data);
+
+            return ErrorOrNothing.MakeResult();
+        }
+
+        public ErrorOrNothing MoveFile(string from, string to) {
+            var fromInfo = ParsePath(from);
+            var toInfo = ParsePath(to);
+
+            if (!ErrorOr.Resolve(GetDirectory(fromInfo.Directory), out FSNode fromDirectory)) {
+                return ErrorOrNothing.MakeError("MoveFile: Resolving from directory failed!");
+            }
+
+            if (!ErrorOr.Resolve(GetDirectory(toInfo.Directory), out FSNode toDirectory)) {
+                return ErrorOrNothing.MakeError("MoveFile: Resolving to directory failed!");
+            }
+
+            var file = GetNodeIn(fromDirectory, FSNodeType.File, fromInfo.FullName);
+
+            if (file.IsError) {
+                return ErrorOrNothing.MakeError("MoveFile: Resolving file failed: " + file.Error);
+            }
+
+            file.Data.Name = toInfo.FullName;
+            toDirectory.ChildNodes.Add(file.Data);
+            fromDirectory.ChildNodes.Remove(file.Data);
+
+            return ErrorOrNothing.MakeResult();
+        }
+
+        public ErrorOrNothing MoveDirectory(string from, string to) {
+            var fromInfo = ParsePath(from);
+            var toInfo = ParsePath(to);
+
+            if (!ErrorOr.Resolve(GetDirectory(fromInfo.Directory), out FSNode fromDirectory)) {
+                return ErrorOrNothing.MakeError("MoveDirectory: Resolving from directory failed!");
+            }
+
+            if (!ErrorOr.Resolve(GetDirectory(toInfo.Directory), out FSNode toDirectory)) {
+                return ErrorOrNothing.MakeError("MoveDirectory: Resolving to directory failed!");
+            }
+
+            var directory = GetDirectory(from);
+
+            if (directory.IsError) {
+                return ErrorOrNothing.MakeError("MoveDirectory: Resolving directory failed: " + directory.Error);
+            }
+
+            directory.Data.Name = toInfo.Name;
+            toDirectory.ChildNodes.Add(directory.Data);
+            fromDirectory.ChildNodes.Remove(directory.Data);
+
+            return ErrorOrNothing.MakeResult();
+        }
+
+        public ErrorOrNothing DeleteDirectory(string path) {
+            if (!ErrorOr.Resolve(GetDirectory(ParsePath(path).Directory), out FSNode directory)) {
+                return ErrorOrNothing.MakeError("DeleteDirectory: Resolving directory failed!");
+            }
+
+            var dir = GetDirectory(path);
+
+            if (dir.IsError) {
+                return ErrorOrNothing.MakeError("DeleteDirectory: Resolving directory failed: " + dir.Error);
+            }
+
+            directory.ChildNodes.Remove(dir.Data);
+
+            return ErrorOrNothing.MakeResult();
+        }
+        
         public ErrorOr<List<FSNode>> GetDirectories(string directoryPath) {
             var directory = GetDirectory(directoryPath);
 
