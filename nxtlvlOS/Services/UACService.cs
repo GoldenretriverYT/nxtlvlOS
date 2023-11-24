@@ -15,9 +15,9 @@ namespace nxtlvlOS.Services {
 
         private List<User> users = new();
         public User CurrentUser { get; private set; }
-        public static string UserDir => @"0:/Users/" + Instance.CurrentUser.Username + "/";
+        public static string UserDir => @"0:\Users\" + Instance.CurrentUser.Username + "\\";
 
-        public const string UserDatabasePath = @"0:/System/users.db";
+        public const string UserDatabasePath = @"0:\System\users.db";
 
 
         public override void Exit() {
@@ -29,16 +29,24 @@ namespace nxtlvlOS.Services {
                 throw new Exception("UAC should not be started twice.");
 
             Instance = this;
+            Kernel.Instance.Logger.Log(LogLevel.Sill, "UACService starting...");
 
-            if (!Directory.Exists(@"/System")) {
-                Directory.CreateDirectory(@"0:/System");
+            Kernel.Instance.Logger.Log(LogLevel.Sill, "[UACService] Checking presence of 0:\\System");
+            if (!Directory.Exists(@"0:\System")) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, "[UACService] Does not exist, creating...");
+                Directory.CreateDirectory(@"0:\System");
             }
 
-            if (!Directory.Exists(@"0:/Users/")) {
-                Directory.CreateDirectory(@"0:/Users/");
+            Kernel.Instance.Logger.Log(LogLevel.Sill, "[UACService] Checking presence of 0:\\Users");
+            if (!Directory.Exists(@"0:\Users\")) {
+
+                Kernel.Instance.Logger.Log(LogLevel.Sill, "[UACService] Does not exist, creating...");
+                Directory.CreateDirectory(@"0:\Users\");
             }
 
+            Kernel.Instance.Logger.Log(LogLevel.Sill, "[UACService] Checking presence of " + UserDatabasePath);
             if (!File.Exists(UserDatabasePath)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, "[UACService] Does not exist, creating...");
                 File.WriteAllText(UserDatabasePath, "");
             }
 

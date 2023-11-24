@@ -10,7 +10,7 @@
 
     <PropertyGroup>
         <EnableGDB>False</EnableGDB>
-        <StartCosmosGDB>False</StartCosmosGDB>
+        <StartCosmosGDB>True</StartCosmosGDB>
         <VisualStudioDebugPort>Pipe: Cosmos\Serial</VisualStudioDebugPort>
         <CosmosDebugPort>Serial: COM1</CosmosDebugPort>
         <Launch>VMware</Launch>
@@ -20,7 +20,9 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <ExtractMapFile>True</ExtractMapFile>
         <DebugEnabled>True</DebugEnabled>
-        <OptimizationLevel>2</OptimizationLevel>
+        <OptimizationLevel>0</OptimizationLevel>
+        <TraceMode>All</TraceMode>
+        <VMWareEdition>Player</VMWareEdition>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -16,7 +16,7 @@ namespace nxtlvlOS.Services {
         private Dictionary<string, AssociationFile> associationFiles = new();
         private Dictionary<string, Func<App>> nativeAppRegistry = new();
 
-        private const string AssocFilesRoot = @"0:/System/FileExts/Assoc/";
+        private const string AssocFilesRoot = @"0:\System\FileExts\Assoc\";
 
         public override void Exit() {
             throw new Exception("FileAssociationService should not be killed.");
@@ -35,9 +35,12 @@ namespace nxtlvlOS.Services {
         }
 
         public void StartAppFromPath(string path, string[] args) {
-            var extension = Path.GetExtension(path);
+            Kernel.Instance.Logger.Log(LogLevel.Sill, "Opening file " + path);
+            var extension = Path.GetExtension(path).Substring(1);
             
             if (!associationFiles.ContainsKey(extension)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, "No suitable association found! Extension: " + extension
+                    + "Known Extensions: " + string.Join(", ", associationFiles.Keys));
                 return; // TODO: Implement "Choose an app to open this file" dialog
             }
 
@@ -82,12 +85,12 @@ namespace nxtlvlOS.Services {
                     continue;
                 }
 
-                associationFiles.Add(Path.GetFileName(file), result.Data);
+                associationFiles.Add(Path.GetFileNameWithoutExtension(file), result.Data);
             }
         }
 
         public ErrorOr<AssociationFile> GetAssocFromPath(string path) {
-            return GetAssocFromExt(Path.GetExtension(path));
+            return GetAssocFromExt(Path.GetExtension(path).Substring(1));
         }
 
         public ErrorOr<AssociationFile> GetAssocFromExt(string ext) {

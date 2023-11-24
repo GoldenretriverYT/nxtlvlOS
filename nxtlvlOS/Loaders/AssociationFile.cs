@@ -11,7 +11,7 @@ namespace nxtlvlOS.Loaders {
     public class AssociationFile {
         public string Name, NativeTarget;
         public string StartArgs = "";
-        public string IconPath = "0:/System/FileExts/Icons/txt.bmp"; // Whilst there is a fallback value, the existence of this file is not guranteed
+        public string IconPath = @"0:\System\FileExts\Icons\txt.bmp"; // Whilst there is a fallback value, the existence of this file is not guranteed
 
         public NXTBmp Icon {
             get {

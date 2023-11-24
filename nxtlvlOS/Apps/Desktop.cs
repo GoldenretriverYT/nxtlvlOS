@@ -25,7 +25,7 @@ namespace nxtlvlOS.Apps
         private NXTBmp iconBmp = new(Assets.AssetManager.FileIconGeneric); // TODO: Move icon to some FileExtensionService that provides various info about an extension
         private NXTBmp directoryBmp = null; // Either retrieved from /System/Icons/directory.bmp or iconBmp as fallback
         
-        private string desktopDir => UACService.UserDir + @"Desktop/";
+        private string desktopDir => UACService.UserDir + @"Desktop\";
         private int previousSecond = -1;
 
         public override void Exit()
@@ -35,8 +35,8 @@ namespace nxtlvlOS.Apps
 
         public override void Init(string[] args)
         {
-            if (File.Exists("0:/System/Icons/directory.bmp")) {
-                var data = File.ReadAllBytes("0:/System/Icons/directory.bmp");
+            if (File.Exists(@"0:\System\Icons\directory.bmp")) {
+                var data = File.ReadAllBytes(@"0:\System\Icons\directory.bmp");
                 directoryBmp = new NXTBmp(data);
             } else {
                 directoryBmp = iconBmp;

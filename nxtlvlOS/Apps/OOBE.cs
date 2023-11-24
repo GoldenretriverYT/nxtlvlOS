@@ -37,16 +37,16 @@ namespace nxtlvlOS.Apps
 
         public override void Init(string[] args)
         {
-            if (!Directory.Exists(@"0:/System"))
+            if (!Directory.Exists(@"0:\System"))
             {
-                Directory.CreateDirectory(@"0:/System");
+                Directory.CreateDirectory(@"0:\System");
             }
 
-            if (File.Exists(@"0:/System/oobedone"))
+            if (File.Exists(@"0:\System\oobedone"))
             {
-                if (File.Exists(@"0:/System/kblyt.cfg"))
+                if (File.Exists(@"0:\System\kblyt.cfg"))
                 { // TODO: Offload this to a KeyboardService
-                    var kbLayout = File.ReadAllText(@"0:/System/kblyt.cfg");
+                    var kbLayout = File.ReadAllText(@"0:\System\kblyt.cfg");
 
                     foreach (var layout in KeyboardLayouts)
                     {
@@ -113,7 +113,7 @@ namespace nxtlvlOS.Apps
                     stepCreateAccountContainer.Visible = true;
 
                     KeyboardManager.SetKeyLayout(_layout.Item2); // TODO: Offload this to a KeyboardService
-                    File.WriteAllText(@"0:/System/kblyt.cfg", _layout.Item1);
+                    File.WriteAllText(@"0:\System\kblyt.cfg", _layout.Item1);
                 };
 
                 offset += 30;
@@ -197,7 +197,7 @@ namespace nxtlvlOS.Apps
             copyFilesButton.Click = (state, absoluteX, absoluteY) =>
             {
                 AssetManager.IncludeFiles();
-                File.WriteAllText(@"0:/System/oobedone", "1");
+                File.WriteAllText(@"0:\System\oobedone", "1");
                 ProcessManager.KillProcess(SelfProcess);
             };
 
