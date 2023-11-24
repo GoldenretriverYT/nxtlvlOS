@@ -48,6 +48,7 @@ namespace nxtlvlOS.Apps
             desktopForm.SizeX = 1280;
             desktopForm.SizeY = 720;
             desktopForm.ShouldBeDrawnToScreen = false; // We will use the EmptyBuffer of WindowManager for backgrounds instead, improves performance
+            desktopForm.DoNotBringToFront = true;
             desktopForm.SetTitlebarEnabled(false);
             desktopForm.SetTitle("Desktop");
 
