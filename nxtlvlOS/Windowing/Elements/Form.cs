@@ -135,7 +135,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
             if (titlebarEnabled) {
                 DrawRectFilled(4, 4, SizeX-4, 24, 0xFF000072);
-                DrawStringPSF(PCScreenFont.Default, 6, 6, title, 0xFFFFFFFF);
+                DrawStringPSF(WindowManager.DefaultFont, 6, 6, title, 0xFFFFFFFF);
             }
         }
 

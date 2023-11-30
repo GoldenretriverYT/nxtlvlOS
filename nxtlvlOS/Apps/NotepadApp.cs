@@ -90,11 +90,11 @@ namespace nxtlvlOS.Apps
 
             // TextField
             textField = new();
-            textField.RelativePosX = 0;
-            textField.RelativePosY = 49; // the titlebar + toolstrip is included within the size
+            textField.RelativePosX = 2;
+            textField.RelativePosY = 50; // the titlebar + toolstrip is included within the size
                                          // note: the toolstrip is actually 25px to show a seperator
-            textField.SizeX = 600;
-            textField.SizeY = 400 - 49;
+            textField.SizeX = 600 - 4;
+            textField.SizeY = 400 - 52; // 51 to show inset bottom of form
             
             textField.SetBackgroundColor(0xFFFFFFFF);
             textField.SetInsetColor(textField.BackgroundColor); // basically disable the inset effect

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace nxtlvlOS.Utils {
     public class DirectoryUtils {
         public static void RecursiveCopy(string src, string dest, bool overwrite = true) {
-            /*if (src[src.Length - 1] != '\\') {
+            if (src[src.Length - 1] != '\\') {
                 src = src += "\\";
             }
 
@@ -33,7 +33,7 @@ namespace nxtlvlOS.Utils {
                     Directory.CreateDirectory(dest + dir);
                 }
                 RecursiveCopy(src + dir + "\\", dest + dir + "\\");
-            }*/
+            }
         }
     }
 }

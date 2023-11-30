@@ -78,6 +78,7 @@ namespace nxtlvlOS.Services {
 
         private void LoadAssocFiles() {
             foreach (var file in Directory.GetFiles(AssocFilesRoot)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, "Trying to load association file " + file);
                 ErrorOr<AssociationFile> result = AssociationFile.LoadFrom(AssocFilesRoot + file);
 
                 if (result.IsError) {
@@ -87,6 +88,11 @@ namespace nxtlvlOS.Services {
 
                 associationFiles.Add(Path.GetFileNameWithoutExtension(file), result.Data);
             }
+        }
+
+        public void ReloadAssocFiles() {
+            associationFiles.Clear();
+            LoadAssocFiles();
         }
 
         public ErrorOr<AssociationFile> GetAssocFromPath(string path) {

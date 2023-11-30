@@ -2,10 +2,13 @@
 using Cosmos.System;
 using nxtlvlOS.Assets;
 using nxtlvlOS.Loaders;
+using nxtlvlOS.Services;
 using nxtlvlOS.Windowing.Elements;
+using nxtlvlOS.Windowing.Fonts;
 using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +31,21 @@ namespace nxtlvlOS.Windowing
 
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseDownEvent = new();
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseUpEvent = new();
+
+        public static PCScreenFont PCScreenFont {
+            get {
+                if (cachedPreferredFont != null) return cachedPreferredFont;
+                
+                var preference = SystemPreferenceService.Instance?.GetPreferenceOrDefault<string>("wm.default_font", "system_default");
+                if (preference == "system_default" || !File.Exists(preference)) return PCScreenFont.Default;
+
+                cachedPreferredFont = PCScreenFont.LoadFont(File.ReadAllBytes(preference));
+
+                return cachedPreferredFont;
+            }
+        }
+
+        private static PCScreenFont cachedPreferredFont = null;
 
         //private static BufferedElement currentHoveredElement;
 

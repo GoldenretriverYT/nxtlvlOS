@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace nxtlvlOS.Apps
 {
@@ -110,10 +111,16 @@ namespace nxtlvlOS.Apps
             {
                 // For now, lets show a context menu as start menu
                 ContextMenuService.Instance.ShowContextMenu(new() {
+                    ("System Preferences", () => {
+                        OpenSystemPreferences();
+                    }),
                     ("Shutdown", () => {
                         Cosmos.HAL.Power.ACPIShutdown();
                     }),
-                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 1)); // 6 (base) + 22 (height per item) * 1 (item count)
+                    ("(dbg) DumpFileTree", () => {
+                        DumpFileTree();
+                    }),
+                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 2)); // 6 (base) + 22 (height per item) * 2 (item count)
             };
 
             tasksContainer.AddChild(startButton);
@@ -154,6 +161,21 @@ namespace nxtlvlOS.Apps
             taskbarForm.RelativePosY = (int)(720 - taskbarForm.SizeY);
 
             infoContainer.AdjustToBoundingBox(HorizontalAlignment.Right, VerticalAlignment.Middle, 10, 0);
+        }
+
+        static void DumpFileTree(string dir = @"0:\", int pad = 2) {
+            foreach(var file in Directory.GetFiles(dir)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, new string(' ', pad) + "-" + file);
+            }
+
+            foreach(var directory in Directory.GetDirectories(dir)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, new string(' ', pad) + "-" + directory);
+                DumpFileTree(dir + directory + @"\", pad + 2);
+            }
+        }
+
+        static void OpenSystemPreferences() {
+
         }
     }
 }

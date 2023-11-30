@@ -15,7 +15,7 @@ namespace nxtlvlOS.Utils {
         /// <param name="src"></param>
         /// <param name="dst"></param>
         public static void SafeCopy(string src, string dst) {
-            /*var readStream = VFSManager.GetFileStream(src);
+            var readStream = VFSManager.GetFileStream(src);
 
             if (!File.Exists(dst)) File.Create(dst).Close();
             var writeStream = File.OpenWrite(dst);
@@ -34,7 +34,7 @@ namespace nxtlvlOS.Utils {
                     Heap.Collect();
                     totalBytesReadSinceLastCollect = 0;
                 }
-            }*/
+            }
         }
     }
 }

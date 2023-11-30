@@ -64,6 +64,8 @@ namespace nxtlvlOS {
 
             Logger.Log(LogLevel.Info, "Initiliazing ContextMenuService"); 
             ProcessManager.CreateProcess(new ContextMenuService(), "ContextMenuService");
+            Logger.Log(LogLevel.Info, "Initiliazing SystemPreferenceService");
+            ProcessManager.CreateProcess(new SystemPreferenceService(), "SystemPreferenceService");
             Logger.Log(LogLevel.Info, "Initiliazing UACService");
             ProcessManager.CreateProcess(new UACService(), "UACService");
             Logger.Log(LogLevel.Info, "Initiliazing OOBE");

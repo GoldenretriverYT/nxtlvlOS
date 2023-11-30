@@ -268,7 +268,7 @@ namespace nxtlvlOS.Windowing.Elements {
             private string placeholder = "Placeholder";
             public string Placeholder => placeholder;
 
-            private PCScreenFont font = PCScreenFont.Default;
+            private PCScreenFont font = WindowManager.DefaultFont;
             public PCScreenFont Font => font;
 
             private uint textColor = 0xFF000000;

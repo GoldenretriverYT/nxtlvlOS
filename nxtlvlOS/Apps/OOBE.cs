@@ -63,11 +63,11 @@ namespace nxtlvlOS.Apps
             }
 
             oobeForm = new(SelfProcess);
-            oobeForm.RelativePosX = 0;
-            oobeForm.RelativePosY = 0;
-            oobeForm.SizeX = 1280;
-            oobeForm.SizeY = 720;
-            oobeForm.SetTitlebarEnabled(false);
+            oobeForm.RelativePosX = (1280 - 600) / 2;
+            oobeForm.RelativePosY = (720 - 400) / 2;
+            oobeForm.SizeX = 600;
+            oobeForm.SizeY = 400;
+            oobeForm.SetTitlebarEnabled(true);
 
             #region Create step containers here for referencing purposes
             Container stepSelectKeyboardLayout = new();
@@ -196,7 +196,13 @@ namespace nxtlvlOS.Apps
 
             copyFilesButton.Click = (state, absoluteX, absoluteY) =>
             {
-                AssetManager.IncludeFiles();
+                if(!Directory.Exists(@"1:\System\")) {
+                    copyFilesTitle.SetText("Please insert the nxtlvlOS installation media and try again.");
+                    return;
+                }
+
+                DirectoryUtils.RecursiveCopy(@"1:\System\", @"0:\System\");
+
                 File.WriteAllText(@"0:\System\oobedone", "1");
                 ProcessManager.KillProcess(SelfProcess);
             };

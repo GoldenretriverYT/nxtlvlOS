@@ -30,14 +30,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="Assets\BackgroundDefault.nxtbmp" />
       <None Remove="Assets\Cursor.nxtbmp" />
       <None Remove="Assets\FileIconGeneric.nxtbmp" />
     </ItemGroup>
 
 
     <ItemGroup>
-      <EmbeddedResource Include="Assets\BackgroundDefault.nxtbmp" />
       <EmbeddedResource Include="Assets\Cursor.nxtbmp" />
       <EmbeddedResource Include="Assets\FileIconGeneric.nxtbmp" />
     </ItemGroup>

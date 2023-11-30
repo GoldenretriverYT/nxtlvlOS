@@ -10,7 +10,7 @@ namespace nxtlvlOS.Windowing.Elements {
         private string text = "Label Text";
         public string Text => text;
 
-        private PCScreenFont font = PCScreenFont.Default;
+        private PCScreenFont font = WindowManager.DefaultFont;
         public PCScreenFont Font => font;
 
         private uint color = 0xFF000000;

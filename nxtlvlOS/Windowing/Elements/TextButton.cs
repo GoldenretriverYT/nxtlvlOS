@@ -12,7 +12,7 @@ namespace nxtlvlOS.Windowing.Elements {
         private string text = "Button Text";
         public string Text => text;
 
-        private PCScreenFont font = PCScreenFont.Default;
+        private PCScreenFont font = WindowManager.DefaultFont;
         public PCScreenFont Font => font;
 
         private uint textColor = 0xFF000000;
