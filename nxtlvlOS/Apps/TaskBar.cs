@@ -23,6 +23,7 @@ namespace nxtlvlOS.Apps
 
         private int frames = 0;
         private int lastRTCSecond = 0;
+        private int lastFormsCount = 0;
 
         public override void Exit()
         {
@@ -71,8 +72,8 @@ namespace nxtlvlOS.Apps
         {
             frames++;
 
-            if (RTC.Second % 2 == 0 && lastRTCSecond != RTC.Second)
-            {
+            if ((RTC.Second % 2 == 0 && lastRTCSecond != RTC.Second) ||
+                (WindowManager.Forms.Count != lastFormsCount)) {
                 UpdateTasks();
                 frames = 0;
             }
@@ -83,6 +84,7 @@ namespace nxtlvlOS.Apps
             }
 
             lastRTCSecond = RTC.Second;
+            lastFormsCount = WindowManager.Forms.Count;
 
             WindowManager.PutToFront(taskbarForm);
         }
