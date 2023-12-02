@@ -22,7 +22,7 @@ namespace nxtlvlOS.Apps
             get => _currentFilePath;
             set {
                 _currentFilePath = value;
-                form.SetTitle("Notepad - " + value ?? "Untitled");
+                form.SetTitle("Notepad - " + (value ?? "Untitled"));
             }
         }
         private string _currentFilePath = null;
