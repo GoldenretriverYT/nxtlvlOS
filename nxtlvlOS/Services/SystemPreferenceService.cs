@@ -32,10 +32,11 @@ namespace nxtlvlOS.Services {
                 File.Create(PREFS_FILE);
             }
 
-            var lines = File.ReadAllLines(PREFS_FILE);
+            var lines = File.ReadAllText(PREFS_FILE).Split("\n");
             foreach (var line in lines) {
                 var parts = line.Split('=');
                 if (parts.Length != 2) {
+                    Kernel.Instance.Logger.Log(LogLevel.Warn, "Invalid preference: " + line);
                     continue;
                 }
 
@@ -65,18 +66,20 @@ namespace nxtlvlOS.Services {
         }
 
         public void SavePrefsFile() {
-            var lines = new List<string>();
+            var text = "";
             foreach (var pref in _prefs) {
                 if (pref.Value.Type == "int") {
-                    lines.Add(pref.Key + "=int:" + ((Preference<int>)pref.Value).Value);
+                    text += (pref.Key + "=int:" + ((Preference<int>)pref.Value).Value) + "\n";
                 } else if (pref.Value.Type == "string") {
-                    lines.Add(pref.Key + "=string:" + ((Preference<string>)pref.Value).Value);
+                    text += (pref.Key + "=string:" + ((Preference<string>)pref.Value).Value) + "\n";
                 } else if (pref.Value.Type == "bool") {
-                    lines.Add(pref.Key + "=bool:" + ((Preference<bool>)pref.Value).Value);
+                    text += (pref.Key + "=bool:" + ((Preference<bool>)pref.Value).Value) + "\n";
+                } else {
+                    Kernel.Instance.Logger.Log(LogLevel.Warn, "Refusing to save preference due to unsupported type: " + pref.Value.Type);
                 }
             }
 
-            File.WriteAllLines(PREFS_FILE, lines);
+            File.WriteAllText(PREFS_FILE, text);
         }
 
         public void SetPreference<T>(string key, T value) {
@@ -88,12 +91,12 @@ namespace nxtlvlOS.Services {
 
             if (_prefs.ContainsKey(key)) {
                 _prefs[key] = new Preference<T>() {
-                    Type = typeof(T).Name,
+                    Type = typeof(T).Name.ToLower(),
                     Value = value
                 };
             } else {
                 _prefs.Add(key, new Preference<T>() {
-                    Type = typeof(T).Name,
+                    Type = typeof(T).Name.ToLower(),
                     Value = value
                 });
             }
@@ -108,7 +111,7 @@ namespace nxtlvlOS.Services {
 
             var pref = _prefs[key];
             
-            if (pref.Type != typeof(T).Name) {
+            if (pref.Type != typeof(T).Name.ToLower()) {
                 return ErrorOr<T>.MakeError("Preference type mismatch: " + key);
             }
 
@@ -117,13 +120,15 @@ namespace nxtlvlOS.Services {
 
         public T GetPreferenceOrDefault<T>(string key, T defaultValue) {
             if (!_prefs.ContainsKey(key)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, $"Preference not found: {key}");
                 SetPreference(key, defaultValue);
                 return defaultValue;
             }
             
             var pref = _prefs[key];
             
-            if (pref.Type != typeof(T).Name) {
+            if (pref.Type != typeof(T).Name.ToLower()) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, $"Preference type mismatch: {key} ({pref.Type} != {typeof(T).Name.ToLower()}); using default.");
                 SetPreference(key, defaultValue);
                 return defaultValue;
             }

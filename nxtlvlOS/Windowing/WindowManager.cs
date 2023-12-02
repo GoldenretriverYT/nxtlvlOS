@@ -33,16 +33,37 @@ namespace nxtlvlOS.Windowing
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseDownEvent = new();
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseUpEvent = new();
 
+        /// <summary>
+        /// The default font/the preferred font of the user.
+        /// Setter may only be used with null to reset the cache.
+        /// </summary>
         public static PCScreenFont DefaultFont {
             get {
                 if (cachedPreferredFont != null) return cachedPreferredFont;
+                Kernel.Instance.Logger.Log(LogLevel.Sill, "Font not cached, loading default font.");
                 
                 var preference = SystemPreferenceService.Instance?.GetPreferenceOrDefault("wm.default_font", "system_default");
-                if (preference == "system_default" || !File.Exists(preference)) return PCScreenFont.Default;
+                Kernel.Instance.Logger.Log(LogLevel.Sill, $"Loading font {preference}...");
+                if (preference == "system_default") {
+                    cachedPreferredFont = PCScreenFont.Default;
+                    return cachedPreferredFont;
+                }else if (!File.Exists(preference)) {
+                    SystemPreferenceService.Instance.SetPreference("wm.default_font", "system_default");
+                    Kernel.Instance.Logger.Log(LogLevel.Warn, $"Font file {preference} does not exist, falling back to default font.");
+                    cachedPreferredFont = PCScreenFont.Default;
+                    return cachedPreferredFont;
+                }
 
                 cachedPreferredFont = PCScreenFont.LoadFont(File.ReadAllBytes(preference));
 
                 return cachedPreferredFont;
+            }
+            set {
+                if(value != null) {
+                    throw new ArgumentException("DefaultFont may only be set to null to reset the cache");
+                }
+
+                cachedPreferredFont = null;
             }
         }
 
@@ -60,10 +81,10 @@ namespace nxtlvlOS.Windowing
 
         public static void Init() {
             (sizeX, sizeY) = Target.GetSize();
-            Buffer = new uint[sizeX * (sizeY+24)]; // Allocate 24 extra lines for stuff overflowing, like the cursor
+            Buffer = new uint[sizeX * (sizeY+24)]; // Allocate 24 extra lines as a safe room for out of bound write
             EmptyBuffer = new uint[sizeX * (sizeY+24)];
 
-            MemoryOperations.Fill(EmptyBuffer, 0xFF358F65);
+            MemoryOperations.Fill(EmptyBuffer, 0xFF4CAACF);
 
             InitCursor();
         }

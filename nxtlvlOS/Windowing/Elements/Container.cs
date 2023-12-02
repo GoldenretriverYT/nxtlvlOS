@@ -65,17 +65,17 @@ namespace nxtlvlOS.Windowing.Elements {
             if (horizontal == HorizontalAlignment.Left) {
                 RelativePosX = paddingX;
             }else if(horizontal == HorizontalAlignment.Center) {
-                RelativePosX = (int)(parentSize.x - (boundingBox.right - boundingBox.left)) / 2;
+                RelativePosX = (int)(parentSize.x - SizeX) / 2;
             } else if (horizontal == HorizontalAlignment.Right) {
-                RelativePosX = (int)(parentSize.x - (boundingBox.right - boundingBox.left));
+                RelativePosX = (int)(parentSize.x - SizeX);
             }
 
             if (vertical == VerticalAlignment.Top) {
                 RelativePosY = paddingY;
             } else if (vertical == VerticalAlignment.Middle) {
-                RelativePosY = (int)(parentSize.y - (boundingBox.bottom - boundingBox.top)) / 2;
+                RelativePosY = (int)(parentSize.y - SizeY) / 2;
             }else if(vertical == VerticalAlignment.Bottom) {
-                RelativePosY = (int)(parentSize.y - (boundingBox.bottom - boundingBox.top));
+                RelativePosY = (int)(parentSize.y - SizeY);
             }
         }
     }
