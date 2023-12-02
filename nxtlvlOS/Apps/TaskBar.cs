@@ -125,7 +125,7 @@ namespace nxtlvlOS.Apps
                     ("(dbg) DumpFileTree", () => {
                         DumpFileTree();
                     }),
-                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 2)); // 6 (base) + 22 (height per item) * 2 (item count)
+                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 3)); // 6 (base) + 22 (height per item) * 3 (item count)
             };
 
             tasksContainer.AddChild(startButton);
