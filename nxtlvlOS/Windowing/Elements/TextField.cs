@@ -310,8 +310,6 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             public override void Draw() {
-                Kernel.Instance.Logger.Log(LogLevel.Info, "Drawing ScrollableTextFrame with text " + text + "; buffer size is " + Buffer.Length);
-
                 SetDirty(false);
                 DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor); // see note in SetBackgroundColor of TextField
                 DrawStringPSFWithNewLines(
