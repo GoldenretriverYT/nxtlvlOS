@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing
@@ -142,7 +143,7 @@ namespace nxtlvlOS.Windowing
                 }
 
                 foreach (var el in elements) {
-                    if (!el.VisibleIncludingParents || !el.ShouldBeDrawnToScreen) continue;
+                    if (!el.VisibleIncludingParents || !el.ShouldBeDrawnToScreen || el.IsDeleted) continue;
 
                     #region Copy Buffer
                     var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
@@ -189,6 +190,7 @@ namespace nxtlvlOS.Windowing
                 }
 
                 Target.DrawBuffer(Buffer);
+                //Thread.Sleep(100); // Slow down for testing
 
                 return new() { Type = WMResultType.OK, AdditionalData = null };
             }catch(Exception ex) {

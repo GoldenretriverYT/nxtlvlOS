@@ -14,11 +14,11 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace nxtlvlOS.Windowing.Elements {
     public class TextField : BufferedElement {
-        private uint backgroundColor = 0xFFDEDEDE;
+        private uint backgroundColor = 0xFF444466;
         public uint BackgroundColor => backgroundColor;
 
-        private uint insetColor = 0xFF808080;
-        public uint InsetColor => insetColor;
+        private uint pressedColor = 0xFF8888AA;
+        public uint PressedColor => pressedColor;
 
         public string Text => frame.Text;
         public string Placeholder => frame.Placeholder;
@@ -65,9 +65,8 @@ namespace nxtlvlOS.Windowing.Elements {
 
             if (IsMouseDown) {
                 DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
-                DrawRectFilled(1, 1, SizeX - 2, SizeY - 2, backgroundColor);
             } else {
-                DrawInsetOppositeRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+                DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
             }
         }
 
@@ -88,10 +87,10 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         private void UpdateFrameSizing() {
-            frame.SizeX = SizeX - 6;
-            frame.SizeY = SizeY - 6;
-            frame.RelativePosX = 3;
-            frame.RelativePosY = 3;
+            frame.SizeX = SizeX - 8;
+            frame.SizeY = SizeY - 8;
+            frame.RelativePosX = 4;
+            frame.RelativePosY = 4;
             frame.SetDirty(true);
         }
 
@@ -231,8 +230,8 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        public void SetInsetColor(uint color) {
-            this.insetColor = color;
+        public void SetPressedColor(uint color) {
+            this.pressedColor = color;
             this.SetDirty(true);
         }
 
@@ -271,13 +270,13 @@ namespace nxtlvlOS.Windowing.Elements {
             private PCScreenFont font = WindowManager.DefaultFont;
             public PCScreenFont Font => font;
 
-            private uint textColor = 0xFF000000;
+            private uint textColor = 0xFFFFFFFF;
             public uint TextColor => textColor;
 
-            private uint placeholderColor = 0xFF545454;
+            private uint placeholderColor = 0xFFCCCCCC;
             public uint PlaceholderColor => placeholderColor;
 
-            private uint backgroundColor = 0xFFDEDEDE;
+            private uint backgroundColor = 0xFF444466;
             private uint BackgroundColor => backgroundColor;
 
             private int scrollX = 0;

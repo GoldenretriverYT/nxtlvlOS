@@ -23,6 +23,20 @@ namespace nxtlvlOS.Windowing {
         public string CustomId = "NoId";
 
         /// <summary>
+        /// This boolean is to mark that the element will never be used again. At that point, it should already be removed
+        /// from the parent.
+        /// 
+        /// This is required as the window manager flattens all elements into a new list before updating and
+        /// reuses that list on draw, which can cause unparented elements to have an absolute position of 0,0.
+        /// 
+        /// This does not mark the element for the GC or whatever, it only prevents the Copy Buffer step
+        /// of the window manager from copying the buffer of this element.
+        /// </summary>
+        public bool IsDeleted = false;
+
+        public uint ChildRelativeOffsetX = 0, ChildRelativeOffsetY = 0;
+
+        /// <summary>
         /// This does not affect child elements, unlike <see cref="Visible"/> does - use this for layout elements
         /// Also prevents a buffer from being created, which <see cref="Visible"/> does not.
         /// </summary>
@@ -345,8 +359,8 @@ namespace nxtlvlOS.Windowing {
             BufferedElement par = Parent;
 
             while(par != null) {
-                x += (uint)par.RelativePosX;
-                y += (uint)par.RelativePosY;
+                x += (uint)par.RelativePosX + par.ChildRelativeOffsetX;
+                y += (uint)par.RelativePosY + par.ChildRelativeOffsetY;
 
                 par = par.Parent;
             }

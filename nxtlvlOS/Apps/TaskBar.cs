@@ -151,7 +151,7 @@ namespace nxtlvlOS.Apps
                 };
 
                 tasksContainer.AddChild(btn);
-                xOffset += 150;
+                xOffset += 146;
 
                 if (xOffset > 1050)
                 {

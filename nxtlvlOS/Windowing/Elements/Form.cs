@@ -16,11 +16,11 @@ namespace nxtlvlOS.Windowing.Elements {
         private bool titlebarEnabled;
         public bool TitlebarEnabled => titlebarEnabled;
 
-        private uint backgroundColor = 0xFFDEDEDE;
+        private uint backgroundColor = 0xFF555577;
         public uint BackgroundColor => backgroundColor;
 
-        private uint insetColor = 0xFF808080;
-        public uint InsetColor => insetColor;
+        private uint titlebarColor = 0xFF444466;
+        public uint TitlebarColor => titlebarColor;
 
         public bool ShouldBeShownInTaskbar = true;
 
@@ -44,7 +44,7 @@ namespace nxtlvlOS.Windowing.Elements {
             this.owner = owner;
             closeButton = new TextButton() {
                 RelativePosX = 0,
-                RelativePosY = 6,
+                RelativePosY = -20, // Negative due to the ChildRelativeOffsetY being 24
                 SizeX = 16,
                 SizeY = 16
             };
@@ -54,6 +54,8 @@ namespace nxtlvlOS.Windowing.Elements {
             closeButton.Click = (MouseState _, uint _, uint _) => {
                 Close();
             };
+
+            ChildRelativeOffsetX = 1; // Border
 
             AddChild(closeButton);
         }
@@ -92,8 +94,8 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        public void SetInsetColor(uint color) {
-            this.insetColor = color;
+        public void SetTitlebarColor(uint color) {
+            this.titlebarColor = color;
             this.SetDirty(true);
         }
 
@@ -128,14 +130,16 @@ namespace nxtlvlOS.Windowing.Elements {
             if (!ShouldBeDrawnToScreen) return; // We want to support this to allow root-level overlays in the WM
             if ((titlebarEnabled && SizeY < 30) || SizeY < 10) throw new Exception("Form must be at least 30 pixels in height if title bar is enabled, or 10 if not.");
             if ((titlebarEnabled && SizeX < 30) || SizeX < 10) throw new Exception("Form must be at least 30 pixels in width if title bar is enabled, or 10 if not.");
+            ChildRelativeOffsetY = (uint)(titlebarEnabled ? 24 : 1);
 
             SetDirty(false);
 
-            DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
+            DrawRectFilled(1, 1, SizeX-1, SizeY-1, backgroundColor);
+            DrawRect(0, 0, SizeX, SizeY, titlebarColor);
 
             if (titlebarEnabled) {
-                DrawRectFilled(4, 4, SizeX-4, 24, 0xFF000072);
-                DrawStringPSF(WindowManager.DefaultFont, 6, 6, title, 0xFFFFFFFF);
+                DrawRectFilled(0, 0, SizeX, 24, titlebarColor);
+                DrawStringPSF(WindowManager.DefaultFont, 6, 4, title, 0xFFFFFFFF);
             }
         }
 

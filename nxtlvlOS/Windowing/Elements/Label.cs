@@ -13,7 +13,7 @@ namespace nxtlvlOS.Windowing.Elements {
         private PCScreenFont font = WindowManager.DefaultFont;
         public PCScreenFont Font => font;
 
-        private uint color = 0xFF000000;
+        private uint color = 0xFFFFFFFF;
         public uint Color => color;
 
         public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left;

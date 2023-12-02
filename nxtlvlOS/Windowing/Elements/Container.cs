@@ -17,8 +17,14 @@ namespace nxtlvlOS.Windowing.Elements {
             ShouldBeDrawnToScreen = false;
         }
 
+        public void EnableDebug() {
+            ShouldBeDrawnToScreen = true;
+        }
+
         public override void Draw() {
-            
+            if (ShouldBeDrawnToScreen && SizeX != 0 && SizeY != 0) {
+                DrawRect(0, 0, SizeX, SizeY, 0xFFFF0000);
+            }
         }
 
         public (int left, int top, int right, int bottom) GetRelativeBoundingBox() {
@@ -50,7 +56,9 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public void AdjustBoundingBoxAndAlignToParent(HorizontalAlignment horizontal = HorizontalAlignment.Left, VerticalAlignment vertical = VerticalAlignment.Top, int paddingX = 0, int paddingY = 0) {
             var boundingBox = GetRelativeBoundingBox();
-            var parentSize = (x: Parent.SizeX - paddingX * 2, y: Parent.SizeY - paddingY * 2);
+            var parentSize = (
+                x: Parent.SizeX - Parent.ChildRelativeOffsetX - (paddingX * 2),
+                y: Parent.SizeY - Parent.ChildRelativeOffsetY - (paddingY * 2));
             SizeX = (uint)(boundingBox.right - boundingBox.left);
             SizeY = (uint)(boundingBox.bottom - boundingBox.top);
 

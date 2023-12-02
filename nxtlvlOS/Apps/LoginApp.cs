@@ -98,8 +98,8 @@ namespace nxtlvlOS.Apps
             loginForm.AddChild(loginInputContainer);
             loginForm.AddChild(actionsContainer);
 
-            loginInputContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Left, VerticalAlignment.Top, 10, 30 + 10); // we have to add 30 to the y padding due to the title bar
-            actionsContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Right, VerticalAlignment.Top, 10, 30 + 10);
+            loginInputContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Left, VerticalAlignment.Top, 10, 10);
+            actionsContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Right, VerticalAlignment.Top, 10, 10);
 
             #endregion
 

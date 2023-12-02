@@ -58,6 +58,7 @@ namespace nxtlvlOS.Services {
         public void ShowContextMenu(List<(string title, Action action)> items, int customX = -1, int customY = -1, int customWidth = 300) {
             foreach (var child in ContextMenuForm.Children.ToList()) {
                 ContextMenuForm.RemoveChild(child);
+                child.IsDeleted = true;
             }
 
             ContextMenuForm.SizeX = (uint)customWidth;

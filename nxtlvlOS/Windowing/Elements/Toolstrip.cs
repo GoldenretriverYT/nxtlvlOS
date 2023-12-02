@@ -57,8 +57,8 @@ namespace nxtlvlOS.Windowing.Elements {
                 
                 child.RelativePosX = currentOffsetX;
                 child.RelativePosY = currentRow * rowSize;
-                
-                currentOffsetX += (int)child.SizeX;
+
+                currentOffsetX += (int)child.SizeX + 2;
             }
 
             SizeY = (uint)((uint)(currentRow + 1) * rowSize) + 1;

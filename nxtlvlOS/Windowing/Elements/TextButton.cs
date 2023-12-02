@@ -15,14 +15,14 @@ namespace nxtlvlOS.Windowing.Elements {
         private PCScreenFont font = WindowManager.DefaultFont;
         public PCScreenFont Font => font;
 
-        private uint textColor = 0xFF000000;
+        private uint textColor = 0xFFFFFFFF;
         public uint TextColor => textColor;
 
-        private uint backgroundColor = 0xFFDEDEDE;
+        private uint backgroundColor = 0xFF666688;
         public uint BackgroundColor => backgroundColor;
 
-        private uint insetColor = 0xFF808080;
-        public uint InsetColor => insetColor;
+        private uint pressedColor = 0xFF8888AA;
+        public uint PressedColor => pressedColor;
 
         public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Center;
         public HorizontalAlignment HorizontalAlignment => horizontalAlignment;
@@ -42,17 +42,11 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public override void Draw() {
             SetDirty(false);
-
+            
             if (IsMouseDown && enabled) {
-                DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
-                DrawRectFilled(1, 1, SizeX-2, SizeY-2, backgroundColor);
+                DrawRectFilled(0, 0, SizeX, SizeY, pressedColor);
             } else {
-                if (enabled) {
-                    DrawInsetRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
-                } else {
-                    // todo: make a better style for disabled buttons, it looks horrible rn
-                    DrawInsetOppositeRectFilled(0, 0, SizeX, SizeY, backgroundColor, insetColor);
-                }
+                DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
             }
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
@@ -83,8 +77,8 @@ namespace nxtlvlOS.Windowing.Elements {
             this.SetDirty(true);
         }
 
-        public void SetInsetColor(uint color) {
-            this.insetColor = color;
+        public void SetPressedColor(uint color) {
+            this.pressedColor = color;
             this.SetDirty(true);
         }
 

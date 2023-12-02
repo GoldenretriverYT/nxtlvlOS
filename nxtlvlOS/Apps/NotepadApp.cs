@@ -45,7 +45,7 @@ namespace nxtlvlOS.Apps
             // Toolstrip
             toolstrip = new();
             toolstrip.RelativePosX = 0;
-            toolstrip.RelativePosY = 24;
+            toolstrip.RelativePosY = 0;
 
             toolstrip.SizeX = 600;
             toolstrip.SetRowSize(24);
@@ -90,13 +90,13 @@ namespace nxtlvlOS.Apps
             // TextField
             textField = new();
             textField.RelativePosX = 2;
-            textField.RelativePosY = 50; // the titlebar + toolstrip is included within the size
+            textField.RelativePosY = 25; // toolstrip is included within the size
                                          // note: the toolstrip is actually 25px to show a seperator
             textField.SizeX = 600 - 4;
-            textField.SizeY = 400 - 52; // 51 to show inset bottom of form
-            
+            textField.SizeY = 400 - 52; // 52 = toolstrip (25px) + titlebar (24px) + 4px padding
+
             textField.SetBackgroundColor(0xFFFFFFFF);
-            textField.SetInsetColor(textField.BackgroundColor); // basically disable the inset effect
+            textField.SetTextColor(0xFF000000);
 
             form.AddChild(toolstrip);
             form.AddChild(textField);
