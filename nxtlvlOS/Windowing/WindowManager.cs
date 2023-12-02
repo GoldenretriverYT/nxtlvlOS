@@ -32,11 +32,11 @@ namespace nxtlvlOS.Windowing
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseDownEvent = new();
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseUpEvent = new();
 
-        public static PCScreenFont PCScreenFont {
+        public static PCScreenFont DefaultFont {
             get {
                 if (cachedPreferredFont != null) return cachedPreferredFont;
                 
-                var preference = SystemPreferenceService.Instance?.GetPreferenceOrDefault<string>("wm.default_font", "system_default");
+                var preference = SystemPreferenceService.Instance?.GetPreferenceOrDefault("wm.default_font", "system_default");
                 if (preference == "system_default" || !File.Exists(preference)) return PCScreenFont.Default;
 
                 cachedPreferredFont = PCScreenFont.LoadFont(File.ReadAllBytes(preference));
@@ -188,7 +188,7 @@ namespace nxtlvlOS.Windowing
                     #endregion
                 }
 
-                Target.DrawBuffer(0, 0, sizeX, Buffer, BufferDrawMode.RawCopy);
+                Target.DrawBuffer(Buffer);
 
                 return new() { Type = WMResultType.OK, AdditionalData = null };
             }catch(Exception ex) {
@@ -223,7 +223,7 @@ namespace nxtlvlOS.Windowing
     }
 
     public interface IRenderTarget {
-        public void DrawBuffer(uint xStart, uint yStart, uint w, uint[] buffer, BufferDrawMode mode);
+        public void DrawBuffer(uint[] buffer);
         public (uint w, uint h) GetSize();
     }
 

@@ -146,7 +146,7 @@ namespace nxtlvlOS.Windowing.Elements {
             BeforeClose.Invoke();
 
             if (Parent != null) {
-                Parent.RemoveElement(this);
+                Parent.RemoveChild(this);
             } else {
                 WindowManager.RemoveForm(this);
             }

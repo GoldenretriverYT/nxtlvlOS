@@ -121,7 +121,7 @@ namespace nxtlvlOS.Apps
             }
 
             oobeForm.AddChild(stepSelectKeyboardLayout); // IMPORTANT: AdjustToBoundingBox needs a parent first!
-            stepSelectKeyboardLayout.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+            stepSelectKeyboardLayout.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Center, VerticalAlignment.Middle);
             #endregion
 
             #region Step 2 - Create account
@@ -172,7 +172,7 @@ namespace nxtlvlOS.Apps
             stepCreateAccountContainer.AddChild(accountNextStep);
 
             oobeForm.AddChild(stepCreateAccountContainer);
-            stepCreateAccountContainer.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+            stepCreateAccountContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Center, VerticalAlignment.Middle);
             #endregion
 
             #region Step 3 - Copy files
@@ -211,7 +211,7 @@ namespace nxtlvlOS.Apps
             stepCopyFilesContainer.AddChild(copyFilesButton);
 
             oobeForm.AddChild(stepCopyFilesContainer);
-            stepCopyFilesContainer.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+            stepCopyFilesContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Center, VerticalAlignment.Middle);
             #endregion
 
             WindowManager.AddForm(oobeForm);

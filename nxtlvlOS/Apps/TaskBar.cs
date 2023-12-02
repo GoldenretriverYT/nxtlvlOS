@@ -22,6 +22,7 @@ namespace nxtlvlOS.Apps
         private Label timeLabel, dateLabel;
 
         private int frames = 0;
+        private int lastRTCSecond = 0;
 
         public override void Exit()
         {
@@ -70,16 +71,18 @@ namespace nxtlvlOS.Apps
         {
             frames++;
 
-            if (RTC.Second % 2 == 0)
+            if (RTC.Second % 2 == 0 && lastRTCSecond != RTC.Second)
             {
                 UpdateTasks();
                 frames = 0;
             }
 
-            if (RTC.Second == 0)
+            if (RTC.Second == 0 && lastRTCSecond != RTC.Second)
             {
                 UpdateDateAndTime();
             }
+
+            lastRTCSecond = RTC.Second;
 
             WindowManager.PutToFront(taskbarForm);
         }
@@ -94,7 +97,7 @@ namespace nxtlvlOS.Apps
         {
             foreach (var child in tasksContainer.Children.ToList())
             {
-                tasksContainer.RemoveElement(child);
+                tasksContainer.RemoveChild(child);
                 //GCImplementation.Free(child); // i am not sure why we need this...
             }
 
@@ -160,7 +163,7 @@ namespace nxtlvlOS.Apps
             taskbarForm.SizeY = (uint)(6 + 24 * Math.Max(1, formCount / 7));
             taskbarForm.RelativePosY = (int)(720 - taskbarForm.SizeY);
 
-            infoContainer.AdjustToBoundingBox(HorizontalAlignment.Right, VerticalAlignment.Middle, 10, 0);
+            infoContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Right, VerticalAlignment.Middle, 10, 0);
         }
 
         static void DumpFileTree(string dir = @"0:\", int pad = 2) {
@@ -175,7 +178,7 @@ namespace nxtlvlOS.Apps
         }
 
         static void OpenSystemPreferences() {
-
+            ProcessManager.CreateProcess(new PreferenceApp(), "Preferences");
         }
     }
 }

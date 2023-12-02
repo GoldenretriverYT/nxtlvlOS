@@ -24,10 +24,10 @@ namespace nxtlvlOS.Windowing.Elements {
         private uint insetColor = 0xFF808080;
         public uint InsetColor => insetColor;
 
-        public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left;
+        public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Center;
         public HorizontalAlignment HorizontalAlignment => horizontalAlignment;
 
-        public VerticalAlignment verticalAlignment = VerticalAlignment.Top;
+        public VerticalAlignment verticalAlignment = VerticalAlignment.Middle;
         public VerticalAlignment VerticalAlignment => verticalAlignment;
 
         public bool safeDrawEnabled = false;

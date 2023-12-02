@@ -151,7 +151,7 @@ namespace nxtlvlOS.Windowing {
             Children.Add(el);
         }
 
-        public bool RemoveElement(BufferedElement el) {
+        public bool RemoveChild(BufferedElement el) {
             if(Children.Contains(el)) {
                 Children.Remove(el);
                 el.Parent = null;

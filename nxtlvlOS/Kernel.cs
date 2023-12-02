@@ -8,7 +8,6 @@ using Cosmos.System.Graphics;
 using nxtlvlOS.Apps;
 using nxtlvlOS.Assets;
 using nxtlvlOS.Processing;
-using nxtlvlOS.RAMFS;
 using nxtlvlOS.Services;
 using nxtlvlOS.Utils;
 using nxtlvlOS.Windowing;
@@ -32,6 +31,7 @@ namespace nxtlvlOS {
 
         private int framesRendered = 0;
         private int previousSecond = -1;
+        private uint lastAfterHeapCollect = 0;
 
         private Label fpsLabel = null;
 
@@ -91,8 +91,10 @@ namespace nxtlvlOS {
 
             framesRendered++;
 
-            if(framesRendered % 60 == 0) {
+            if(framesRendered % 100 == 0) {
+                //Logger.Log(LogLevel.Verb, "Since last GC, " + (GCImplementation.GetUsedRAM() - lastAfterHeapCollect)/1024 + " kb were allocated");
                 Heap.Collect();
+                lastAfterHeapCollect = GCImplementation.GetUsedRAM();
             }
 
             if(RTC.Second != previousSecond) {
@@ -135,7 +137,7 @@ namespace nxtlvlOS {
     public class SpagSVGAIITarget : IRenderTarget {
         public spagSVGAII Canvas;
 
-        public void DrawBuffer(uint xStart, uint yStart, uint w, uint[] buffer, BufferDrawMode mode) {
+        public void DrawBuffer(uint[] buffer) {
             Canvas._xSVGADriver.videoMemory.Copy((uint)Canvas._xSVGADriver.FrameSize, buffer, 0, buffer.Length);
         }
 

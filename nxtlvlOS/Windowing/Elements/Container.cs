@@ -48,7 +48,7 @@ namespace nxtlvlOS.Windowing.Elements {
             return (left, top, right, bottom);
         }
 
-        public void AdjustToBoundingBox(HorizontalAlignment horizontal = HorizontalAlignment.Left, VerticalAlignment vertical = VerticalAlignment.Top, int paddingX = 0, int paddingY = 0) {
+        public void AdjustBoundingBoxAndAlignToParent(HorizontalAlignment horizontal = HorizontalAlignment.Left, VerticalAlignment vertical = VerticalAlignment.Top, int paddingX = 0, int paddingY = 0) {
             var boundingBox = GetRelativeBoundingBox();
             var parentSize = (x: Parent.SizeX - paddingX * 2, y: Parent.SizeY - paddingY * 2);
             SizeX = (uint)(boundingBox.right - boundingBox.left);

@@ -1,5 +1,4 @@
 ﻿using nxtlvlOS.Processing;
-using nxtlvlOS.RAMFS;
 using nxtlvlOS.Services;
 using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
@@ -190,7 +189,7 @@ namespace nxtlvlOS.Apps
             container.AddChild(authorNameLine2);
 
             aboutForm.AddChild(container);
-            container.AdjustToBoundingBox(HorizontalAlignment.Center, VerticalAlignment.Middle);
+            container.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Center, VerticalAlignment.Middle);
 
             WindowManager.AddForm(aboutForm);
         }

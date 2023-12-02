@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using nxtlvlOS.RAMFS;
 using nxtlvlOS.Utils;
 
 namespace nxtlvlOS.Apps
@@ -139,7 +138,7 @@ namespace nxtlvlOS.Apps
         {
             foreach (var child in fileContainer.Children.ToList())
             {
-                fileContainer.RemoveElement(child);
+                fileContainer.RemoveChild(child);
             }
 
             int offsetX = 0, offsetY = 0;
