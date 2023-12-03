@@ -72,6 +72,7 @@ namespace nxtlvlOS.Services {
                 button.SizeX = ContextMenuForm.SizeX - 6;
                 button.SizeY = 22;
                 button.SetText(item.title);
+                button.SetHorizontalAlignment(HorizontalAlignment.Left);
                 button.Click = (MouseState state, uint absX, uint absY) => {
                     item.action();
                     ContextMenuForm.Visible = false;

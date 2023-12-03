@@ -48,15 +48,23 @@ namespace nxtlvlOS.Apps
             prefWMFontTitle.SizeY = 16;
             prefWMFontTitle.RelativePosX = 0;
             prefWMFontTitle.RelativePosY = 0;
-            prefWMFontTitle.SetText("Window Manager Font");
+            prefWMFontTitle.SetText("Default / Preferred Font");
 
             // TODO: When dropdowns are added, make this a list of fonts in the 0:\System\Fonts folder
-            TextField prefWMFontField = new();
+            BasicDropdown prefWMFontField = new();
             prefWMFontField.SizeX = 580;
             prefWMFontField.SizeY = 24;
             prefWMFontField.RelativePosX = 0;
             prefWMFontField.RelativePosY = 20;
-            prefWMFontField.SetText(SystemPreferenceService.Instance.GetPreferenceOrDefault("wm.default_font", "system_default"));
+            prefWMFontField.AddElement("system_default");
+
+            foreach (var file in Directory.GetFiles(@"0:\System\Fonts")) {
+                if (file.EndsWith(".psf")) {
+                    prefWMFontField.AddElement(@"0:\System\Fonts\" + file);
+                }
+            }
+
+            prefWMFontField.SelectElement(SystemPreferenceService.Instance.GetPreferenceOrDefault("wm.default_font", "system_default"));
 
             Label prefWMFontDesc = new();
             prefWMFontDesc.SizeX = 580;
@@ -64,7 +72,7 @@ namespace nxtlvlOS.Apps
             prefWMFontDesc.RelativePosX = 0;
             prefWMFontDesc.RelativePosY = 48;
             prefWMFontDesc.SetNewlinesEnabled(true);
-            prefWMFontDesc.SetText("The font used by the window manager. Path to PSF file \nor \"system_default\" for the default font.");
+            prefWMFontDesc.SetText("The default font used. Path to PSF file or \"system_default\" \nfor the default font. Apps may use their own fonts.");
             #endregion
 
             #region Create actions
@@ -75,7 +83,7 @@ namespace nxtlvlOS.Apps
             prefSaveButton.RelativePosY = 0;
             prefSaveButton.SetText("Save");
             prefSaveButton.Click = (state, mX, mY) => {
-                SystemPreferenceService.Instance.SetPreference("wm.default_font", prefWMFontField.Text.Replace("/", "\\"));
+                SystemPreferenceService.Instance.SetPreference("wm.default_font", prefWMFontField.SelectedElement.Replace("/", "\\"));
                 WindowManager.DefaultFont = null; // Reset the cached default font.
 
                 // TODO: Show MessageBox which warns the user that a restart may be required to apply all changes
