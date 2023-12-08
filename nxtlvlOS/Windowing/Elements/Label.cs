@@ -34,6 +34,7 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public override void Draw() {
+            SetDirty(false);
             Clear(0x00000000);
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {

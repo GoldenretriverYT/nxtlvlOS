@@ -34,6 +34,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public bool SafeDrawEnabled => safeDrawEnabled;
 
         public bool IsMouseDown { get; private set; } = false;
+        public bool IsMouseHovering { get; private set; } = false;
 
 
         public TextButton() {
@@ -46,7 +47,12 @@ namespace nxtlvlOS.Windowing.Elements {
             if (IsMouseDown && enabled) {
                 DrawRectFilled(0, 0, SizeX, SizeY, pressedColor);
             } else {
-                DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
+                if (!IsMouseHovering) {
+                    DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
+                } else {
+                    DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
+                    DrawRectFilled(1, 1, SizeX - 1, SizeY - 1, backgroundColor);
+                }
             }
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
@@ -94,6 +100,16 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public void SetEnabled(bool enabled) {
             this.enabled = enabled;
+            this.SetDirty(true);
+        }
+
+        public override void OnHoverStart() {
+            IsMouseHovering = true;
+            this.SetDirty(true);
+        }
+
+        public override void OnHoverEnd() {
+            IsMouseHovering = false;
             this.SetDirty(true);
         }
 

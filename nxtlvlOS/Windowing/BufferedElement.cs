@@ -17,10 +17,14 @@ namespace nxtlvlOS.Windowing {
         public int RelativePosX, RelativePosY;
         public uint SizeX = 100, SizeY = 100;
         public bool Visible = true;
-        public bool MousePassThrough = false;
         public uint[] Buffer = new uint[0];
         public bool DoNotBringToFront = false;
         public string CustomId = "NoId";
+
+        /// <summary>
+        /// If this is true, this elements becomes uneligible for all mouse events (down, up, hover start, hover end).
+        /// </summary>
+        public bool MousePassThrough = false;
 
         /// <summary>
         /// This boolean is to mark that the element will never be used again. At that point, it should already be removed
@@ -105,6 +109,7 @@ namespace nxtlvlOS.Windowing {
 
 
             if(dirty) {
+                //Kernel.Instance.Logger.Log(LogLevel.Sill, $"Drawing {GetType().Name} ({CustomId}) because it is dirty");
                 Draw();
                 BufferWasUpdated = true;
             }

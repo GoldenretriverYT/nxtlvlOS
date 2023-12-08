@@ -6,6 +6,7 @@ using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace nxtlvlOS.Services {
     public class ContextMenuService : App {
         public static ContextMenuService Instance;
         public Form ContextMenuForm;
+        private bool makeVisible = false;
 
         public override void Exit() {
             throw new Exception("ContextMenuService should not be killed.");
@@ -50,6 +52,14 @@ namespace nxtlvlOS.Services {
         }
 
         public override void Update() {
+            if (makeVisible) {                            // This will delay the context menu from showing
+                                                          // until the next frame, but this is required as newly
+                                                          // create elements (in this case buttons) can not
+                                                          // be shown within the same frame as they are created.
+                ContextMenuForm.Visible = true;
+                makeVisible = false;
+            }
+            
             if(ContextMenuForm.Visible) {
                 WindowManager.PutToFront(ContextMenuForm);
             }
@@ -96,7 +106,7 @@ namespace nxtlvlOS.Services {
             }
 
             Kernel.Instance.Logger.Log(LogLevel.Info, "Showing context menu with sizex=" + ContextMenuForm.SizeX + " sizey=" + ContextMenuForm.SizeY + " relx=" + ContextMenuForm.RelativePosX + " rely=" + ContextMenuForm.RelativePosY);
-            ContextMenuForm.Visible = true;
+            makeVisible = true;
             WindowManager.PutToFront(ContextMenuForm);
         }
     }

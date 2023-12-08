@@ -22,6 +22,7 @@ namespace nxtlvlOS.Windowing.Elements.Shapes {
         }
 
         public override void Draw() {
+            SetDirty(false);
             DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
         }
     }

@@ -51,6 +51,7 @@ namespace nxtlvlOS.Apps
             accountTitle.SizeY = 16;
             accountTitle.RelativePosX = 0;
             accountTitle.RelativePosY = 0;
+            accountTitle.CustomId = "LoginLabel";
             accountTitle.SetText("Login");
             accountTitle.SetHorizontalAlignment(HorizontalAlignment.Left);
             accountTitle.SetVerticalAlignment(VerticalAlignment.Middle);

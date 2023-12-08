@@ -127,12 +127,13 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public override void Draw() {
+            SetDirty(false);
+            
             if (!ShouldBeDrawnToScreen) return; // We want to support this to allow root-level overlays in the WM
             if ((titlebarEnabled && SizeY < 30) || SizeY < 10) throw new Exception("Form must be at least 30 pixels in height if title bar is enabled, or 10 if not.");
             if ((titlebarEnabled && SizeX < 30) || SizeX < 10) throw new Exception("Form must be at least 30 pixels in width if title bar is enabled, or 10 if not.");
             ChildRelativeOffsetY = (uint)(titlebarEnabled ? 24 : 1);
 
-            SetDirty(false);
 
             DrawRectFilled(1, 1, SizeX-1, SizeY-1, backgroundColor);
             DrawRect(0, 0, SizeX, SizeY, titlebarColor);

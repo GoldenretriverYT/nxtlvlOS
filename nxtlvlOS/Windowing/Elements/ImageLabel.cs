@@ -16,7 +16,8 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public override void Draw() {
             if (image.Length != SizeX * SizeY) throw new Exception("Image size mismatch. Scaling is not support yet.");
-
+            SetDirty(false);
+            
             Buffer = image;
         }
 

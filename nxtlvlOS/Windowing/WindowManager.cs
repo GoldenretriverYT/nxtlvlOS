@@ -29,6 +29,7 @@ namespace nxtlvlOS.Windowing
         private static MouseState previousState = MouseState.None;
 
         public static BufferedElement FocusedElement;
+        public static BufferedElement PreviouslyHoveredElement = null;
 
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseDownEvent = new();
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseUpEvent = new();
@@ -115,7 +116,7 @@ namespace nxtlvlOS.Windowing
                 cursorElement.RelativePosY = (int)MouseManager.Y;
                 elements.Add(cursorElement);
 
-                // mouse stuff
+                // Get the element that is under the mouse
                 BufferedElement elementUnderMouse = null;
 
                 foreach (var el in elements) {
@@ -123,12 +124,26 @@ namespace nxtlvlOS.Windowing
 
                     if(ShapeCollisions.RectIntersectsWithPoint(
                         absolute.y, absolute.x, absolute.y + el.SizeY, absolute.x + el.SizeX,
-                        MouseManager.X, MouseManager.Y) && el.VisibleIncludingParents) {
+                        MouseManager.X, MouseManager.Y) && el.VisibleIncludingParents && !el.MousePassThrough) {
+
                         elementUnderMouse = el;
                         continue;
                     }
                 }
 
+                if (PreviouslyHoveredElement != elementUnderMouse && elementUnderMouse != null) {
+                    if (PreviouslyHoveredElement != null) {
+                        //Kernel.Instance.Logger.Log(LogLevel.Sill, $"Element {PreviouslyHoveredElement.GetType().Name} ({PreviouslyHoveredElement.CustomId}): OnHoverEnd");
+                        PreviouslyHoveredElement.OnHoverEnd();
+                    }
+
+                    PreviouslyHoveredElement = elementUnderMouse;
+                    //Kernel.Instance.Logger.Log(LogLevel.Sill, $"Element {elementUnderMouse.GetType().Name} ({elementUnderMouse.CustomId}): OnHoverStart");
+                    elementUnderMouse.OnHoverStart();
+                }
+
+                // Handle mouse events
+                // TODO: Handle mouse events for all mouse buttons
                 if (elementUnderMouse != null) {
                     if (MouseManager.MouseState != previousState) {
                         if ((MouseManager.MouseState & MouseState.Left) == MouseState.Left &&

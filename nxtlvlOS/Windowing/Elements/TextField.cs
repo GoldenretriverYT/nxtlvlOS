@@ -31,11 +31,16 @@ namespace nxtlvlOS.Windowing.Elements {
         public int CursorPos = 0;
 
         public bool IsMouseDown { get; private set; } = false;
+        public bool IsMouseHovering { get; private set; } = false;
 
-        private ScrollableTextFrame frame = new();
+        private ScrollableTextFrame frame = new() {
+            CustomId = "TextFieldFrame"
+        };
+        
         private Rect cursor = new() {
             SizeX = 2,
-            SizeY = 16
+            SizeY = 16,
+            CustomId = "CursorRect"
         };
 
         public TextField() {
@@ -66,7 +71,12 @@ namespace nxtlvlOS.Windowing.Elements {
             if (IsMouseDown) {
                 DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
             } else {
-                DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
+                if (!IsMouseHovering) {
+                    DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
+                } else {
+                    DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
+                    DrawRectFilled(1, 1, SizeX - 1, SizeY - 1, backgroundColor);
+                }
             }
         }
 
@@ -242,6 +252,15 @@ namespace nxtlvlOS.Windowing.Elements {
         public void SetScrollY(int scrollY) {
             this.frame.SetScrollY(scrollY);
         }
+        public override void OnHoverStart() {
+            IsMouseHovering = true;
+            this.SetDirty(true);
+        }
+
+        public override void OnHoverEnd() {
+            IsMouseHovering = false;
+            this.SetDirty(true);
+        }
 
         public override void OnMouseDown(MouseState state) {
             base.OnMouseDown(state);
@@ -294,6 +313,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
             public ScrollableTextFrame() {
                 DrawMode = BufferDrawMode.RawCopy;
+                MousePassThrough = true;
                 SizeChanged = () => {
                     Kernel.Instance.Logger.Log(LogLevel.Info, "Size changed for ScrollableTextFrame with text " + text);
                 };

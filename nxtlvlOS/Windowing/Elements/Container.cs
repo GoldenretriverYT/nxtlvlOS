@@ -75,7 +75,7 @@ namespace nxtlvlOS.Windowing.Elements {
             } else if (vertical == VerticalAlignment.Middle) {
                 RelativePosY = (int)(parentSize.y - SizeY) / 2;
             }else if(vertical == VerticalAlignment.Bottom) {
-                RelativePosY = (int)(parentSize.y - SizeY);
+                RelativePosY = (int)(parentSize.y - SizeY*2);
             }
         }
     }
