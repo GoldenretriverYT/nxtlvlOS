@@ -12,7 +12,7 @@ namespace nxtlvlOS.Services {
         public static SystemPreferenceService Instance;
 
         private Dictionary<string, Preference> _prefs = new Dictionary<string, Preference>();
-        const string PREFS_FILE = @"0:\System\prefs.nxt";
+        static string PREFS_FILE = @"0:\System\prefs.nxt";
 
         public override void Exit() {
 
@@ -28,39 +28,56 @@ namespace nxtlvlOS.Services {
         }
 
         public void LoadPrefsFile() {
-            if (!File.Exists(PREFS_FILE)) {
-                File.Create(PREFS_FILE);
-            }
-
-            var lines = File.ReadAllText(PREFS_FILE).Split("\n");
-            foreach (var line in lines) {
-                var parts = line.Split('=');
-                if (parts.Length != 2) {
-                    Kernel.Instance.Logger.Log(LogLevel.Warn, "Invalid preference: " + line);
-                    continue;
+            try {
+                if (!Directory.Exists(@"0:\System")) {
+                    Directory.CreateDirectory(@"0:\System");
                 }
 
-                var key = parts[0];
-                var value = parts[1];
+                Kernel.Instance.Logger.Log(LogLevel.Info, "ye.0 " + PREFS_FILE);
+                if (!File.Exists(PREFS_FILE)) {
+                    Kernel.Instance.Logger.Log(LogLevel.Info, "ye.1 " + PREFS_FILE);
+                    File.WriteAllText(PREFS_FILE, "");
+                    Kernel.Instance.mDebugger.Send("whar");
+                    Kernel.Instance.Logger.Log(LogLevel.Info, "ye.2 " + PREFS_FILE);
+                }
+                Kernel.Instance.Logger.Log(LogLevel.Info, "ye.3 " + PREFS_FILE);
 
-                if (value.StartsWith("int:")) {
-                    var pref = new Preference<int>();
-                    pref.Type = "int";
-                    pref.Value = int.Parse(value.Substring(4));
-                    _prefs.Add(key, pref);
-                } else if (value.StartsWith("string:")) {
-                    var pref = new Preference<string>();
-                    pref.Type = "string";
-                    pref.Value = value.Substring(7);
-                    _prefs.Add(key, pref);
-                } else if (value.StartsWith("bool:")) {
-                    var pref = new Preference<bool>();
-                    pref.Type = "bool";
-                    pref.Value = bool.Parse(value.Substring(5));
-                    _prefs.Add(key, pref);
+                var lines = File.ReadAllText(PREFS_FILE).Split("\n");
+                foreach (var line in lines) {
+                    var parts = line.Split('=');
+                    if (parts.Length != 2) {
+                        Kernel.Instance.Logger.Log(LogLevel.Warn, "Invalid preference: " + line);
+                        continue;
+                    }
+
+                    var key = parts[0];
+                    var value = parts[1];
+
+                    if (value.StartsWith("int:")) {
+                        var pref = new Preference<int>();
+                        pref.Type = "int";
+                        pref.Value = int.Parse(value.Substring(4));
+                        _prefs.Add(key, pref);
+                    } else if (value.StartsWith("string:")) {
+                        var pref = new Preference<string>();
+                        pref.Type = "string";
+                        pref.Value = value.Substring(7);
+                        _prefs.Add(key, pref);
+                    } else if (value.StartsWith("bool:")) {
+                        var pref = new Preference<bool>();
+                        pref.Type = "bool";
+                        pref.Value = bool.Parse(value.Substring(5));
+                        _prefs.Add(key, pref);
+                    } else {
+                        Kernel.Instance.Logger.Log(LogLevel.Warn, "Invalid preference: " + line);
+                        continue;
+                    }
+                }
+            }catch (Exception ex) {
+                if(ex == null) {
+                    Kernel.Instance.Panic("Null exception on prefs load");
                 }else {
-                    Kernel.Instance.Logger.Log(LogLevel.Warn, "Invalid preference: " + line);
-                    continue;
+                    Kernel.Instance.Panic("Exception on prefs load: " + ex.Message);
                 }
             }
         }

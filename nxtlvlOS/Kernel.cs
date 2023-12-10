@@ -5,6 +5,7 @@ using Cosmos.System;
 using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
+using Microsoft.VisualBasic;
 using nxtlvlOS.Apps;
 using nxtlvlOS.Assets;
 using nxtlvlOS.Processing;
@@ -15,6 +16,7 @@ using nxtlvlOS.Windowing.Elements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -36,40 +38,76 @@ namespace nxtlvlOS {
         private Label fpsLabel = null;
 
         protected override void BeforeRun() {
-            Console.WriteLine(Console.OutputEncoding);
-            Instance = this;
+            try {
+                Console.WriteLine(Console.OutputEncoding);
+                Instance = this;
 
-            Console.Clear();
-            Logger.AddLoggerTarget(new ConsoleLoggerTarget());
+                Console.Clear();
+                Logger.AddLoggerTarget(new ConsoleLoggerTarget());
 
-            var debuggerTarget = new DebuggerLoggerTarget();
-            debuggerTarget.dbg = this.mDebugger;
-            Logger.AddLoggerTarget(debuggerTarget);
+                var debuggerTarget = new DebuggerLoggerTarget();
+                debuggerTarget.dbg = this.mDebugger;
+                Logger.AddLoggerTarget(debuggerTarget);
 
-            Logger.Log(LogLevel.Info, $"Logger initiliazed, min output level: {LogLevelHelpers.GetTag(Logger.MinOutputLevel)}");
+                Logger.Log(LogLevel.Info, $"Logger initiliazed, min output level: {LogLevelHelpers.GetTag(Logger.MinOutputLevel)}");
 
-            Logger.Log(LogLevel.Info, $"Initiliazing file system");
-            VFSManager.RegisterVFS(VFS, false);
-            Logger.Log(LogLevel.Info, "Initiliazed file system!");
+                Logger.Log(LogLevel.Info, $"Initiliazing file system");
+                VFSManager.RegisterVFS(VFS, false);
+                Logger.Log(LogLevel.Info, "Initiliazed file system!");
 
-            Logger.Log(LogLevel.Info, "Initiliazing Window Manager");
+                Logger.Log(LogLevel.Info, "Dumping VFS info...");
+                int diskIdx = 0;
+                foreach (Disk disk in VFS.Disks) {
+                    Logger.Log(LogLevel.Info, "Disk " + diskIdx + ":");
+                    Logger.Log(LogLevel.Info, "  IsMBR: " + disk.IsMBR);
+                    Logger.Log(LogLevel.Info, "  Host TypeName: " + disk.Host.GetType().Name);
+                    Logger.Log(LogLevel.Info, "  Size: " + disk.Size);
+                    Logger.Log(LogLevel.Info, "  Type: " + disk.Type);
+                    Logger.Log(LogLevel.Info, "  Partitions:");
 
-            Canvas = new spagSVGAII(new(1280, 720, ColorDepth.ColorDepth32));
-            var adapter = new SpagSVGAIITarget();
-            adapter.Canvas = Canvas;
-            WindowManager.Target = adapter;
-            WindowManager.Init();
+                    int partitionIdx = 0;
+                    foreach (ManagedPartition partition in disk.Partitions) {
+                        Logger.Log(LogLevel.Info, "    Partition " + partitionIdx + ":");
+                        Logger.Log(LogLevel.Info, "      BlockCount: " + partition.Host.BlockCount);
+                        Logger.Log(LogLevel.Info, "      BlockSize: " + partition.Host.BlockSize);
+                        Logger.Log(LogLevel.Info, "      HasFS: " + partition.HasFileSystem);
+                        Logger.Log(LogLevel.Info, "      RootPath: " + partition.RootPath);
+                        Logger.Log(LogLevel.Info, "      MountedFS: " + partition.MountedFS);
 
-            Logger.Log(LogLevel.Info, "Initiliazed Window Mananger!");
+                        partitionIdx++;
+                    }
 
-            Logger.Log(LogLevel.Info, "Initiliazing SystemPreferenceService");
-            ProcessManager.CreateProcess(new SystemPreferenceService(), "SystemPreferenceService");
-            Logger.Log(LogLevel.Info, "Initiliazing ContextMenuService"); 
-            ProcessManager.CreateProcess(new ContextMenuService(), "ContextMenuService");
-            Logger.Log(LogLevel.Info, "Initiliazing UACService");
-            ProcessManager.CreateProcess(new UACService(), "UACService");
-            Logger.Log(LogLevel.Info, "Initiliazing OOBE");
-            ProcessManager.CreateProcess(new OOBE(), "OOBE");
+                    diskIdx++;
+                }
+
+                Logger.Log(LogLevel.Info, "Initiliazing SystemPreferenceService");
+                ProcessManager.CreateProcess(new SystemPreferenceService(), "SystemPreferenceService");
+
+                Logger.Log(LogLevel.Info, "Initiliazing Window Manager");
+
+                Canvas = new spagSVGAII(new(1280, 720, ColorDepth.ColorDepth32));
+                var adapter = new SpagSVGAIITarget();
+                adapter.Canvas = Canvas;
+                WindowManager.Target = adapter;
+                WindowManager.Init();
+
+                Logger.Log(LogLevel.Info, "Initiliazed Window Mananger!");
+
+                File.Create("0:\\iotest.txt");
+
+                Logger.Log(LogLevel.Info, "Initiliazing ContextMenuService");
+                ProcessManager.CreateProcess(new ContextMenuService(), "ContextMenuService");
+                Logger.Log(LogLevel.Info, "Initiliazing UACService");
+                ProcessManager.CreateProcess(new UACService(), "UACService");
+                Logger.Log(LogLevel.Info, "Initiliazing OOBE");
+                ProcessManager.CreateProcess(new OOBE(), "OOBE");
+            } catch(Exception ex) {
+                if(ex == null) {
+                    Logger.Log(LogLevel.Crit, "Unknown error occured during initiliazation");
+                }else {
+                    Logger.Log(LogLevel.Crit, "Error occured during initiliazation: " + ex.Message);
+                }
+            }
         }
 
         protected override void Run() {

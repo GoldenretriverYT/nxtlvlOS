@@ -198,6 +198,7 @@ namespace nxtlvlOS.Apps
             {
                 if(!Directory.Exists(@"1:\System\")) {
                     copyFilesTitle.SetText("Please insert the nxtlvlOS installation media and try again.");
+                    DumpFileTree("1:\\");
                     return;
                 }
 
@@ -217,6 +218,21 @@ namespace nxtlvlOS.Apps
             WindowManager.AddForm(oobeForm);
         }
 
+        static void DumpFileTree(string dir = @"0:\", int pad = 2) {
+            if(pad == 2) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, "Dumping file tree:");
+            }
+
+            foreach (var file in Directory.GetFiles(dir)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, new string(' ', pad) + "-" + file);
+            }
+
+            foreach (var directory in Directory.GetDirectories(dir)) {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, new string(' ', pad) + "-" + directory);
+                DumpFileTree(dir + directory + @"\", pad + 2);
+            }
+        }
+        
         public override void Update()
         {
 

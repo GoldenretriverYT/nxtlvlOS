@@ -125,7 +125,10 @@ namespace nxtlvlOS.Apps
                     ("(dbg) DumpFileTree", () => {
                         DumpFileTree();
                     }),
-                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 3)); // 6 (base) + 22 (height per item) * 3 (item count)
+                    ("(dbg) DiskTest", () => {
+                        DiskTest();
+                    }),
+                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 4)); // 6 (base) + 22 (height per item) * 3 (item count)
             };
 
             tasksContainer.AddChild(startButton);
@@ -181,6 +184,20 @@ namespace nxtlvlOS.Apps
 
         static void OpenSystemPreferences() {
             ProcessManager.CreateProcess(new PreferenceApp(), "Preferences");
+        }
+
+        static void DiskTest() {
+            int start = RTC.Hour * 3600 + RTC.Minute * 60 + RTC.Second;
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Writing 2mb of data...");
+
+            byte[] data = new byte[1024 * 1024 * 2];
+            File.WriteAllBytes(@"0:\test.bin", data);
+
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Reading 2mb of data...");
+            File.ReadAllBytes(@"0:\test.bin");
+
+            int end = RTC.Hour * 3600 + RTC.Minute * 60 + RTC.Second;
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Done in " + (end - start) + " seconds");
         }
     }
 }
