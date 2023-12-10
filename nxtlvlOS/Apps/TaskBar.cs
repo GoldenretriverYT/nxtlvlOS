@@ -188,12 +188,12 @@ namespace nxtlvlOS.Apps
 
         static void DiskTest() {
             int start = RTC.Hour * 3600 + RTC.Minute * 60 + RTC.Second;
-            Kernel.Instance.Logger.Log(LogLevel.Info, "Writing 2mb of data...");
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Writing 8mb of data...");
 
-            byte[] data = new byte[1024 * 1024 * 2];
+            byte[] data = new byte[1024 * 1024 * 8];
             File.WriteAllBytes(@"0:\test.bin", data);
 
-            Kernel.Instance.Logger.Log(LogLevel.Info, "Reading 2mb of data...");
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Reading 8mb of data...");
             File.ReadAllBytes(@"0:\test.bin");
 
             int end = RTC.Hour * 3600 + RTC.Minute * 60 + RTC.Second;

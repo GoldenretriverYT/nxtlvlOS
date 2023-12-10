@@ -36,6 +36,13 @@ namespace nxtlvlOS.Utils {
                 _data = data
             };
         }
+
+        public bool Resolve(out T data, T defaultVal = default(T)) {
+            data = defaultVal;
+            if (IsError) return false;
+            data = Data;
+            return true;
+        }
     }
 
     public class ErrorOr {
