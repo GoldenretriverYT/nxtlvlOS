@@ -31,22 +31,22 @@ namespace nxtlvlOS.Services {
             ContextMenuForm.Visible = false;
             ContextMenuForm.ShouldBeShownInTaskbar = false;
 
-            WindowManager.GlobalMouseUpEvent.Subscribe((eventData) => {
-                if(ContextMenuForm == null) {
+            WindowManager.GlobalMouseUpEvent += (eventData) => {
+                if (ContextMenuForm == null) {
                     Kernel.Instance.Logger.Log(LogLevel.Warn, "ContextMenuForm is null; should not be null.");
                     return;
                 }
-                
+
                 if (!ContextMenuForm.Visible) return;
 
                 var absPos = ContextMenuForm.GetAbsolutePosition();
 
-                if(!ShapeCollisions.RectIntersectsWithPoint(
+                if (!ShapeCollisions.RectIntersectsWithPoint(
                     absPos.y, absPos.x, absPos.y + ContextMenuForm.SizeY, absPos.x + ContextMenuForm.SizeX,
                     eventData.x, eventData.y)) {
                     ContextMenuForm.Visible = false;
                 }
-            });
+            };
 
             WindowManager.AddForm(ContextMenuForm);
         }
@@ -83,7 +83,7 @@ namespace nxtlvlOS.Services {
                 button.SizeY = 22;
                 button.SetText(item.title);
                 button.SetHorizontalAlignment(HorizontalAlignment.Left);
-                button.Click = (MouseState state, uint absX, uint absY) => {
+                button.Click += (MouseState state, uint absX, uint absY) => {
                     item.action();
                     ContextMenuForm.Visible = false;
                 };

@@ -68,7 +68,7 @@ namespace nxtlvlOS.Services {
                 okBtn.SizeX = 180;
                 okBtn.SizeY = 24;
                 okBtn.SetText("OK");
-                okBtn.Click = (state, x, y) => {
+                okBtn.Click += (state, x, y) => {
                     WindowManager.RemoveForm(form);
                 };
                 

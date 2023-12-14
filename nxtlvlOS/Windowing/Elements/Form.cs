@@ -51,7 +51,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
             closeButton.SetText("X");
 
-            closeButton.Click = (MouseState _, uint _, uint _) => {
+            closeButton.Click += (MouseState _, uint _, uint _) => {
                 Close();
             };
 

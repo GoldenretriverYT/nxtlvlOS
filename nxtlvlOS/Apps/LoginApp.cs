@@ -79,7 +79,7 @@ namespace nxtlvlOS.Apps
             accountLogin.SetHorizontalAlignment(HorizontalAlignment.Center);
             accountLogin.SetVerticalAlignment(VerticalAlignment.Middle);
 
-            accountLogin.Click = (state, absoluteX, absoluteY) =>
+            accountLogin.Click += (state, absoluteX, absoluteY) =>
             {
                 if (UACService.Instance.Authenticate(accountUsername.Text, accountPassword.Text))
                 {

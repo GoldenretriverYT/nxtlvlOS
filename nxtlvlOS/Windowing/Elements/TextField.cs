@@ -52,7 +52,7 @@ namespace nxtlvlOS.Windowing.Elements {
             frame.SetBackgroundColor(backgroundColor);
             UpdateFrameSizing();
 
-            SizeChanged = () => {
+            SizeChanged += () => {
                 UpdateFrameSizing();
             };           
                                             
@@ -309,7 +309,7 @@ namespace nxtlvlOS.Windowing.Elements {
             public ScrollableTextFrame() {
                 DrawMode = BufferDrawMode.RawCopy;
                 MousePassThrough = true;
-                SizeChanged = () => {
+                SizeChanged += () => {
                     Kernel.Instance.Logger.Log(LogLevel.Info, "Size changed for ScrollableTextFrame with text " + text);
                 };
             }

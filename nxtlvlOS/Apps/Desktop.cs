@@ -51,7 +51,7 @@ namespace nxtlvlOS.Apps
             desktopForm.SetTitlebarEnabled(false);
             desktopForm.SetTitle("Desktop");
 
-            desktopForm.KeyPress = (ev) =>
+            desktopForm.KeyPress += (ev) =>
             {
                 if (ev.Key == ConsoleKeyEx.F5)
                 {
@@ -59,7 +59,7 @@ namespace nxtlvlOS.Apps
                 }
             };
 
-            desktopForm.MouseUp = (state, prev, absoluteX, absoluteY) =>
+            desktopForm.MouseUp += (state, prev, absoluteX, absoluteY) =>
             {
                 Kernel.Instance.Logger.Log(LogLevel.Info, "Desktop mouse up " + (int)(prev & MouseState.Right));
                 if ((prev & MouseState.Right) == MouseState.Right)
@@ -170,7 +170,7 @@ namespace nxtlvlOS.Apps
                 img.SizeY = 64;
                 img.SetTransparent(true);
                 img.SetImage(directoryBmp.Data);
-                img.Click = DirectoryClicked;
+                img.Click += DirectoryClicked;
                 fileContainer.AddChild(img);
 
                 Label lbl = new();
@@ -181,7 +181,7 @@ namespace nxtlvlOS.Apps
                 lbl.SetText(directory);
                 lbl.SetHorizontalAlignment(HorizontalAlignment.Center);
                 lbl.SetSafeDrawEnabled(true);
-                lbl.Click = DirectoryClicked;
+                lbl.Click += DirectoryClicked;
                 fileContainer.AddChild(lbl);
 
                 offsetY += 80;
@@ -233,7 +233,7 @@ namespace nxtlvlOS.Apps
                 img.SizeY = 64;
                 img.SetTransparent(true);
                 img.SetImage(icon.Data);
-                img.Click = FileClicked;
+                img.Click += FileClicked;
                 fileContainer.AddChild(img);
 
                 Label lbl = new();
@@ -244,7 +244,7 @@ namespace nxtlvlOS.Apps
                 lbl.SetText(file);
                 lbl.SetHorizontalAlignment(HorizontalAlignment.Center);
                 lbl.SetSafeDrawEnabled(true);
-                lbl.Click = FileClicked;
+                lbl.Click += FileClicked;
                 fileContainer.AddChild(lbl);
 
                 offsetY += 80;
@@ -290,7 +290,7 @@ namespace nxtlvlOS.Apps
             cancelBtn.SizeX = 185;
             cancelBtn.SizeY = 24;
             cancelBtn.SetText("Cancel");
-            cancelBtn.Click = (state, x, y) => {
+            cancelBtn.Click += (state, x, y) => {
                 WindowManager.RemoveForm(form);
             };
 
@@ -300,7 +300,7 @@ namespace nxtlvlOS.Apps
             okBtn.SizeX = 185;
             okBtn.SizeY = 24;
             okBtn.SetText("OK");
-            okBtn.Click = (state, x, y) => {
+            okBtn.Click += (state, x, y) => {
                 Kernel.Instance.Logger.Log(LogLevel.Verb, "Renaming file '" + originalPath + "' to '" + (Path.GetDirectoryName(originalPath) + "\\" + newNameField.Text) + "'");
                 File.WriteAllBytes(Path.GetDirectoryName(originalPath) + "/" + newNameField.Text, File.ReadAllBytes(originalPath));
                 File.Delete(originalPath);

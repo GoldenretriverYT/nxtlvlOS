@@ -82,7 +82,7 @@ namespace nxtlvlOS.Apps
             prefSaveButton.RelativePosX = 0;
             prefSaveButton.RelativePosY = 0;
             prefSaveButton.SetText("Save");
-            prefSaveButton.Click = (state, mX, mY) => {
+            prefSaveButton.Click += (state, mX, mY) => {
                 SystemPreferenceService.Instance.SetPreference("wm.default_font", prefWMFontField.SelectedElement.Replace("/", "\\"));
                 WindowManager.DefaultFont = null; // Reset the cached default font.
 

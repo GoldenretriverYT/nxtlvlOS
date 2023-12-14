@@ -52,7 +52,7 @@ namespace nxtlvlOS.Apps
             
             var fileMenu = new ToolstripButton();
             fileMenu.SetText("File");
-            fileMenu.Click = (state, x, y) => {
+            fileMenu.Click += (state, x, y) => {
                 ContextMenuService.Instance.ShowContextMenu(new() {
                     ("New", () => { New(); }),
                     ("Open", () => { Open(); }),
@@ -67,7 +67,7 @@ namespace nxtlvlOS.Apps
 
             var editMenu = new ToolstripButton();
             editMenu.SetText("Edit");
-            editMenu.Click = (state, x, y) => {
+            editMenu.Click += (state, x, y) => {
                 ContextMenuService.Instance.ShowContextMenu(new() {
                     ("Cut", () => {}),
                     ("Copy", () => {}),
@@ -77,7 +77,7 @@ namespace nxtlvlOS.Apps
 
             var helpMenu = new ToolstripButton();
             helpMenu.SetText("Help");
-            helpMenu.Click = (state, x, y) => {
+            helpMenu.Click += (state, x, y) => {
                 ContextMenuService.Instance.ShowContextMenu(new() {
                     ("About Notepad", () => { About(); })
                 }, (int)(helpMenu.GetAbsolutePosition().x), (int)(helpMenu.GetAbsolutePosition().y + helpMenu.SizeY), 200);

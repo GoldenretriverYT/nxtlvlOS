@@ -1,6 +1,7 @@
 ﻿using Cosmos.System;
 using nxtlvlOS.Windowing.Elements;
 using nxtlvlOS.Windowing.Fonts;
+using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -71,27 +72,24 @@ namespace nxtlvlOS.Windowing {
         /// </summary>
         public bool BufferWasUpdated = true;
 
-        public Action PreDrawAndChildUpdate = () => { };
-        public Action PostDrawAndChildUpdate = () => { };
+        public Event PreDrawAndChildUpdate = new();
+        public Event PostDrawAndChildUpdate = new();
 
-        public Action SizeChanged = () => { };
-        public Action VisibilityChanged = () => { };
+        public Event SizeChanged = new();
+        public Event VisibilityChanged = new();
 
-        public Action<MouseState, uint, uint> Click = (MouseState state, uint absoluteX, uint absoluteY) => { };
+        public Event<MouseState, uint, uint> Click = new();
+        
+        public Event<MouseState, uint, uint> MouseDown = new();
+        public Event<MouseState, MouseState, uint, uint> MouseUp = new();
 
-        public Action<MouseState, uint, uint> MouseDown = (MouseState state, uint absoluteX, uint absoluteY) => {
-        };
-
-        public Action<MouseState, MouseState, uint, uint> MouseUp = (MouseState state, MouseState prev, uint absoluteX, uint absoluteY) => {
-        };
-
-        public Action<KeyEvent> KeyPress = (KeyEvent) => { };
+        public Event<KeyEvent> KeyPress = new();
 
         public bool VisibleIncludingParents => Visible && (Parent == null ? true : Parent.VisibleIncludingParents);
         public bool PreviousVisibility = false;
 
         public virtual void Update() {
-            PreDrawAndChildUpdate();
+            PreDrawAndChildUpdate.Invoke();
 
             if (ShouldBeDrawnToScreen && (_bufSizeX != SizeX || _bufSizeY != SizeY)) {
                 _bufSizeX = SizeX;
@@ -99,12 +97,12 @@ namespace nxtlvlOS.Windowing {
 
                 Buffer = new uint[SizeY * SizeX];
                 SetDirty(true);
-                SizeChanged();
+                SizeChanged.Invoke();
             }
 
             if(PreviousVisibility != VisibleIncludingParents) {
                 PreviousVisibility = VisibleIncludingParents;
-                VisibilityChanged();
+                VisibilityChanged.Invoke();
             }
 
 
@@ -119,20 +117,20 @@ namespace nxtlvlOS.Windowing {
                 child.Update();
             }
 
-            PostDrawAndChildUpdate();
+            PostDrawAndChildUpdate.Invoke();
         }
 
         public virtual void OnMouseDown(MouseState state) {
             this.BringToFront();
 
-            MouseDown(state, MouseManager.X, MouseManager.Y);
+            MouseDown.Invoke(state, MouseManager.X, MouseManager.Y);
         }
 
         public virtual void OnMouseUp(MouseState state, MouseState prev, bool mouseIsOver) {
-            MouseUp(state, prev, MouseManager.X, MouseManager.Y);
+            MouseUp.Invoke(state, prev, MouseManager.X, MouseManager.Y);
 
             if (mouseIsOver && enabled) {
-                Click(prev, MouseManager.X, MouseManager.Y); // we need to provide prev so the mouse button can get fetched from it
+                Click.Invoke(prev, MouseManager.X, MouseManager.Y); // we need to provide prev so the mouse button can get fetched from it
             }
         }
 
@@ -145,7 +143,7 @@ namespace nxtlvlOS.Windowing {
         }
 
         public virtual void OnKey(KeyEvent ev) {
-            KeyPress(ev);
+            KeyPress.Invoke(ev);
         }
 
         public void BringToFront() {

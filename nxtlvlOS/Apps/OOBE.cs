@@ -107,7 +107,7 @@ namespace nxtlvlOS.Apps
                 layoutButton.SetHorizontalAlignment(HorizontalAlignment.Center);
                 layoutButton.SetVerticalAlignment(VerticalAlignment.Middle);
 
-                layoutButton.Click = (state, absoluteX, absoluteY) =>
+                layoutButton.Click += (state, absoluteX, absoluteY) =>
                 {
                     stepSelectKeyboardLayout.Visible = false;
                     stepCreateAccountContainer.Visible = true;
@@ -157,7 +157,7 @@ namespace nxtlvlOS.Apps
             accountNextStep.SetHorizontalAlignment(HorizontalAlignment.Center);
             accountNextStep.SetVerticalAlignment(VerticalAlignment.Middle);
 
-            accountNextStep.Click = (state, absoluteX, absoluteY) =>
+            accountNextStep.Click += (state, absoluteX, absoluteY) =>
             {
                 Kernel.Instance.Logger.Log(LogLevel.Info, "Creating user");
                 UACService.Instance.CreateUser(accountUsername.Text, accountPassword.Text);
@@ -194,7 +194,7 @@ namespace nxtlvlOS.Apps
             copyFilesButton.SetHorizontalAlignment(HorizontalAlignment.Center);
             copyFilesButton.SetVerticalAlignment(VerticalAlignment.Middle);
 
-            copyFilesButton.Click = (state, absoluteX, absoluteY) =>
+            copyFilesButton.Click += (state, absoluteX, absoluteY) =>
             {
                 if(!Directory.Exists(@"1:\System\")) {
                     copyFilesTitle.SetText("Please insert the nxtlvlOS installation media and try again.");

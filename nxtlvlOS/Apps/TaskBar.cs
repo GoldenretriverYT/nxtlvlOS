@@ -112,7 +112,7 @@ namespace nxtlvlOS.Apps
             startButton.SetHorizontalAlignment(HorizontalAlignment.Left);
             startButton.SetVerticalAlignment(VerticalAlignment.Middle);
 
-            startButton.Click = (_, _, _) =>
+            startButton.Click += (_, _, _) =>
             {
                 // For now, lets show a context menu as start menu
                 ContextMenuService.Instance.ShowContextMenu(new() {
@@ -150,7 +150,7 @@ namespace nxtlvlOS.Apps
                 btn.SetText(form.Title);
                 btn.SetSafeDrawEnabled(true);
 
-                btn.Click = (s, absoluteX, absoluteY) =>
+                btn.Click += (s, absoluteX, absoluteY) =>
                 {
                     WindowManager.PutToFront(form);
                 };
