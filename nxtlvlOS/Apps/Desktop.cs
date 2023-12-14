@@ -270,24 +270,24 @@ namespace nxtlvlOS.Apps
             form.SetTitlebarEnabled(true);
 
             Label lbl = new();
-            lbl.RelativePosX = 5;
-            lbl.RelativePosY = 35;
+            lbl.RelativePosX = 10;
+            lbl.RelativePosY = 15;
             lbl.SizeX = 390;
             lbl.SizeY = 16;
             lbl.SetText("Specify a new name for '" + Path.GetFileName(originalPath) + "':");
 
             TextField newNameField = new();
-            newNameField.RelativePosX = 5;
-            newNameField.RelativePosY = 55;
-            newNameField.SizeX = 390;
+            newNameField.RelativePosX = 10;
+            newNameField.RelativePosY = 35;
+            newNameField.SizeX = 380;
             newNameField.SizeY = 24;
 
             newNameField.SetText(Path.GetFileName(originalPath));
 
             TextButton cancelBtn = new();
-            cancelBtn.RelativePosX = 5;
-            cancelBtn.RelativePosY = 85;
-            cancelBtn.SizeX = 190;
+            cancelBtn.RelativePosX = 10;
+            cancelBtn.RelativePosY = 70;
+            cancelBtn.SizeX = 185;
             cancelBtn.SizeY = 24;
             cancelBtn.SetText("Cancel");
             cancelBtn.Click = (state, x, y) => {
@@ -296,12 +296,13 @@ namespace nxtlvlOS.Apps
 
             TextButton okBtn = new();
             okBtn.RelativePosX = 205;
-            okBtn.RelativePosY = 85;
-            okBtn.SizeX = 190;
+            okBtn.RelativePosY = 70;
+            okBtn.SizeX = 185;
             okBtn.SizeY = 24;
             okBtn.SetText("OK");
             okBtn.Click = (state, x, y) => {
-                File.WriteAllBytes(Path.GetFullPath(originalPath) + "/" + newNameField.Text, File.ReadAllBytes(originalPath));
+                Kernel.Instance.Logger.Log(LogLevel.Verb, "Renaming file '" + originalPath + "' to '" + (Path.GetDirectoryName(originalPath) + "\\" + newNameField.Text) + "'");
+                File.WriteAllBytes(Path.GetDirectoryName(originalPath) + "/" + newNameField.Text, File.ReadAllBytes(originalPath));
                 File.Delete(originalPath);
                 ReloadFiles();
                 WindowManager.RemoveForm(form);

@@ -55,7 +55,7 @@ namespace nxtlvlOS {
                 VFSManager.RegisterVFS(VFS, false);
                 Logger.Log(LogLevel.Info, "Initiliazed file system!");
 
-                Logger.Log(LogLevel.Info, "Dumping VFS info...");
+                /*Logger.Log(LogLevel.Info, "Dumping VFS info...");
                 int diskIdx = 0;
                 foreach (Disk disk in VFS.Disks) {
                     Logger.Log(LogLevel.Info, "Disk " + diskIdx + ":");
@@ -78,7 +78,7 @@ namespace nxtlvlOS {
                     }
 
                     diskIdx++;
-                }
+                }*/
 
                 Logger.Log(LogLevel.Info, "Initiliazing SystemPreferenceService");
                 ProcessManager.CreateProcess(new SystemPreferenceService(), "SystemPreferenceService");
@@ -99,6 +99,8 @@ namespace nxtlvlOS {
                 ProcessManager.CreateProcess(new ContextMenuService(), "ContextMenuService");
                 Logger.Log(LogLevel.Info, "Initiliazing UACService");
                 ProcessManager.CreateProcess(new UACService(), "UACService");
+                Logger.Log(LogLevel.Info, "Initiliazing ClipboardService");
+                ProcessManager.CreateProcess(new ClipboardService(), "ClipboardService");
                 Logger.Log(LogLevel.Info, "Initiliazing OOBE");
                 ProcessManager.CreateProcess(new OOBE(), "OOBE");
             } catch(Exception ex) {

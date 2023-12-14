@@ -183,6 +183,7 @@ namespace nxtlvlOS.Windowing
 
                     #region Copy Buffer
                     var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
+                    var (xMinParentBounds, xMaxParentBounds, yMinParentBounds, yMaxParentBounds) = el.GetParentBounds();
 
                     if (el.DrawMode == BufferDrawMode.RawCopy) {
                         uint offsetInThisElement = (uint)((absolutePosY * sizeX) + absolutePosX);

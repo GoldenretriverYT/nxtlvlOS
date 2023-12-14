@@ -27,87 +27,82 @@ namespace nxtlvlOS.Windowing.Elements {
         public PCScreenFont Font => frame.Font;
         public int ScrollX => frame.ScrollX;
         public int ScrollY => frame.ScrollY;
-
-        public int CursorPos = 0;
-
+                                            
+        public int CursorPos = 0;           
+                                            
         public bool IsMouseDown { get; private set; } = false;
         public bool IsMouseHovering { get; private set; } = false;
-
+                                            
         private ScrollableTextFrame frame = new() {
-            CustomId = "TextFieldFrame"
-        };
-        
-        private Rect cursor = new() {
-            SizeX = 2,
-            SizeY = 16,
-            CustomId = "CursorRect"
-        };
-
-        public TextField() {
+            CustomId = "TextFieldFrame"     
+        };                                  
+                                            
+        private Rect cursor = new() {       
+            SizeX = 2,                      
+            SizeY = 16,                     
+            CustomId = "CursorRect"         
+        };                                  
+                                            
+        public TextField() {                
             DrawMode = BufferDrawMode.RawCopy;
-
+                                            
             cursor.BackgroundColor = 0xFF000000;
-            cursor.Visible = false;
-
+            cursor.Visible = false;         
+                                            
             frame.SetBackgroundColor(backgroundColor);
             UpdateFrameSizing();
 
             SizeChanged = () => {
                 UpdateFrameSizing();
-            };
-
-            /*VisibilityChanged = () => {
-                Kernel.Instance.Logger.Log(LogLevel.Info, "Visibility changed");
-                UpdateFrameSizing(); // HACK: This is a hack! Required due to GC issues in Cosmos
-            };*/
-
-            AddChild(frame);
-            AddChild(cursor);
-        }
-
-        public override void Draw() {
-            SetDirty(false);
-
-            if (IsMouseDown) {
+            };           
+                                            
+            AddChild(frame);                
+            AddChild(cursor);               
+        }                                   
+                                            
+        public override void Draw() {       
+            SetDirty(false);                
+                                            
+            if (IsMouseDown) {              
                 DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
-            } else {
-                if (!IsMouseHovering) {
+            } else {                        
+                if (!IsMouseHovering) {     
                     DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor);
-                } else {
+                } else {                    
                     DrawRect(0, 0, SizeX, SizeY, 0xFF000000);
                     DrawRectFilled(1, 1, SizeX - 1, SizeY - 1, backgroundColor);
-                }
-            }
-        }
-
-        public override void Update() {
+                }                           
+            }                               
+        }                                   
+                                            
+        public override void Update() {     
             if(WindowManager.FocusedElement == this && RTC.Second % 2 == 0) {
-                cursor.Visible = true;
-
+                cursor.Visible = true;      
+                                            
                 var textPos = GetTextPosition(CursorPos);
                 var relPos = GetRelativePositionFromTextPosition(textPos.x, textPos.y);
-
+                                            
                 cursor.RelativePosX = relPos.x + 3;
                 cursor.RelativePosY = relPos.y + 3;
-            } else {
-                cursor.Visible = false;
-            }
-
-            base.Update();
-        }
-
-        private void UpdateFrameSizing() {
-            frame.SizeX = SizeX - 8;
-            frame.SizeY = SizeY - 8;
-            frame.RelativePosX = 4;
-            frame.RelativePosY = 4;
-            frame.SetDirty(true);
-        }
-
+            } else {                        
+                cursor.Visible = false;     
+            }                               
+                                            
+            base.Update();                  
+        }                                   
+                                            
+        private void UpdateFrameSizing() {  
+            frame.SizeX = SizeX - 8;        
+            frame.SizeY = SizeY - 8;        
+            frame.RelativePosX = 4;         
+            frame.RelativePosY = 4;         
+            frame.SetDirty(true);           
+        }                                   
+                                            
         private (int x, int y) GetTextPosition(int offset) {
-            int x = 0;
-            int y = 0;
-
+            int x = 0;                      
+            int y = 0;                      
+                                            
             string[] lines = Text.Split('\n');
 
             for(int i = 0; i < offset; i++) {

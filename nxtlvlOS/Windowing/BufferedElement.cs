@@ -190,6 +190,27 @@ namespace nxtlvlOS.Windowing {
             return (absoluteX, absoluteY);
         }
 
+        public (int xMin, int xMax, int yMin, int yMax) GetParentBounds() {
+            if (Parent == null) {
+                return (0, (int)SizeX, 0, (int)SizeY);
+            }
+
+            var parentAbs = Parent.GetAbsolutePosition();
+            var parentBounds = Parent.GetParentBounds();
+
+            var xMin = (int)parentAbs.x;
+            var xMax = (int)parentAbs.x + (int)SizeX;
+            var yMin = (int)parentAbs.y;
+            var yMax = (int)parentAbs.y + (int)SizeY;
+
+            if (xMin < parentBounds.xMin) xMin = parentBounds.xMin;
+            if (xMax > parentBounds.xMax) xMax = parentBounds.xMax;
+            if (yMin < parentBounds.yMin) yMin = parentBounds.yMin;
+            if (yMax > parentBounds.yMax) yMax = parentBounds.yMax;
+
+            return (xMin, xMax, yMin, yMax);
+        }
+
         public void Clear(uint colorArgb = 0x00000000) {
             for(var x = 0; x < SizeX; x++) {
                 for(var y = 0; y < SizeY; y++) {

@@ -1,6 +1,8 @@
 ﻿using nxtlvlOS.Loaders;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Utils;
+using nxtlvlOS.Windowing;
+using nxtlvlOS.Windowing.Elements;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +42,41 @@ namespace nxtlvlOS.Services {
             if (!associationFiles.ContainsKey(extension)) {
                 Kernel.Instance.Logger.Log(LogLevel.Sill, "No suitable association found! Extension: " + extension
                     + "Known Extensions: " + string.Join(", ", associationFiles.Keys));
+
+                Form form = new(SelfProcess);
+
+                form.RelativePosX = 200;
+                form.RelativePosY = 200;
+
+                form.SizeX = 400;
+                form.SizeY = 130;
+
+                form.SetTitle("Choose an app to open this file");
+                form.SetTitlebarEnabled(true);
+
+                Label lbl = new();
+                lbl.RelativePosX = 10;
+                lbl.RelativePosY = 5;
+                lbl.SizeX = 390;
+                lbl.SizeY = 64;
+                lbl.SetText("This dialog is not yet implemented.\nInstead, you can manually\ncreate an association file at\n" + AssocFilesRoot + extension + ".asc");
+                lbl.SetNewlinesEnabled(true);
+                
+                TextButton okBtn = new();
+                okBtn.RelativePosX = 200;
+                okBtn.RelativePosY = 70;
+                okBtn.SizeX = 180;
+                okBtn.SizeY = 24;
+                okBtn.SetText("OK");
+                okBtn.Click = (state, x, y) => {
+                    WindowManager.RemoveForm(form);
+                };
+                
+                form.AddChild(lbl);
+                form.AddChild(okBtn);
+
+                WindowManager.AddForm(form);
+
                 return; // TODO: Implement "Choose an app to open this file" dialog
             }
 

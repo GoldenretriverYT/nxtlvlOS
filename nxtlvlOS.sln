@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "nxtFontMaker", "nxtFontMake
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMPtoNXTBMP", "BMPtoNXTBMP\BMPtoNXTBMP.csproj", "{731A6000-2A1C-43D4-A2BF-695FABB91DAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFS", "TestFS\TestFS.csproj", "{AC7C518B-27DD-4449-84B3-AE0E040E159F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFS", "TestFS\TestFS.csproj", "{AC7C518B-27DD-4449-84B3-AE0E040E159F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "spaghetto", "..\spaghetto\spaghetto\spaghetto.csproj", "{045BCB35-A5A2-4AEB-BB19-1CBDA1C30C43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AC7C518B-27DD-4449-84B3-AE0E040E159F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC7C518B-27DD-4449-84B3-AE0E040E159F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC7C518B-27DD-4449-84B3-AE0E040E159F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{045BCB35-A5A2-4AEB-BB19-1CBDA1C30C43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{045BCB35-A5A2-4AEB-BB19-1CBDA1C30C43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{045BCB35-A5A2-4AEB-BB19-1CBDA1C30C43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{045BCB35-A5A2-4AEB-BB19-1CBDA1C30C43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
