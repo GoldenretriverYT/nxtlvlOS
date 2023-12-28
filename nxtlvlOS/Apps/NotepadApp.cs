@@ -89,7 +89,7 @@ namespace nxtlvlOS.Apps
 
             // TextField
             textField = new();
-            textField.RelativePosX = 2;
+            textField.RelativePosX = 200;
             textField.RelativePosY = 26; // toolstrip is included within the size
                                          // note: the toolstrip is actually 25px to show a seperator
             textField.SizeX = 600 - 4;

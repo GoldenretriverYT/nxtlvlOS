@@ -62,6 +62,7 @@ namespace nxtlvlOS.Apps
             accountUsername.RelativePosX = 0;
             accountUsername.RelativePosY = 30;
             accountUsername.SetPlaceholder("Username");
+            accountUsername.CustomId = "__dbg__TextFieldAccountUsername";
 
             TextField accountPassword = new();
             accountPassword.SizeX = 400;

@@ -21,10 +21,10 @@ namespace nxtlvlOS.Windowing
         public static uint[] Buffer;
         public static uint[] EmptyBuffer;
 
-        public static (uint w, uint h) ScreenSize => (sizeX, sizeY);
+        public static (uint w, uint h) ScreenSize => (wmSizeX, wmSizeY);
 
         public static List<BufferedElement> Forms = new();
-        private static uint sizeX, sizeY;
+        private static uint wmSizeX, wmSizeY;
 
         private static MouseState previousState = MouseState.None;
 
@@ -81,9 +81,9 @@ namespace nxtlvlOS.Windowing
         };
 
         public static void Init() {
-            (sizeX, sizeY) = Target.GetSize();
-            Buffer = new uint[sizeX * (sizeY+24)]; // Allocate 24 extra lines as a safe room for out of bound write
-            EmptyBuffer = new uint[sizeX * (sizeY+24)];
+            (wmSizeX, wmSizeY) = Target.GetSize();
+            Buffer = new uint[wmSizeX * (wmSizeY+24)]; // Allocate 24 extra lines as a safe room for out of bound write
+            EmptyBuffer = new uint[wmSizeX * (wmSizeY+24)];
 
             MemoryOperations.Fill(EmptyBuffer, 0xFF4CAACF);
 
@@ -97,8 +97,8 @@ namespace nxtlvlOS.Windowing
             cursorElement.SetTransparent(true);
             cursorElement.Draw();
 
-            MouseManager.ScreenWidth = sizeX;
-            MouseManager.ScreenHeight = sizeY;
+            MouseManager.ScreenWidth = wmSizeX;
+            MouseManager.ScreenHeight = wmSizeY;
         }
 
         public static WMResult Update() {
@@ -186,16 +186,28 @@ namespace nxtlvlOS.Windowing
                     var (xMinParentBounds, xMaxParentBounds, yMinParentBounds, yMaxParentBounds) = el.GetParentBounds();
 
                     if (el.DrawMode == BufferDrawMode.RawCopy) {
-                        uint offsetInThisElement = (uint)((absolutePosY * sizeX) + absolutePosX);
-                        uint offsetInChild = 0;
+                        // Calculate the overlapping region
+                        int startX = (int)Math.Max(absolutePosX, xMinParentBounds);
+                        int endX = (int)Math.Min(absolutePosX + el.SizeX, xMaxParentBounds);
+                        int startY = (int)Math.Max(absolutePosY, yMinParentBounds);
+                        int endY = (int)Math.Min(absolutePosY + el.SizeY, yMaxParentBounds);
 
-                        for (var y = 0; y < el.SizeY; y++) {
-                            System.Buffer.BlockCopy(el.Buffer, (int)offsetInChild * 4, Buffer, (int)offsetInThisElement * 4, (int)el.SizeX * 4);
+                        // Offset in the window manager buffer
+                        uint offsetInWMBuffer = (uint)(startY * wmSizeX + startX);
+                        // Offset in the child buffer
+                        uint offsetInChild = (uint)((startY - absolutePosY) * el.SizeX + (startX - absolutePosX));
+
+                        if (endX - startX <= 0 || endY - startY <= 0) continue;
+
+                        for (var y = startY; y < endY; y++) {
+                            // Adjust the length to copy based on the overlapping region
+                            int lengthToCopy = (endX - startX) * 4;
+                            System.Buffer.BlockCopy(el.Buffer, (int)offsetInChild * 4, Buffer, (int)offsetInWMBuffer * 4, lengthToCopy);
                             offsetInChild += el.SizeX;
-                            offsetInThisElement += sizeX;
+                            offsetInWMBuffer += wmSizeX;
                         }
                     } else {
-                        uint offsetInThisElement = (uint)((absolutePosY * sizeX) + absolutePosX);  // Only updated per-line
+                        uint offsetInThisElement = (uint)((absolutePosY * wmSizeX) + absolutePosX);  // Only updated per-line
                         uint offsetInChild = 0; // Only updated per-line
 
                         for (var y = 0; y < el.SizeY; y++) {
@@ -220,7 +232,7 @@ namespace nxtlvlOS.Windowing
                             }
 
                             offsetInChild += el.SizeX;
-                            offsetInThisElement += sizeX;
+                            offsetInThisElement += wmSizeX;
                         }
                     }
                     #endregion

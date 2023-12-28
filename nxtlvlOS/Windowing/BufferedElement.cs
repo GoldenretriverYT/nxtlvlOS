@@ -190,16 +190,17 @@ namespace nxtlvlOS.Windowing {
 
         public (int xMin, int xMax, int yMin, int yMax) GetParentBounds() {
             if (Parent == null) {
-                return (0, (int)SizeX, 0, (int)SizeY);
+                return (0, (int)WindowManager.ScreenSize.w, 0, (int)WindowManager.ScreenSize.h);
             }
 
             var parentAbs = Parent.GetAbsolutePosition();
             var parentBounds = Parent.GetParentBounds();
 
+            // If any size is 0, we use the screen size because its probably 0 as the element has no size
             var xMin = (int)parentAbs.x;
-            var xMax = (int)parentAbs.x + (int)SizeX;
+            var xMax = (int)parentAbs.x + (int)(Parent.SizeX == 0 ? WindowManager.ScreenSize.w : Parent.SizeX);
             var yMin = (int)parentAbs.y;
-            var yMax = (int)parentAbs.y + (int)SizeY;
+            var yMax = (int)parentAbs.y + (int)(Parent.SizeY == 0 ? WindowManager.ScreenSize.h : Parent.SizeY);
 
             if (xMin < parentBounds.xMin) xMin = parentBounds.xMin;
             if (xMax > parentBounds.xMax) xMax = parentBounds.xMax;
