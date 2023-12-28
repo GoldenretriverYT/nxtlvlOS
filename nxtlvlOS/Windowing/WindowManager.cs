@@ -206,33 +206,34 @@ namespace nxtlvlOS.Windowing
                             offsetInChild += el.SizeX;
                             offsetInWMBuffer += wmSizeX;
                         }
-                    } else {
-                        uint offsetInThisElement = (uint)((absolutePosY * wmSizeX) + absolutePosX);  // Only updated per-line
-                        uint offsetInChild = 0; // Only updated per-line
+                    } else if (el.DrawMode == BufferDrawMode.PixelByPixel) {
+                        // Calculate the overlapping region
+                        int startX = (int)Math.Max(absolutePosX, xMinParentBounds);
+                        int endX = (int)Math.Min(absolutePosX + el.SizeX, xMaxParentBounds);
+                        int startY = (int)Math.Max(absolutePosY, yMinParentBounds);
+                        int endY = (int)Math.Min(absolutePosY + el.SizeY, yMaxParentBounds);
 
-                        for (var y = 0; y < el.SizeY; y++) {
-                            for (var x = 0; x < el.SizeX; x++) {
-                                var childBufVal = el.Buffer[offsetInChild + x];
-                                var currentBufVal = Buffer[offsetInThisElement + x];
+                        for (var y = startY; y < endY; y++) {
+                            uint offsetInThisElement = (uint)((y * wmSizeX) + startX);
+                            uint offsetInChild = (uint)((y - absolutePosY) * el.SizeX + (startX - absolutePosX));
+
+                            for (var x = startX; x < endX; x++) {
+                                var childBufVal = el.Buffer[offsetInChild + (x - startX)];
+                                var currentBufVal = Buffer[offsetInThisElement + (x - startX)];
                                 var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
 
                                 if (childBufValAlpha == 0) continue;
 
                                 if (childBufValAlpha == 255) {
-                                    Buffer[offsetInThisElement + x] = childBufVal;
+                                    Buffer[offsetInThisElement + (x - startX)] = childBufVal;
                                 } else {
                                     byte red = (byte)(((childBufVal >> 16) & 0xFF) * childBufValAlpha + ((currentBufVal >> 16) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                     byte green = (byte)(((childBufVal >> 8) & 0xFF) * childBufValAlpha + ((currentBufVal >> 8) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                     byte blue = (byte)(((childBufVal >> 0) & 0xFF) * childBufValAlpha + ((currentBufVal >> 0) & 0xFF) * (255 - childBufValAlpha) >> 8);
 
-                                    Buffer[offsetInThisElement + x] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
+                                    Buffer[offsetInThisElement + (x - startX)] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
                                 }
-
-                                //Buffer[offsetInThisElement + x] = ColorUtils.AlphaBlend(childBufVal, currentBufVal);
                             }
-
-                            offsetInChild += el.SizeX;
-                            offsetInThisElement += wmSizeX;
                         }
                     }
                     #endregion
