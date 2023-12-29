@@ -11,7 +11,7 @@ namespace nxtlvlOS.Windowing.Elements {
         /// <summary>
         /// Adds the element as a child and recalculates the layout
         /// </summary>
-        public void AddItem(BufferedElement element) {
+        public virtual void AddItem(BufferedElement element) {
             AddChild(element);
             DoLayout();
         }

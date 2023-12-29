@@ -185,6 +185,11 @@ namespace nxtlvlOS.Windowing
                     var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
                     var (xMinParentBounds, xMaxParentBounds, yMinParentBounds, yMaxParentBounds) = el.GetParentBounds();
 
+                    if(el.CustomId == "__dbg__") {
+                        Kernel.Instance.Logger.Log(LogLevel.Info, $"Absolute position: {absolutePosX}, {absolutePosY}");
+                        Kernel.Instance.Logger.Log(LogLevel.Info, $"Parent bounds: xMin({xMinParentBounds}), xMax({xMaxParentBounds}), yMin({yMinParentBounds}), yMax({yMaxParentBounds})");
+                    }
+
                     if (el.DrawMode == BufferDrawMode.RawCopy) {
                         // Calculate the overlapping region
                         int startX = (int)Math.Max(absolutePosX, xMinParentBounds);

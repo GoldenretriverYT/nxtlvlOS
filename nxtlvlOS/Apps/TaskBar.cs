@@ -128,7 +128,10 @@ namespace nxtlvlOS.Apps
                     ("(dbg) DiskTest", () => {
                         DiskTest();
                     }),
-                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 4)); // 6 (base) + 22 (height per item) * 3 (item count)
+                    ("(dbg) UITest", () => {
+                        UITest();
+                    }),
+                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 5)); // 6 (base) + 22 (height per item) * 5 (item count)
             };
 
             tasksContainer.AddChild(startButton);
@@ -198,6 +201,118 @@ namespace nxtlvlOS.Apps
 
             int end = RTC.Hour * 3600 + RTC.Minute * 60 + RTC.Second;
             Kernel.Instance.Logger.Log(LogLevel.Info, "Done in " + (end - start) + " seconds");
+        }
+
+        void UITest() {
+            Form form = new(SelfProcess);
+            form.SizeX = 1000;
+            form.SizeY = 600;
+            form.RelativePosX = 100;
+            form.RelativePosY = 40;
+
+            var button = new TextButton();
+            button.RelativePosX = 10;
+            button.RelativePosY = 10;
+            button.SizeX = 100;
+            button.SizeY = 30;
+            button.SetText("Click me!");
+
+            button.Click += (_, _, _) => {
+                button.SetText("Clicked!");
+            };
+
+            form.AddChild(button);
+
+            var scrollView = new ScrollView();
+            scrollView.RelativePosX = 10;
+            scrollView.RelativePosY = 50;
+            scrollView.SizeX = 300;
+            scrollView.SizeY = 300;
+
+            scrollView.ContainerSizeX = 1000;
+            scrollView.ContainerSizeY = 1000;
+
+            form.AddChild(scrollView);
+
+            var label = new Label();
+            label.RelativePosX = 0;
+            label.RelativePosY = 0;
+            label.SizeX = 200;
+            label.SizeY = 16;
+            label.SetText("Hello world!");
+            //label.CustomId = "__dbg__";
+            scrollView.AddItem(label);
+
+            var label2 = new Label();
+            label2.RelativePosX = 280;
+            label2.RelativePosY = 600;
+            label2.SizeX = 200;
+            label2.SizeY = 16;
+            label2.SetText("Hello world!");
+            scrollView.AddItem(label2);
+
+            var textField = new TextField();
+            textField.RelativePosX = 10;
+            textField.RelativePosY = 20;
+            textField.SizeX = 200;
+            textField.SizeY = 200;
+            textField.SetText("Hello world!");
+            scrollView.AddItem(textField);
+
+            // There currently are no scrollbars built into scrollview, add some "scroll buttons" to test scrolling
+            var scrollUpButton = new TextButton();
+            scrollUpButton.RelativePosX = 410;
+            scrollUpButton.RelativePosY = 50;
+            scrollUpButton.SizeX = 50;
+            scrollUpButton.SizeY = 50;
+            scrollUpButton.SetText("Up");
+
+            scrollUpButton.Click += (_, _, _) => {
+                scrollView.ScrollY += 10;
+            };
+
+            form.AddChild(scrollUpButton);
+
+            var scrollDownButton = new TextButton();
+            scrollDownButton.RelativePosX = 410;
+            scrollDownButton.RelativePosY = 100;
+            scrollDownButton.SizeX = 50;
+            scrollDownButton.SizeY = 50;
+            scrollDownButton.SetText("Down");
+
+            scrollDownButton.Click += (_, _, _) => {
+                scrollView.ScrollY -= 10;
+            };
+
+            form.AddChild(scrollDownButton);
+
+            var scrollLeftButton = new TextButton();
+            scrollLeftButton.RelativePosX = 360;
+            scrollLeftButton.RelativePosY = 75;
+            scrollLeftButton.SizeX = 50;
+            scrollLeftButton.SizeY = 50;
+            scrollLeftButton.SetText("Left");
+
+            scrollLeftButton.Click += (_, _, _) => {
+                scrollView.ScrollX += 10;
+            };
+
+            form.AddChild(scrollLeftButton);
+
+            var scrollRightButton = new TextButton();
+            scrollRightButton.RelativePosX = 460;
+            scrollRightButton.RelativePosY = 75;
+            scrollRightButton.SizeX = 50;
+            scrollRightButton.SizeY = 50;
+            scrollRightButton.SetText("Right");
+
+            scrollRightButton.Click += (_, _, _) => {
+                scrollView.ScrollX -= 10;
+            };
+
+            form.AddChild(scrollRightButton);
+
+            WindowManager.AddForm(form);
         }
     }
 }
