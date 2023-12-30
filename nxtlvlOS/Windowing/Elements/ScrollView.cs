@@ -78,7 +78,6 @@ namespace nxtlvlOS.Windowing.Elements {
             ScrollPassThrough = false;
 
             MouseScroll += (int delta) => {
-                Kernel.Instance.Logger.Log(LogLevel.Sill, $"Scrolling {delta}");
                 if (HasVerticalScrollBar) {
                     ScrollY -= -delta * 10;
                     if (ScrollY < 0) ScrollY = 0;
@@ -198,6 +197,7 @@ namespace nxtlvlOS.Windowing.Elements {
             downButton.SetText("v");
 
             bar.BackgroundColor = ColorUtils.Primary500;
+            bar.DoNotBringToFront = true;
             dragBar.BackgroundColor = ColorUtils.Primary100;
 
             dragBar.MouseDown += StartDragging;
