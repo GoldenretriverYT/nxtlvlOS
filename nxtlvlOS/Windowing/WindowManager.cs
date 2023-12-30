@@ -99,6 +99,12 @@ namespace nxtlvlOS.Windowing
 
             MouseManager.ScreenWidth = wmSizeX;
             MouseManager.ScreenHeight = wmSizeY;
+
+            if(!MouseManager.ScrollWheelPresent) {
+                Kernel.Instance.Logger.Log(LogLevel.Warn, "Scroll wheel not present; scrolling will not work.");
+            } else {
+                Kernel.Instance.Logger.Log(LogLevel.Info, "Scroll wheel present!");
+            }
         }
 
         public static WMResult Update() {
@@ -118,15 +124,22 @@ namespace nxtlvlOS.Windowing
 
                 // Get the element that is under the mouse
                 BufferedElement elementUnderMouse = null;
+                BufferedElement scrollTarget = null;
 
                 foreach (var el in elements) {
                     var absolute = el.GetAbsolutePosition();
 
                     if(ShapeCollisions.RectIntersectsWithPoint(
                         absolute.y, absolute.x, absolute.y + el.SizeY, absolute.x + el.SizeX,
-                        MouseManager.X, MouseManager.Y) && el.VisibleIncludingParents && !el.MousePassThrough) {
+                        MouseManager.X, MouseManager.Y) && el.VisibleIncludingParents) {
+                        if (!el.MousePassThrough) {
+                            elementUnderMouse = el;
+                        }
 
-                        elementUnderMouse = el;
+                        if(!el.ScrollPassThrough) {
+                            scrollTarget = el;
+                        }
+
                         continue;
                     }
                 }
@@ -170,6 +183,12 @@ namespace nxtlvlOS.Windowing
 
                         previousState = MouseManager.MouseState;
                     }
+                }
+
+                if (scrollTarget != null && MouseManager.ScrollDelta != 0) {
+                    scrollTarget.OnMouseScroll(MouseManager.ScrollDelta);
+
+                    MouseManager.ResetScrollDelta();
                 }
 
                 while(KeyboardManager.KeyAvailable) {

@@ -4,6 +4,7 @@ using Cosmos.HAL;
 using Cosmos.System;
 using nxtlvlOS.Windowing.Elements.Shapes;
 using nxtlvlOS.Windowing.Fonts;
+using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,10 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace nxtlvlOS.Windowing.Elements {
     public class TextField : BufferedElement {
-        private uint backgroundColor = 0xFF444466;
+        private uint backgroundColor = ColorUtils.Primary500;
         public uint BackgroundColor => backgroundColor;
 
-        private uint pressedColor = 0xFF8888AA;
+        private uint pressedColor = ColorUtils.Primary100;
         public uint PressedColor => pressedColor;
 
         public string Text => frame.Text;

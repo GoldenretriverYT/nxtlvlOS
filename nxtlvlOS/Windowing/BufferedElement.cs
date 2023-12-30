@@ -82,11 +82,13 @@ namespace nxtlvlOS.Windowing {
         
         public Event<MouseState, uint, uint> MouseDown = new();
         public Event<MouseState, MouseState, uint, uint> MouseUp = new();
+        public Event<int> MouseScroll = new();
 
         public Event<KeyEvent> KeyPress = new();
 
         public bool VisibleIncludingParents => Visible && (Parent == null ? true : Parent.VisibleIncludingParents);
         public bool PreviousVisibility = false;
+        public bool ScrollPassThrough = true; // We dont react to scroll by default
 
         public virtual void Update() {
             PreDrawAndChildUpdate.Invoke();
@@ -94,8 +96,14 @@ namespace nxtlvlOS.Windowing {
             if (ShouldBeDrawnToScreen && (_bufSizeX != SizeX || _bufSizeY != SizeY)) {
                 _bufSizeX = SizeX;
                 _bufSizeY = SizeY;
+                var finalSize = (SizeY * SizeX);
 
-                Buffer = new uint[SizeY * SizeX];
+                if (finalSize < 0 || finalSize > 0x7FFFFFFF) {
+                    Kernel.Instance.Logger.Log(LogLevel.Crit, $"Buffer size of {GetType().Name} ({CustomId}) is negative or too high! ({SizeY * SizeX}) SizeY: {SizeY} SizeX: {SizeX}");
+                    return;
+                }
+
+                Buffer = new uint[finalSize];
                 SetDirty(true);
                 SizeChanged.Invoke();
             }
@@ -132,6 +140,10 @@ namespace nxtlvlOS.Windowing {
             if (mouseIsOver && enabled) {
                 Click.Invoke(prev, MouseManager.X, MouseManager.Y); // we need to provide prev so the mouse button can get fetched from it
             }
+        }
+
+        public virtual void OnMouseScroll(int delta) {
+            MouseScroll.Invoke(delta);
         }
 
         public virtual void OnHoverStart() {
