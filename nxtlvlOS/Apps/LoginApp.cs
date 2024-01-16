@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using nxtlvlOS.Windowing.Utils;
 
 namespace nxtlvlOS.Apps
 {
@@ -26,11 +27,12 @@ namespace nxtlvlOS.Apps
 
         public override void Init(string[] args)
         {
-            loginForm = new(SelfProcess);
-            loginForm.RelativePosX = (1280 - 600) / 2;
-            loginForm.RelativePosY = (720 - 170) / 2;
-            loginForm.SizeX = 600;
-            loginForm.SizeY = 170;
+            loginForm = new(SelfProcess) {
+                RelativePosX = (1280 - 600) / 2,
+                RelativePosY = (720 - 170) / 2,
+                SizeX = 600,
+                SizeY = 170
+            };
             loginForm.SetTitlebarEnabled(true);
             loginForm.SetTitle("Login - nxtlvlOS");
             loginForm.SetCloseButtonEnabled(false);
@@ -46,29 +48,34 @@ namespace nxtlvlOS.Apps
             #endregion
 
             #region Create login elements
-            Label accountTitle = new();
-            accountTitle.SizeX = 400;
-            accountTitle.SizeY = 16;
-            accountTitle.RelativePosX = 0;
-            accountTitle.RelativePosY = 0;
-            accountTitle.CustomId = "LoginLabel";
-            accountTitle.SetText("Login");
-            accountTitle.SetHorizontalAlignment(HorizontalAlignment.Left);
-            accountTitle.SetVerticalAlignment(VerticalAlignment.Middle);
+            Label accountTitle = new() {
+                SizeX = 400,
+                SizeY = 16,
+                RelativePosX = 0,
+                RelativePosY = 0,
+                CustomId = "LoginLabel",
+                Text = "Login",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Middle
+            };
 
-            TextField accountUsername = new();
-            accountUsername.SizeX = 400;
-            accountUsername.SizeY = 24;
-            accountUsername.RelativePosX = 0;
-            accountUsername.RelativePosY = 30;
+            TextField accountUsername = new() {
+                SizeX = 400,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 30,
+                CustomId = "__dbg__TextFieldAccountUsername",
+            };
+
             accountUsername.SetPlaceholder("Username");
-            accountUsername.CustomId = "__dbg__TextFieldAccountUsername";
 
-            TextField accountPassword = new();
-            accountPassword.SizeX = 400;
-            accountPassword.SizeY = 24;
-            accountPassword.RelativePosX = 0;
-            accountPassword.RelativePosY = 65;
+            TextField accountPassword = new() {
+                SizeX = 400,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 65,
+            };
+
             accountPassword.SetPlaceholder("Password");
 
             TextButton accountLogin = new();
@@ -88,7 +95,7 @@ namespace nxtlvlOS.Apps
                 }
                 else
                 {
-                    accountTitle.SetText("Authentication failed!");
+                    accountTitle.Text = "Authentication failed!";
                 }
             };
 

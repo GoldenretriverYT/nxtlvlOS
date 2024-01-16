@@ -1,15 +1,8 @@
 ﻿using Cosmos.System;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Utils;
-using nxtlvlOS.Windowing;
-using nxtlvlOS.Windowing.Elements;
-using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace nxtlvlOS.Services {
     public class ClipboardService : App {

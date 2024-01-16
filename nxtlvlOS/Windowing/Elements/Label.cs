@@ -8,25 +8,65 @@ using System.Threading.Tasks;
 namespace nxtlvlOS.Windowing.Elements {
     public class Label : BufferedElement {
         private string text = "Label Text";
-        public string Text => text;
+        public string Text { get => text; set {
+                text = value;
+                SetDirty(true);
+            }
+        }
 
-        private PCScreenFont font = WindowManager.DefaultFont;
-        public PCScreenFont Font => font;
+        private Font font = WindowManager.DefaultFont;
+        public Font Font {
+            get => font;
+            set {
+                font = value;
+                SetDirty(true);
+            }
+        }
 
         private uint color = 0xFFFFFFFF;
-        public uint Color => color;
+        public uint Color {
+            get => color;
+            set {
+                color = value;
+                SetDirty(true);
+            }
+        }
 
-        public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left;
-        public HorizontalAlignment HorizontalAlignment => horizontalAlignment;
+        private HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left;
+        public HorizontalAlignment HorizontalAlignment {
+            get => horizontalAlignment;
+            set {
+                horizontalAlignment = value;
+                SetDirty(true);
+            }
+        }
 
-        public VerticalAlignment verticalAlignment = VerticalAlignment.Top;
-        public VerticalAlignment VerticalAlignment => verticalAlignment;
+        private VerticalAlignment verticalAlignment = VerticalAlignment.Top;
+        public VerticalAlignment VerticalAlignment {
+            get => verticalAlignment;
+            set {
+                verticalAlignment = value;
+                SetDirty(true);
+            }
+        }
 
-        public bool safeDrawEnabled = false;
-        public bool SafeDrawEnabled => safeDrawEnabled;
+        private bool safeDrawEnabled = false;
+        public bool SafeDrawEnabled {
+            get => safeDrawEnabled;
+            set {
+                safeDrawEnabled = value;
+                SetDirty(true);
+            }
+        }
 
-        public bool newlinesEnabled = false;
-        public bool NewlinesEnabled => newlinesEnabled;
+        private bool newlinesEnabled = false;
+        public bool NewlinesEnabled {
+            get => newlinesEnabled;
+            set {
+                newlinesEnabled = value;
+                SetDirty(true);
+            }
+        }
 
 
         public Label() {
@@ -39,52 +79,17 @@ namespace nxtlvlOS.Windowing.Elements {
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
                 if (!newlinesEnabled)
-                    DrawStringPSF(font, 0, 0, text, color, safeDrawEnabled);
+                    DrawString(font, 0, 0, text, color, safeDrawEnabled);
                 else
-                    DrawStringPSFWithNewLines(font, 0, 0, text, color, safeDrawEnabled);
+                    DrawStringWithNewLines(font, 0, 0, text, color, safeDrawEnabled);
             } else {
                 var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX, SizeY);
                 
                 if (!newlinesEnabled)
-                    DrawStringPSF(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled);
+                    DrawString(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled);
                 else
-                    DrawStringPSFWithNewLines(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled);
+                    DrawStringWithNewLines(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled);
             }
-        }
-
-        public void SetText(string text) {
-            this.text = text;
-            this.SetDirty(true);
-        }
-
-        public void SetFont(PCScreenFont font) {
-            this.font = font;
-            this.SetDirty(true);
-        }
-
-        public void SetColor(uint color) {
-            this.color = color;
-            this.SetDirty(true);
-        }
-
-        public void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
-            this.horizontalAlignment = horizontalAlignment;
-            this.SetDirty(true);
-        }
-
-        public void SetVerticalAlignment(VerticalAlignment verticalAlignment) {
-            this.verticalAlignment = verticalAlignment;
-            this.SetDirty(true);
-        }
-
-        public void SetSafeDrawEnabled(bool safeDrawEnabled) {
-            this.safeDrawEnabled = safeDrawEnabled;
-            this.SetDirty(true);
-        }
-
-        public void SetNewlinesEnabled(bool newlinesEnabled) {
-            this.newlinesEnabled = newlinesEnabled;
-            this.SetDirty(true);
         }
     }
 }

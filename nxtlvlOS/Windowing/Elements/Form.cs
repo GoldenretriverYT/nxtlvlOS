@@ -16,10 +16,10 @@ namespace nxtlvlOS.Windowing.Elements {
         private bool titlebarEnabled;
         public bool TitlebarEnabled => titlebarEnabled;
 
-        private uint backgroundColor = 0xFF555577;
+        private uint backgroundColor = ColorUtils.Primary400; 
         public uint BackgroundColor => backgroundColor;
 
-        private uint titlebarColor = 0xFF444466;
+        private uint titlebarColor = ColorUtils.Primary500;
         public uint TitlebarColor => titlebarColor;
 
         public bool ShouldBeShownInTaskbar = true;
@@ -46,7 +46,8 @@ namespace nxtlvlOS.Windowing.Elements {
                 RelativePosX = 0,
                 RelativePosY = -20, // Negative due to the ChildRelativeOffsetY being 24
                 SizeX = 16,
-                SizeY = 16
+                SizeY = 16,
+                PaddingY = 0
             };
 
             closeButton.SetText("X");
@@ -140,7 +141,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
             if (titlebarEnabled) {
                 DrawRectFilled(0, 0, SizeX, 24, titlebarColor);
-                DrawStringPSF(WindowManager.DefaultFont, 6, 4, title, 0xFFFFFFFF);
+                DrawString(WindowManager.DefaultFont, 6, 4, title, 0xFFFFFFFF);
             }
         }
 

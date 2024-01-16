@@ -38,7 +38,7 @@ namespace nxtlvlOS.Windowing
         /// The default font/the preferred font of the user.
         /// Setter may only be used with null to reset the cache.
         /// </summary>
-        public static PCScreenFont DefaultFont {
+        public static Font DefaultFont {
             get {
                 if (cachedPreferredFont != null) return cachedPreferredFont;
                 Kernel.Instance.Logger.Log(LogLevel.Sill, "Font not cached, loading default font.");
@@ -68,7 +68,7 @@ namespace nxtlvlOS.Windowing
             }
         }
 
-        private static PCScreenFont cachedPreferredFont = null;
+        private static Font cachedPreferredFont = null;
 
         //private static BufferedElement currentHoveredElement;
 
@@ -110,7 +110,8 @@ namespace nxtlvlOS.Windowing
         public static WMResult Update() {
             try {
                 // Clear buffer
-                System.Buffer.BlockCopy(EmptyBuffer, 0, Buffer, 0, Buffer.Length * 4);
+                //System.Buffer.BlockCopy(EmptyBuffer, 0, Buffer, 0, Buffer.Length * 4);
+                MemoryOperations.Fill(Buffer, 0xFF4CAACF);
 
                 foreach (var form in Forms.ToList()) {
                     form.Update();
@@ -222,10 +223,10 @@ namespace nxtlvlOS.Windowing
                         uint offsetInChild = (uint)((startY - absolutePosY) * el.SizeX + (startX - absolutePosX));
 
                         if (endX - startX <= 0 || endY - startY <= 0) continue;
+                        int lengthToCopy = (endX - startX) * 4;
 
                         for (var y = startY; y < endY; y++) {
                             // Adjust the length to copy based on the overlapping region
-                            int lengthToCopy = (endX - startX) * 4;
                             System.Buffer.BlockCopy(el.Buffer, (int)offsetInChild * 4, Buffer, (int)offsetInWMBuffer * 4, lengthToCopy);
                             offsetInChild += el.SizeX;
                             offsetInWMBuffer += wmSizeX;
@@ -257,6 +258,8 @@ namespace nxtlvlOS.Windowing
 
                                     Buffer[offsetInThisElement + (x - startX)] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
                                 }
+
+                                //Buffer[offsetInThisElement + (x - startX)] = ColorUtils.AlphaBlend(childBufVal, currentBufVal);
                             }
                         }
                     }

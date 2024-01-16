@@ -12,8 +12,8 @@ namespace nxtlvlOS.Windowing.Elements {
         private string text = "Button Text";
         public string Text => text;
 
-        private PCScreenFont font = WindowManager.DefaultFont;
-        public PCScreenFont Font => font;
+        private Font font = WindowManager.DefaultFont;
+        public Font Font => font;
 
         private uint textColor = 0xFFFFFFFF;
         public uint TextColor => textColor;
@@ -32,6 +32,24 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public bool safeDrawEnabled = false;
         public bool SafeDrawEnabled => safeDrawEnabled;
+
+        private int paddingX = 3;
+        public int PaddingX {
+            get => paddingX;
+            set {
+                paddingX = value;
+                SetDirty(true);
+            }
+        }
+
+        private int paddingY = 3;
+        public int PaddingY {
+            get => paddingY;
+            set {
+                paddingY = value;
+                SetDirty(true);
+            }
+        }
 
         public bool IsMouseDown { get; private set; } = false;
         public bool IsMouseHovering { get; private set; } = false;
@@ -56,10 +74,10 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
-                DrawStringPSF(font, 3, 3, text, textColor, safeDrawEnabled);
+                DrawString(font, paddingX, paddingY, text, textColor, safeDrawEnabled);
             }else {
                 var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX - 6, SizeY - 6);
-                DrawStringPSF(font, (int)(3 + offsets.x), (int)(3 + offsets.y), text, textColor, safeDrawEnabled);
+                DrawString(font, (int)(paddingX + offsets.x), (int)(paddingY + offsets.y), text, textColor, safeDrawEnabled);
             }
         }
 

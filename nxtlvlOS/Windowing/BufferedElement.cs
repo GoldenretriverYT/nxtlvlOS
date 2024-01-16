@@ -2,13 +2,7 @@
 using nxtlvlOS.Windowing.Elements;
 using nxtlvlOS.Windowing.Fonts;
 using nxtlvlOS.Windowing.Utils;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing {
     public abstract class BufferedElement {
@@ -317,16 +311,16 @@ namespace nxtlvlOS.Windowing {
             DrawRectFilled(x1, y2 - 2, x2, y2, 0xFFFFFFFF);
         }
 
-        public void DrawStringPSF(PCScreenFont font, int x, int y, string str, uint color, bool safe = false) {
+        public void DrawString(Font font, int x, int y, string str, uint color, bool safe = false) {
             var xOffset = x;
 
-            foreach(var c in str) {
-                DrawCharPSF(font, xOffset, y, c, color, safe, false);
+            foreach (var c in str) {
+                DrawChar(font, xOffset, y, c, color, safe, false);
                 xOffset += font.Width;
             }
         }
 
-        public void DrawStringPSFWithNewLines(PCScreenFont font, int x, int y, string str, uint color, bool safe = false, bool dbg = false) {
+        public void DrawStringWithNewLines(Font font, int x, int y, string str, uint color, bool safe = false, bool dbg = false) {
             var xOffset = x;
             var yOffset = y;
 
@@ -339,13 +333,13 @@ namespace nxtlvlOS.Windowing {
 
                 if (char.IsControl(c)) continue;
 
-                DrawCharPSF(font, xOffset, yOffset, c, color, safe, dbg);
+                DrawChar(font, xOffset, yOffset, c, color, safe, dbg);
                 xOffset += font.Width;
             }
         }
 
         /// <summary>
-        /// Draws a character from a PSF font
+        /// Draws a character from a font
         /// </summary>
         /// <param name="font">The font to use</param>
         /// <param name="x">The starting x position</param>
@@ -353,40 +347,8 @@ namespace nxtlvlOS.Windowing {
         /// <param name="c">The character to draw</param>
         /// <param name="color">The 32-bit ARGB color</param>
         /// <param name="safe">If this is true, a bounds check will be performed for each pixel. Slower but, well, safe.</param>
-        public void DrawCharPSF(PCScreenFont font, int x, int y, char c, uint color, bool safe, bool dbg) {
-            if (safe) {
-                int p = font.Height * (byte)c;
-
-                if (dbg) Kernel.Instance.Logger.Log(LogLevel.Verb, "x is " + x + " and y is " + y + " with char being (byte)" + (byte)c);
-
-                for (int cy = 0; cy < font.Height; cy++) {
-                    for (byte cx = 0; cx < font.Width; cx++) {
-                        if ((font.Data[p + cy] & (1 << (cx))) != 0) {
-                            var xOff = x + (font.Width - cx);
-                            var yOff = y + cy;
-                            var off = (yOff * SizeX) + xOff;
-
-                            if (xOff >= SizeX || xOff < 0) continue;
-                            if (yOff >= SizeY || yOff < 0) continue;
-                            if (off >= Buffer.Length || off < 0) continue;
-                            Buffer[off] = color;
-                        }
-                    }
-                }
-            } else { // lots of duplicated code, but well, performance is more important
-                int p = font.Height * (byte)c;
-
-                for (int cy = 0; cy < font.Height; cy++) {
-                    for (byte cx = 0; cx < font.Width; cx++) {
-                        if ((font.Data[p + cy] & (1 << (cx))) != 0) {
-                            var xOff = x + (font.Width - cx);
-                            var yOff = y + cy;
-
-                            Buffer[(yOff * SizeX) + xOff] = color;
-                        }
-                    }
-                }
-            }
+        public void DrawChar(Font font, int x, int y, char c, uint color, bool safe, bool dbg) {
+            font.DrawChar(this, x, y, c, color, safe, dbg);
         }
 
         public (uint x, uint y) GetAbsolutePosition() {

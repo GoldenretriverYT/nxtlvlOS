@@ -75,13 +75,15 @@ namespace nxtlvlOS.Windowing.Fonts {
             return (resX, resY);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Font"/> class.
-        /// </summary>
-        /// <param name="width">The width of a single character in pixels</param>
-        /// <param name="height">The height of a single character in pixels</param>
-        /// <param name="data">The raw pixel data.</param>
-        public Font(byte width, byte height, byte[] data) {
+        public abstract void DrawChar(BufferedElement el, int x, int y, char c, uint color, bool safe, bool dbg);
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Font"/> class.
+            /// </summary>
+            /// <param name="width">The width of a single character in pixels</param>
+            /// <param name="height">The height of a single character in pixels</param>
+            /// <param name="data">The raw pixel data.</param>
+            public Font(byte width, byte height, byte[] data) {
             Width = width;
             Height = height;
             Data = data;

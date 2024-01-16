@@ -43,12 +43,13 @@ namespace nxtlvlOS.Apps
             #endregion
 
             #region Create pref elements
-            Label prefWMFontTitle = new();
-            prefWMFontTitle.SizeX = 580;
-            prefWMFontTitle.SizeY = 16;
-            prefWMFontTitle.RelativePosX = 0;
-            prefWMFontTitle.RelativePosY = 0;
-            prefWMFontTitle.SetText("Default / Preferred Font");
+            Label prefWMFontTitle = new() {
+                SizeX = 580,
+                SizeY = 16,
+                RelativePosX = 0,
+                RelativePosY = 0,
+                Text = "Default / Preferred Font",
+            };
 
             // TODO: When dropdowns are added, make this a list of fonts in the 0:\System\Fonts folder
             BasicDropdown prefWMFontField = new();
@@ -66,13 +67,14 @@ namespace nxtlvlOS.Apps
 
             prefWMFontField.SelectElement(SystemPreferenceService.Instance.GetPreferenceOrDefault("wm.default_font", "system_default"));
 
-            Label prefWMFontDesc = new();
-            prefWMFontDesc.SizeX = 580;
-            prefWMFontDesc.SizeY = 32;
-            prefWMFontDesc.RelativePosX = 0;
-            prefWMFontDesc.RelativePosY = 48;
-            prefWMFontDesc.SetNewlinesEnabled(true);
-            prefWMFontDesc.SetText("The default font used. Path to PSF file or \"system_default\" \nfor the default font. Apps may use their own fonts.");
+            Label prefWMFontDesc = new() {
+                SizeX = 580,
+                SizeY = 32,
+                RelativePosX = 0,
+                RelativePosY = 48,
+                NewlinesEnabled = true,
+                Text = "The default font used. Path to PSF file or \"system_default\" \nfor the default font. Apps may use their own fonts."
+            };
             #endregion
 
             #region Create actions

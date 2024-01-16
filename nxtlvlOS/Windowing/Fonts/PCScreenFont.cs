@@ -1,4 +1,5 @@
-﻿using nxtlvlOS.Windowing.Fonts;
+﻿using Cosmos.System.Graphics.Fonts;
+using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -228,6 +229,42 @@ namespace nxtlvlOS.Windowing.Fonts {
             }
 
             return offset;
+        }
+
+        public override void DrawChar(BufferedElement el, int x, int y, char c, uint color, bool safe, bool dbg) {
+            if (safe) {
+                int p = Height * (byte)c;
+
+                if (dbg) Kernel.Instance.Logger.Log(LogLevel.Verb, "x is " + x + " and y is " + y + " with char being (byte)" + (byte)c);
+
+                for (int cy = 0; cy < Height; cy++) {
+                    for (byte cx = 0; cx < Width; cx++) {
+                        if ((Data[p + cy] & (1 << (cx))) != 0) {
+                            var xOff = x + (Width - cx);
+                            var yOff = y + cy;
+                            var off = (yOff * el.SizeX) + xOff;
+
+                            if (xOff >= el.SizeX || xOff < 0) continue;
+                            if (yOff >= el.SizeY || yOff < 0) continue;
+                            if (off >= el.Buffer.Length || off < 0) continue;
+                            el.Buffer[off] = color;
+                        }
+                    }
+                }
+            } else { // lots of duplicated code, but well, performance is more important
+                int p = Height * (byte)c;
+
+                for (int cy = 0; cy < Height; cy++) {
+                    for (byte cx = 0; cx < Width; cx++) {
+                        if ((Data[p + cy] & (1 << (cx))) != 0) {
+                            var xOff = x + (Width - cx);
+                            var yOff = y + cy;
+
+                            el.Buffer[(yOff * el.SizeX) + xOff] = color;
+                        }
+                    }
+                }
+            }
         }
     }
 

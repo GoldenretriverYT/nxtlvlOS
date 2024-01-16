@@ -47,19 +47,24 @@ namespace nxtlvlOS.Apps
             infoContainer = new();
             taskbarForm.AddChild(infoContainer);
 
-            timeLabel = new();
-            timeLabel.SizeX = 100;
-            timeLabel.SizeY = 16;
-            timeLabel.SetText("00:00");
-            timeLabel.SetHorizontalAlignment(HorizontalAlignment.Center);
+            timeLabel = new() {
+                SizeX = 100,
+                SizeY = 16,
+                RelativePosY = 0,
+                Text = "00:00",
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
             infoContainer.AddChild(timeLabel);
 
-            dateLabel = new();
-            dateLabel.SizeX = 100;
-            dateLabel.SizeY = 16;
-            dateLabel.RelativePosY = 16;
-            dateLabel.SetText("2023-01-01");
-            dateLabel.SetHorizontalAlignment(HorizontalAlignment.Center);
+            dateLabel = new() {
+                SizeX = 100,
+                SizeY = 16,
+                RelativePosY = 16,
+                Text = "2023-01-01",
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
+
             infoContainer.AddChild(dateLabel);
 
             UpdateTasks();
@@ -91,8 +96,8 @@ namespace nxtlvlOS.Apps
 
         public void UpdateDateAndTime()
         {
-            timeLabel.SetText(RTC.Hour.ToString().PadLeft(2, '0') + ":" + RTC.Minute.ToString().PadLeft(2, '0'));
-            dateLabel.SetText(RTC.Century.ToString() + RTC.Year.ToString() + "-" + RTC.Month + "-" + RTC.DayOfTheMonth);
+            timeLabel.Text = RTC.Hour.ToString().PadLeft(2, '0') + ":" + RTC.Minute.ToString().PadLeft(2, '0');
+            dateLabel.Text = RTC.Century.ToString() + RTC.Year.ToString() + "-" + RTC.Month + "-" + RTC.DayOfTheMonth;
         }
 
         public void UpdateTasks()
@@ -105,7 +110,7 @@ namespace nxtlvlOS.Apps
 
             var startButton = new TextButton();
             startButton.RelativePosX = 4;
-            startButton.RelativePosY = 3;
+            startButton.RelativePosY = 4;
             startButton.SizeX = 24;
             startButton.SizeY = 24;
             startButton.SetText("NX");
@@ -137,7 +142,7 @@ namespace nxtlvlOS.Apps
             tasksContainer.AddChild(startButton);
 
             var xOffset = 30;
-            var yOffset = 3;
+            var yOffset = 4;
             var formCount = 0;
 
             foreach (var formElement in WindowManager.Forms)
@@ -168,7 +173,7 @@ namespace nxtlvlOS.Apps
                 }
             }
 
-            taskbarForm.SizeY = (uint)(6 + 24 * Math.Max(1, formCount / 7));
+            taskbarForm.SizeY = (uint)(8 + 24 * Math.Max(1, formCount / 7));
             taskbarForm.RelativePosY = (int)(720 - taskbarForm.SizeY);
 
             infoContainer.AdjustBoundingBoxAndAlignToParent(HorizontalAlignment.Right, VerticalAlignment.Middle, 10, 0);
@@ -234,21 +239,24 @@ namespace nxtlvlOS.Apps
 
             form.AddChild(scrollView);
 
-            var label = new Label();
-            label.RelativePosX = 0;
-            label.RelativePosY = 0;
-            label.SizeX = 200;
-            label.SizeY = 16;
-            label.SetText("Hello world!");
-            //label.CustomId = "__dbg__";
+            var label = new Label() {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 200,
+                SizeY = 16,
+                Text = "Hello world!",
+            };
+
             scrollView.AddItem(label);
 
-            var label2 = new Label();
-            label2.RelativePosX = 280;
-            label2.RelativePosY = 600;
-            label2.SizeX = 200;
-            label2.SizeY = 16;
-            label2.SetText("Hello world!");
+            var label2 = new Label() {
+                RelativePosX = 280,
+                RelativePosY = 600,
+                SizeX = 200,
+                SizeY = 16,
+                Text = "Hello world!",
+            };
+
             scrollView.AddItem(label2);
 
             var textField = new TextField();

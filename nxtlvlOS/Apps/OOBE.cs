@@ -82,14 +82,15 @@ namespace nxtlvlOS.Apps
 
             #region Step 1 - Select a keyboard layout
 
-            Label kbTitle = new();
-            kbTitle.SizeX = 500;
-            kbTitle.SizeY = 24;
-            kbTitle.RelativePosX = 0;
-            kbTitle.RelativePosY = 0;
-            kbTitle.SetText("Select a keyboard layout to start the OOBE experience!");
-            kbTitle.SetHorizontalAlignment(HorizontalAlignment.Center);
-            kbTitle.SetVerticalAlignment(VerticalAlignment.Middle);
+            Label kbTitle = new() {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 500,
+                SizeY = 24,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Text = "Select a keyboard layout to start the OOBE experience!"
+            };
             stepSelectKeyboardLayout.AddChild(kbTitle);
 
             var offset = 50;
@@ -125,14 +126,15 @@ namespace nxtlvlOS.Apps
             #endregion
 
             #region Step 2 - Create account
-            Label accountTitle = new();
-            accountTitle.SizeX = 500;
-            accountTitle.SizeY = 24;
-            accountTitle.RelativePosX = 0;
-            accountTitle.RelativePosY = 0;
-            accountTitle.SetText("Create an account to start using nxtlvlOS!");
-            accountTitle.SetHorizontalAlignment(HorizontalAlignment.Center);
-            accountTitle.SetVerticalAlignment(VerticalAlignment.Middle);
+            Label accountTitle = new() {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 500,
+                SizeY = 24,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Text = "Create an account to start using nxtlvlOS!"
+            };
 
             TextField accountUsername = new();
             accountUsername.SizeX = 500;
@@ -176,14 +178,15 @@ namespace nxtlvlOS.Apps
             #endregion
 
             #region Step 3 - Copy files
-            Label copyFilesTitle = new();
-            copyFilesTitle.SizeX = 500;
-            copyFilesTitle.SizeY = 24;
-            copyFilesTitle.RelativePosX = 0;
-            copyFilesTitle.RelativePosY = 0;
-            copyFilesTitle.SetText("We will now have to copy a files. This may take a while.");
-            copyFilesTitle.SetHorizontalAlignment(HorizontalAlignment.Center);
-            copyFilesTitle.SetVerticalAlignment(VerticalAlignment.Middle);
+            Label copyFilesTitle = new() {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 500,
+                SizeY = 24,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle,
+                Text = "We will now have to copy a files. This may take a while."
+            };
 
             TextButton copyFilesButton = new();
             copyFilesButton.SizeX = 500;
@@ -197,7 +200,7 @@ namespace nxtlvlOS.Apps
             copyFilesButton.Click += (state, absoluteX, absoluteY) =>
             {
                 if(!Directory.Exists(@"1:\System\")) {
-                    copyFilesTitle.SetText("Please insert the nxtlvlOS installation media and try again.");
+                    copyFilesTitle.Text = "Please insert the nxtlvlOS installation media and try again.";
                     DumpFileTree("1:\\");
                     return;
                 }

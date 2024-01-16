@@ -157,32 +157,32 @@ namespace nxtlvlOS.Apps
 
             Container container = new();
 
-            Label appName = new();
+            Label appName = new() {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 150,
+                SizeY = 20,
+                Text = "Notepad",
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
 
-            appName.SetText("Notepad");
-            appName.RelativePosX = 0;
-            appName.RelativePosY = 0;
-            appName.SetHorizontalAlignment(HorizontalAlignment.Center);
-            appName.SizeY = 20;
-            appName.SizeX = 150;
+            Label authorName = new() {
+                RelativePosX = 0,
+                RelativePosY = 40,
+                SizeX = 160,
+                SizeY = 20,
+                Text = "by GoldenretriverYT",
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
 
-            Label authorName = new();
-
-            authorName.SetText("by GoldenretriverYT");
-            authorName.RelativePosX = 0;
-            authorName.RelativePosY = 40;
-            authorName.SetHorizontalAlignment(HorizontalAlignment.Center);
-            authorName.SizeY = 20;
-            authorName.SizeX = 160;
-
-            Label authorNameLine2 = new();
-
-            authorNameLine2.SetText("& Contributors");
-            authorNameLine2.RelativePosX = 0;
-            authorNameLine2.RelativePosY = 60;
-            authorNameLine2.SetHorizontalAlignment(HorizontalAlignment.Center);
-            authorNameLine2.SizeY = 20;
-            authorNameLine2.SizeX = 150;
+            Label authorNameLine2 = new() {
+                RelativePosX = 0,
+                RelativePosY = 60,
+                SizeX = 150,
+                SizeY = 20,
+                Text = "& Contributors",
+                HorizontalAlignment = HorizontalAlignment.Center,
+            };
 
             container.AddChild(appName);
             container.AddChild(authorName);

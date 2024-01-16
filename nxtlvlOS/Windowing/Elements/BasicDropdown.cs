@@ -17,8 +17,8 @@ namespace nxtlvlOS.Windowing.Elements {
         public string SelectedElement => SelectedIndex == -1 ? null : Elements[SelectedIndex];
         public string[] Elements { get; set; } = new string[0];
 
-        private PCScreenFont font = WindowManager.DefaultFont;
-        public PCScreenFont Font => font;
+        private Font font = WindowManager.DefaultFont;
+        public Font Font => font;
 
         private uint textColor = 0xFFFFFFFF;
         public uint TextColor => textColor;
@@ -58,13 +58,13 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
-                DrawStringPSF(font, 3, 3, shownText, textColor, safeDrawEnabled);
+                DrawString(font, 3, 3, shownText, textColor, safeDrawEnabled);
             } else {
                 var offsets = font.AlignWithin(shownText, horizontalAlignment, verticalAlignment, SizeX - 22, SizeY - 6);
-                DrawStringPSF(font, (int)(3 + offsets.x), (int)(3 + offsets.y), shownText, textColor, safeDrawEnabled);
+                DrawString(font, (int)(3 + offsets.x), (int)(3 + offsets.y), shownText, textColor, safeDrawEnabled);
             }
 
-            DrawStringPSF(font, (int)(SizeX - 19), 3, "v", textColor, safeDrawEnabled);
+            DrawString(font, (int)(SizeX - 19), 3, "v", textColor, safeDrawEnabled);
         }
 
         public void SetFont(PCScreenFont font) {

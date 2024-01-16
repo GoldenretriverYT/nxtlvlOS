@@ -173,14 +173,16 @@ namespace nxtlvlOS.Apps
                 img.Click += DirectoryClicked;
                 fileContainer.AddChild(img);
 
-                Label lbl = new();
-                lbl.RelativePosX = 5 + offsetX;
-                lbl.RelativePosY = 69 + offsetY;
-                lbl.SizeX = 96;
-                lbl.SizeY = 16;
-                lbl.SetText(directory);
-                lbl.SetHorizontalAlignment(HorizontalAlignment.Center);
-                lbl.SetSafeDrawEnabled(true);
+                Label lbl = new() {
+                    RelativePosX = 5 + offsetX,
+                    RelativePosY = 69 + offsetY,
+                    SizeX = 96,
+                    SizeY = 16,
+                    Text = directory,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    SafeDrawEnabled = true,
+                };
+
                 lbl.Click += DirectoryClicked;
                 fileContainer.AddChild(lbl);
 
@@ -236,14 +238,16 @@ namespace nxtlvlOS.Apps
                 img.Click += FileClicked;
                 fileContainer.AddChild(img);
 
-                Label lbl = new();
-                lbl.RelativePosX = 5 + offsetX;
-                lbl.RelativePosY = 69 + offsetY;
-                lbl.SizeX = 96;
-                lbl.SizeY = 16;
-                lbl.SetText(file);
-                lbl.SetHorizontalAlignment(HorizontalAlignment.Center);
-                lbl.SetSafeDrawEnabled(true);
+                Label lbl = new() {
+                    RelativePosX = 5 + offsetX,
+                    RelativePosY = 69 + offsetY,
+                    SizeX = 96,
+                    SizeY = 16,
+                    Text = file,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    SafeDrawEnabled = true,
+                };
+
                 lbl.Click += FileClicked;
                 fileContainer.AddChild(lbl);
 
@@ -269,12 +273,13 @@ namespace nxtlvlOS.Apps
             form.SetTitle("Rename file");
             form.SetTitlebarEnabled(true);
 
-            Label lbl = new();
-            lbl.RelativePosX = 10;
-            lbl.RelativePosY = 15;
-            lbl.SizeX = 390;
-            lbl.SizeY = 16;
-            lbl.SetText("Specify a new name for '" + Path.GetFileName(originalPath) + "':");
+            Label lbl = new() {
+                RelativePosX = 10,
+                RelativePosY = 15,
+                SizeX = 390,
+                SizeY = 16,
+                Text = "Specify a new name for '" + Path.GetFileName(originalPath) + "':",
+            };
 
             TextField newNameField = new();
             newNameField.RelativePosX = 10;

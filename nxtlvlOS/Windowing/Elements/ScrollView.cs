@@ -2,11 +2,6 @@
 using nxtlvlOS.Windowing.Elements.Shapes;
 using nxtlvlOS.Windowing.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing.Elements {
     internal class ScrollView : Layout {
@@ -229,14 +224,14 @@ namespace nxtlvlOS.Windowing.Elements {
                 if (orentation == Orentation.Vertical) {
                     var y = (int)(MouseManager.Y - absoluteBarPos.y - diffY);
                     if (y < 16) y = 16;
-                    if (y > SizeY - 16 - dragBar.SizeY) y = (int)(SizeY - 16 - dragBar.SizeY);
+                    if (y > SizeY - 32 - dragBar.SizeY) y = (int)(SizeY - 32 - dragBar.SizeY);
                     dragBar.RelativePosY = y;
                     Value = (int)((y - 16) / (float)(SizeY - 32 - dragBar.SizeY) * MaxValue);
                     OnValueChanged.Invoke();
                 } else {
                     var x = (int)(MouseManager.X - absoluteBarPos.x - diffX);
                     if (x < 16) x = 16;
-                    if (x > SizeX - 16 - dragBar.SizeX) x = (int)(SizeX - 16 - dragBar.SizeX);
+                    if (x > SizeX - 32 - dragBar.SizeX) x = (int)(SizeX - 32 - dragBar.SizeX);
                     dragBar.RelativePosX = x;
                     Value = (int)((x - 16) / (float)(SizeX - 32 - dragBar.SizeX) * MaxValue);
                     OnValueChanged.Invoke();
@@ -271,7 +266,7 @@ namespace nxtlvlOS.Windowing.Elements {
                 dragBar.RelativePosX = 0;
                 dragBar.RelativePosY = 16 + (int)((SizeY - 32) * (Value / (float)MaxValue));
                 dragBar.SizeX = SizeX;
-                dragBar.SizeY = GetDragBarSizeVert();
+                dragBar.SizeY = 32;
                 dragBar.CustomId = "ScrollBarVertHandle";
             }else {
                 bar.RelativePosX = 16;
@@ -282,7 +277,7 @@ namespace nxtlvlOS.Windowing.Elements {
 
                 dragBar.RelativePosX = 16 + (int)((SizeX - 32) * (Value / (float)MaxValue));
                 dragBar.RelativePosY = 0;
-                dragBar.SizeX = GetDragBarSizeHoriz();
+                dragBar.SizeX = 32;
                 dragBar.SizeY = SizeY;
                 dragBar.CustomId = "ScrollBarHorizHandle";
             }

@@ -142,7 +142,7 @@ namespace nxtlvlOS {
 
                 var perfInfo = "FPS: ca. " + framesRendered + "; Memory: " + Math.Floor((GCImplementation.GetUsedRAM() / 1024f)) + "kb / " + GCImplementation.GetAvailableRAM()*1024 + "kb";
                 Logger.Log(LogLevel.Info, perfInfo);
-                if (fpsLabel != null) fpsLabel.SetText(perfInfo);
+                if (fpsLabel != null) fpsLabel.Text = perfInfo;
 
                 framesRendered = 0;
             }

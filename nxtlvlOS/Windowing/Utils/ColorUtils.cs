@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IL2CPU.API.Attribs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing.Utils {
     public class ColorUtils {
+        /// <summary>
+        /// Super fast alpha blend. Plugged.
+        /// </summary>
+        /// <param name="original"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException">Thrown if plug is missing.</exception>
         public static uint AlphaBlend(uint original, uint target) {
             throw new NotImplementedException();
         }

@@ -25,7 +25,7 @@ namespace nxtlvlOS.Windowing.Elements {
         public string Placeholder => frame.Placeholder;
         public uint TextColor => frame.TextColor;
         public uint PlaceholderColor => frame.PlaceholderColor;
-        public PCScreenFont Font => frame.Font;
+        public Font Font => frame.Font;
         public int ScrollX => frame.ScrollX;
         public int ScrollY => frame.ScrollY;
                                             
@@ -282,8 +282,8 @@ namespace nxtlvlOS.Windowing.Elements {
             private string placeholder = "Placeholder";
             public string Placeholder => placeholder;
 
-            private PCScreenFont font = WindowManager.DefaultFont;
-            public PCScreenFont Font => font;
+            private Font font = WindowManager.DefaultFont;
+            public Font Font => font;
 
             private uint textColor = 0xFFFFFFFF;
             public uint TextColor => textColor;
@@ -328,7 +328,7 @@ namespace nxtlvlOS.Windowing.Elements {
             public override void Draw() {
                 SetDirty(false);
                 DrawRectFilled(0, 0, SizeX, SizeY, backgroundColor); // see note in SetBackgroundColor of TextField
-                DrawStringPSFWithNewLines(
+                DrawStringWithNewLines(
                     font,
                     -ScrollX,
                     -ScrollY,
