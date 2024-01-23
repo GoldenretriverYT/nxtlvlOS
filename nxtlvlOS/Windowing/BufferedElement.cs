@@ -311,30 +311,46 @@ namespace nxtlvlOS.Windowing {
             DrawRectFilled(x1, y2 - 2, x2, y2, 0xFFFFFFFF);
         }
 
-        public void DrawString(Font font, int x, int y, string str, uint color, bool safe = false) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="font"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="str"></param>
+        /// <param name="color"></param>
+        /// <param name="safe"></param>
+        /// <param name="internalAlphaBlend">Whether or not to blend the output with the buffer itself. Will not look good if the element is not opaque.</param>
+        public void DrawString(Font font, int x, int y, string str, uint color, bool safe = false, bool internalAlphaBlend = true) {
             var xOffset = x;
 
             foreach (var c in str) {
-                DrawChar(font, xOffset, y, c, color, safe, false);
-                xOffset += font.Width;
+                var hMetrics = font.GetGlyphMetrics(c);
+
+                xOffset += hMetrics.lsb;
+                DrawChar(font, xOffset, y, c, color, safe, false, internalAlphaBlend);
+                xOffset += hMetrics.width;
             }
         }
 
-        public void DrawStringWithNewLines(Font font, int x, int y, string str, uint color, bool safe = false, bool dbg = false) {
+        public void DrawStringWithNewLines(Font font, int x, int y, string str, uint color, bool safe = false, bool dbg = false, bool internalAlphaBlend = true) {
             var xOffset = x;
             var yOffset = y;
 
             foreach (var c in str) {
                 if(c == '\n') {
                     xOffset = x;
-                    yOffset += font.Height;
+                    yOffset += font.GetLineHeight();
                     continue;
                 }
 
                 if (char.IsControl(c)) continue;
 
-                DrawChar(font, xOffset, yOffset, c, color, safe, dbg);
-                xOffset += font.Width;
+                var hMetrics = font.GetGlyphMetrics(c);
+
+                xOffset += hMetrics.lsb;
+                DrawChar(font, xOffset, yOffset, c, color, safe, dbg, internalAlphaBlend);
+                xOffset += hMetrics.width;
             }
         }
 
@@ -347,8 +363,82 @@ namespace nxtlvlOS.Windowing {
         /// <param name="c">The character to draw</param>
         /// <param name="color">The 32-bit ARGB color</param>
         /// <param name="safe">If this is true, a bounds check will be performed for each pixel. Slower but, well, safe.</param>
-        public void DrawChar(Font font, int x, int y, char c, uint color, bool safe, bool dbg) {
-            font.DrawChar(this, x, y, c, color, safe, dbg);
+        /// <param name="internalAlphaBlend">Whether or not to blend the output with the buffer itself. Will not look good if the element is not opaque.</param>
+        public void DrawChar(Font font, int x, int y, char c, uint color, bool safe, bool dbg, bool internalAlphaBlend = true) {
+            font.DrawChar(this, x, y, c, color, safe, dbg, internalAlphaBlend);
+        }
+
+        /// <summary>
+        /// Fast method to draw a bitmap to the buffer. Does not check for bounds.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="bmp"></param>
+        public void DrawCosmosBitmapUnsafe(int x, int y, Cosmos.System.Graphics.Bitmap bmp) {
+            bmp.RawData.CopyTo(Buffer, (y * SizeX) + x);
+        }
+
+        /// <summary>
+        /// Slower counterpart to <see cref="DrawCosmosBitmapUnsafe(int, int, Cosmos.System.Graphics.Bitmap)"/> that checks for bounds
+        /// and alpha blends the bitmap with the buffer.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="bmp"></param>
+        public void DrawCosmosBitmapAlpha(int x, int y, Cosmos.System.Graphics.Bitmap bmp) {
+            var xMax = x + bmp.Width;
+            var yMax = y + bmp.Height;
+
+            if (xMax > SizeX) xMax = (int)SizeX;
+            if (yMax > SizeY) yMax = (int)SizeY;
+
+            for (var yOff = y; yOff < yMax; yOff++) {
+                if(yOff < 0 || yOff >= SizeY) continue;
+                
+                for (var xOff = x; xOff < xMax; xOff++) {
+                    if(xOff < 0 || xOff >= SizeX) continue;
+
+                    var bitmapBufVal = bmp.RawData[(yOff - y) * bmp.Width + (xOff - x)];
+                    var currentBufVal = Buffer[yOff * SizeX + xOff];
+                    var bitmapBufValAlpha = (byte)((bitmapBufVal >> 24) & 0xFF);
+
+                    if (bitmapBufValAlpha == 0) continue;
+
+                    if (bitmapBufValAlpha == 255) {
+                        Buffer[yOff * SizeX + xOff] = (uint)bitmapBufVal;
+                    } else {
+                        byte red = (byte)(((bitmapBufVal >> 16) & 0xFF) * bitmapBufValAlpha + ((currentBufVal >> 16) & 0xFF) * (255 - bitmapBufValAlpha) >> 8);
+                        byte green = (byte)(((bitmapBufVal >> 8) & 0xFF) * bitmapBufValAlpha + ((currentBufVal >> 8) & 0xFF) * (255 - bitmapBufValAlpha) >> 8);
+                        byte blue = (byte)(((bitmapBufVal >> 0) & 0xFF) * bitmapBufValAlpha + ((currentBufVal >> 0) & 0xFF) * (255 - bitmapBufValAlpha) >> 8);
+
+                        Buffer[yOff * SizeX + xOff] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Slower counterpart to <see cref="DrawCosmosBitmapUnsafe(int, int, Cosmos.System.Graphics.Bitmap)"/> that checks for bounds.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="bmp"></param>
+        public void DrawCosmosBitmap(int x, int y, Cosmos.System.Graphics.Bitmap bmp) {
+            var xMax = x + bmp.Width;
+            var yMax = y + bmp.Height;
+
+            if (xMax > SizeX) xMax = (int)SizeX;
+            if (yMax > SizeY) yMax = (int)SizeY;
+
+            for (var yOff = y; yOff < yMax; yOff++) {
+                if (yOff < 0 || yOff >= SizeY) continue;
+
+                for (var xOff = x; xOff < xMax; xOff++) {
+                    if (xOff < 0 || xOff >= SizeX) continue;
+                    // TODO: Copy whole lines instead of going pixel by pixel
+                    Buffer[yOff * SizeX + xOff] = (uint)bmp.RawData[(yOff - y) * bmp.Width + (xOff - x)];
+                }
+            }
         }
 
         public (uint x, uint y) GetAbsolutePosition() {

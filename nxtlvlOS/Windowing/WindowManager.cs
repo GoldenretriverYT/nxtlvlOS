@@ -55,7 +55,19 @@ namespace nxtlvlOS.Windowing
                     return cachedPreferredFont;
                 }
 
-                cachedPreferredFont = PCScreenFont.LoadFont(File.ReadAllBytes(preference));
+                try { 
+                    if (preference.EndsWith(".psf"))
+                        cachedPreferredFont = PCScreenFont.LoadFont(File.ReadAllBytes(preference));
+                    else if (preference.EndsWith(".ttf"))
+                        cachedPreferredFont = new TTFFont(File.ReadAllBytes(preference));
+                    else
+                        throw new Exception($"Unknown font file extension for {preference}.");
+                }catch(Exception ex) {
+                    SystemPreferenceService.Instance.SetPreference("wm.default_font", "system_default");
+                    Kernel.Instance.Logger.Log(LogLevel.Fail, $"Failed to load font {preference}: {ex.Message}; Reverting to default!");
+                    cachedPreferredFont = PCScreenFont.Default;
+                    return cachedPreferredFont;
+                }
 
                 return cachedPreferredFont;
             }

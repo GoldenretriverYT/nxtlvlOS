@@ -119,15 +119,43 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         private (int x, int y) GetRelativePositionFromTextPosition(int textX, int textY) {
-            int x = textX * Font.Width;
-            int y = textY * Font.Height;
+            int x, y;
+            if (Font.Width == 0) {
+                // This is prob a ttf font, so its variable. This makes shit a bit hard... Lets just take the size for now
+                if(Font is TTFFont ttf) {
+                    x = textX * ttf.Size / 2;
+                    y = textY * ttf.Size;
+                } else { // Fallback
+                    x = textX * 8;
+                    y = textY * 16;
+                }
+            } else {
+                x = textX * Font.Width;
+                y = textY * Font.Height;
+            }
 
             return (x - ScrollX, y - ScrollY);
         }
 
         private (int x, int y) GetTextPositionFromRelativePosition(int relativeX, int relativeY) {
-            int textX = (relativeX + ScrollX) / Font.Width;
-            int textY = (relativeY + ScrollY) / Font.Height;
+            int actualFontWidth, actualFontHeight;
+
+            if (Font.Width == 0) {
+                // also prob a ttf font
+                if (Font is TTFFont ttf) {
+                    actualFontWidth = ttf.Size / 2;
+                    actualFontHeight = ttf.Size;
+                } else { // Fallback
+                    actualFontWidth = 8;
+                    actualFontHeight = 16;
+                }
+            } else {
+                actualFontWidth = Font.Width;
+                actualFontHeight = Font.Height;
+            }
+
+            int textX = (relativeX + ScrollX) / actualFontWidth;
+            int textY = (relativeY + ScrollY) / actualFontHeight;
 
             return (textX, textY);
         }

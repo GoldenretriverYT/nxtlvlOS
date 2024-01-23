@@ -19,7 +19,9 @@ namespace nxtlvlOS.Apps
         private Form prefForm;
 
         public override void Exit() {
-            if (prefForm != null) prefForm.Close();
+            if (prefForm != null && !prefForm.IsBeingClosed) {
+                prefForm.Close();
+            }
         }
 
         public override void Init(string[] args)
@@ -29,6 +31,9 @@ namespace nxtlvlOS.Apps
             prefForm.RelativePosY = (720 - 424) / 2;
             prefForm.SizeX = 600;
             prefForm.SizeY = 424;
+            prefForm.Closed += () => {
+                Exit();
+            };
             prefForm.SetTitlebarEnabled(true);
             prefForm.SetTitle("Preferences - nxtlvlOS");
 
@@ -60,7 +65,7 @@ namespace nxtlvlOS.Apps
             prefWMFontField.AddElement("system_default");
 
             foreach (var file in Directory.GetFiles(@"0:\System\Fonts")) {
-                if (file.EndsWith(".psf")) {
+                if (file.EndsWith(".psf") || file.EndsWith(".ttf")) {
                     prefWMFontField.AddElement(@"0:\System\Fonts\" + file);
                 }
             }

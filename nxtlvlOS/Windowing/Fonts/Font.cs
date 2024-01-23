@@ -15,12 +15,12 @@ namespace nxtlvlOS.Windowing.Fonts {
         public byte[] Data { get; }
 
         /// <summary>
-        /// The height of a single character in pixels.
+        /// The height of a single character in pixels, or 0 if the font is variable height.
         /// </summary>
         public byte Height { get; }
 
         /// <summary>
-        /// The width of a single character in pixels.
+        /// The width of a single character in pixels, or 0 if the font is variable width.
         /// </summary>
         public byte Width { get; }
 
@@ -32,11 +32,11 @@ namespace nxtlvlOS.Windowing.Fonts {
             return (byteToConvert & (1 << (bitToReturn - 1))) != 0;
         }
 
-        public (uint w, uint h) MeasureString(string str) {
+        public virtual (uint w, uint h) MeasureString(string str) {
             return ((uint)(str.Length * Width), Height);
         }
 
-        public (uint w, uint h) MeasureStringExhaustive(string str) {
+        public virtual (uint w, uint h) MeasureStringExhaustive(string str) {
             string[] lines = str.Split('\n');
 
             int wMax = 0;
@@ -75,18 +75,26 @@ namespace nxtlvlOS.Windowing.Fonts {
             return (resX, resY);
         }
 
-        public abstract void DrawChar(BufferedElement el, int x, int y, char c, uint color, bool safe, bool dbg);
+        public abstract void DrawChar(BufferedElement el, int x, int y, char c, uint color, bool safe, bool dbg, bool internalAlphaBlend = false);
 
-            /// <summary>
-            /// Initializes a new instance of the <see cref="Font"/> class.
-            /// </summary>
-            /// <param name="width">The width of a single character in pixels</param>
-            /// <param name="height">The height of a single character in pixels</param>
-            /// <param name="data">The raw pixel data.</param>
-            public Font(byte width, byte height, byte[] data) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Font"/> class.
+        /// </summary>
+        /// <param name="width">The width of a single character in pixels</param>
+        /// <param name="height">The height of a single character in pixels</param>
+        /// <param name="data">The raw pixel data.</param>
+        public Font(byte width, byte height, byte[] data) {
             Width = width;
             Height = height;
             Data = data;
+        }
+
+        public virtual int GetLineHeight() {
+            return Height;
+        }
+
+        public virtual (int width, int lsb) GetGlyphMetrics(char c) {
+            return (Width, 0);
         }
     }
 }

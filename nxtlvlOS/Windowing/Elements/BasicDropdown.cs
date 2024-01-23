@@ -45,6 +45,8 @@ namespace nxtlvlOS.Windowing.Elements {
                 throw new Exception("BasicDropdown needs to be at least 64 pixels wide");
             }
 
+            SetDirty(false);
+
             if (SelectedIndex >= Elements.Length) {
                 SelectedIndex = -1;
             }

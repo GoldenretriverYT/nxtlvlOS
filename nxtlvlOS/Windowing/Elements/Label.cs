@@ -79,16 +79,16 @@ namespace nxtlvlOS.Windowing.Elements {
 
             if (horizontalAlignment == HorizontalAlignment.Left && verticalAlignment == VerticalAlignment.Top) {
                 if (!newlinesEnabled)
-                    DrawString(font, 0, 0, text, color, safeDrawEnabled);
+                    DrawString(font, 0, 0, text, color, safeDrawEnabled, false);
                 else
-                    DrawStringWithNewLines(font, 0, 0, text, color, safeDrawEnabled);
+                    DrawStringWithNewLines(font, 0, 0, text, color, safeDrawEnabled, false, false);
             } else {
                 var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX, SizeY);
-                
+
                 if (!newlinesEnabled)
-                    DrawString(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled);
+                    DrawString(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled, false);
                 else
-                    DrawStringWithNewLines(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled);
+                    DrawStringWithNewLines(font, (int)offsets.x, (int)offsets.y, text, color, safeDrawEnabled, false, false);
             }
         }
     }

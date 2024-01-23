@@ -49,18 +49,21 @@ namespace nxtlvlOS {
 
                 logger.AddLoggerTarget(target);
             }
-
+            
             return logger;
         }
     }
 
     public enum LogLevel {
-        Crit,
-        Fail,
-        Warn,
-        Info,
-        Verb,
-        Sill,
+        Crit = 0,
+        Fail = 1,
+        Warn = 2,
+        Info = 3,
+        Verb = 4,
+        Sill = 5,
+
+        // enums can apparently have aliases! didnt know that
+        Error = Fail,
     }
 
     public static class LogLevelHelpers {

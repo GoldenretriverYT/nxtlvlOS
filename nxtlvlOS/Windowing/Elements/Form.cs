@@ -31,6 +31,8 @@ namespace nxtlvlOS.Windowing.Elements {
         private Process owner;
         public Process Owner => owner;
 
+        public bool IsBeingClosed { get; private set; } = false;
+
         /// <summary>
         /// Invoked right before the form closes. Closing means to completely delete the form - not just to hide it.
         /// </summary>
@@ -149,6 +151,7 @@ namespace nxtlvlOS.Windowing.Elements {
         /// Close the form - this removes it from its parent or the window manager as well.
         /// </summary>
         public void Close() {
+            IsBeingClosed = true;
             BeforeClose.Invoke();
 
             if (Parent != null) {

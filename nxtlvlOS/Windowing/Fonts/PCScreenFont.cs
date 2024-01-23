@@ -231,7 +231,7 @@ namespace nxtlvlOS.Windowing.Fonts {
             return offset;
         }
 
-        public override void DrawChar(BufferedElement el, int x, int y, char c, uint color, bool safe, bool dbg) {
+        public override void DrawChar(BufferedElement el, int x, int y, char c, uint color, bool safe, bool dbg, bool internalAlphaBlend = false) {
             if (safe) {
                 int p = Height * (byte)c;
 
