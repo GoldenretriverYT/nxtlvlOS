@@ -12,6 +12,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using nxtlvlOS.Windowing.Utils;
 
 namespace nxtlvlOS.Apps
 {
@@ -145,7 +146,10 @@ namespace nxtlvlOS.Apps
                     ("(dbg) UITest", () => {
                         UITest();
                     }),
-                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 5)); // 6 (base) + 22 (height per item) * 5 (item count)
+                    ("(dbg) FlattenTest", () => {
+                        FlattenTest();
+                    }),
+                }, 0, 720 - (int)taskbarForm.SizeY - (6 + 22 * 7)); // 6 (base) + 22 (height per item) * 5 (item count)
             };
 
             tasksContainer.AddChild(startButton);
@@ -347,6 +351,28 @@ namespace nxtlvlOS.Apps
             form.AddChild(scrollRightButton);
 
             WindowManager.AddForm(form);
+        }
+
+        void FlattenTest() {
+            //Stopwatch sw = Stopwatch.StartNew();
+
+            //for(int i = 0; i < 1000; i++) {
+            //    _ = IEnumerableHelpers.FlattenElements(WindowManager.Forms);
+            //}
+
+            //sw.Stop();
+
+            //Kernel.Instance.Logger.Log(LogLevel.Info, "FlattenElements took " + sw.ElapsedMilliseconds + "ms");
+
+            //sw.Restart();
+
+            //for(int i = 0; i < 1000; i++) {
+            //    _ = IEnumerableHelpers.FlattenElementsOld(WindowManager.Forms);
+            //}
+
+            //sw.Stop();
+
+            //Kernel.Instance.Logger.Log(LogLevel.Info, "FlattenElementsOld took " + sw.ElapsedMilliseconds + "ms");
         }
     }
 }

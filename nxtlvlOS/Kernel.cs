@@ -36,6 +36,9 @@ namespace nxtlvlOS {
         private uint lastAfterHeapCollect = 0;
         private uint lastAfterLog = 0;
 
+        private ulong msSinceBoot = 0;
+        public ulong MsSinceBoot => msSinceBoot;
+
         public Label fpsLabel = null;
 
         protected override void BeforeRun() {
@@ -51,6 +54,12 @@ namespace nxtlvlOS {
                 Logger.AddLoggerTarget(debuggerTarget);
 
                 Logger.Log(LogLevel.Info, $"Logger initiliazed, min output level: {LogLevelHelpers.GetTag(Logger.MinOutputLevel)}");
+
+                Logger.Log(LogLevel.Info, $"Initiliazing PIT");
+                Cosmos.HAL.Global.PIT.T0Frequency = 1000; // Run every 1ms
+                Cosmos.HAL.Global.PIT.RegisterTimer(new(() => {
+                    msSinceBoot += 1;
+                }, /*1ms in ns*/ 1000000, true));
 
                 Logger.Log(LogLevel.Info, $"Initiliazing file system");
                 VFSManager.RegisterVFS(VFS, false);
