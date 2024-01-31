@@ -1,5 +1,6 @@
 ﻿using Cosmos.System;
 using nxtlvlOS.Windowing.Fonts;
+using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +11,76 @@ using System.Threading.Tasks;
 namespace nxtlvlOS.Windowing.Elements {
     public class TextButton : BufferedElement {
         private string text = "Button Text";
-        public string Text => text;
+        public string Text {
+            get => text;
+            set {
+                text = value;
+                SetDirty(true);
+            }
+        }
 
         private Font font = WindowManager.DefaultFont;
-        public Font Font => font;
+        public Font Font {
+            get => font;
+            set {
+                font = value;
+                SetDirty(true);
+            }
+        }
 
-        private uint textColor = 0xFFFFFFFF;
-        public uint TextColor => textColor;
+        private uint textColor = ColorUtils.Light100;
+        public uint TextColor {
+            get => textColor;
+            set {
+                textColor = value;
+                SetDirty(true);
+            }
+        }
 
-        private uint backgroundColor = 0xFF666688;
-        public uint BackgroundColor => backgroundColor;
+        private uint backgroundColor = ColorUtils.Primary300;
+        public uint BackgroundColor {
+            get => backgroundColor;
+            set {
+                backgroundColor = value;
+                SetDirty(true);
+            }
+        }
 
-        private uint pressedColor = 0xFF8888AA;
-        public uint PressedColor => pressedColor;
+        private uint pressedColor = ColorUtils.Primary100;
+        public uint PressedColor {
+            get => pressedColor;
+            set {
+                pressedColor = value;
+                SetDirty(true);
+            }
+        }
 
         public HorizontalAlignment horizontalAlignment = HorizontalAlignment.Center;
-        public HorizontalAlignment HorizontalAlignment => horizontalAlignment;
+        public HorizontalAlignment HorizontalAlignment {
+            get => horizontalAlignment;
+            set {
+                horizontalAlignment = value;
+                SetDirty(true);
+            }
+        }
 
         public VerticalAlignment verticalAlignment = VerticalAlignment.Middle;
-        public VerticalAlignment VerticalAlignment => verticalAlignment;
+        public VerticalAlignment VerticalAlignment {
+            get => verticalAlignment;
+            set {
+                verticalAlignment = value;
+                SetDirty(true);
+            }
+        }
 
         public bool safeDrawEnabled = false;
-        public bool SafeDrawEnabled => safeDrawEnabled;
+        public bool SafeDrawEnabled {
+            get => safeDrawEnabled;
+            set {
+                safeDrawEnabled = value;
+                SetDirty(true);
+            }
+        }
 
         private int paddingX = 3;
         public int PaddingX {
@@ -79,41 +128,6 @@ namespace nxtlvlOS.Windowing.Elements {
                 var offsets = font.AlignWithin(text, horizontalAlignment, verticalAlignment, SizeX - 6, SizeY - 6);
                 DrawString(font, (int)(paddingX + offsets.x), (int)(paddingY + offsets.y), text, textColor, safeDrawEnabled);
             }
-        }
-
-        public void SetText(string text) {
-            this.text = text;
-            this.SetDirty(true);
-        }
-
-        public void SetFont(PCScreenFont font) {
-            this.font = font;
-            this.SetDirty(true);
-        }
-
-        public void SetTextColor(uint color) {
-            this.textColor = color;
-            this.SetDirty(true);
-        }
-
-        public void SetBackgroundColor(uint color) {
-            this.backgroundColor = color;
-            this.SetDirty(true);
-        }
-
-        public void SetPressedColor(uint color) {
-            this.pressedColor = color;
-            this.SetDirty(true);
-        }
-
-        public void SetHorizontalAlignment(HorizontalAlignment horizontalAlignment) {
-            this.horizontalAlignment = horizontalAlignment;
-            this.SetDirty(true);
-        }
-
-        public void SetVerticalAlignment(VerticalAlignment verticalAlignment) {
-            this.verticalAlignment = verticalAlignment;
-            this.SetDirty(true);
         }
 
         public void SetEnabled(bool enabled) {

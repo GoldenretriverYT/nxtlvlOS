@@ -266,6 +266,10 @@ namespace nxtlvlOS.Windowing.Fonts {
                 }
             }
         }
+
+        public override Font Copy() {
+            return new PCScreenFont(Width, Height, Data, unicodeMappings);
+        }
     }
 
     /// <summary>

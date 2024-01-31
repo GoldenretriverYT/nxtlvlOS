@@ -8,7 +8,15 @@ using System.Threading.Tasks;
 namespace nxtlvlOS.Windowing.Elements {
     public class ImageLabel : BufferedElement {
         private uint[] image = new uint[0];
-        public uint[] Image => image;
+        public uint[] Image {
+            get => image;
+            set {
+                if (value.Length != SizeX * SizeY) throw new Exception("Image size mismatch. Scaling is not support yet.");
+
+                image = value;
+                this.SetDirty(true);
+            }
+        }
 
         public ImageLabel() {
             DrawMode = BufferDrawMode.RawCopy;
@@ -19,13 +27,6 @@ namespace nxtlvlOS.Windowing.Elements {
             SetDirty(false);
             
             Buffer = image;
-        }
-
-        public void SetImage(uint[] image) {
-            if (image.Length != SizeX * SizeY) throw new Exception("Image size mismatch. Scaling is not support yet.");
-
-            this.image = image;
-            this.SetDirty(true);
         }
 
         public void SetTransparent(bool isTransparent) {

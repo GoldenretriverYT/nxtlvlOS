@@ -26,6 +26,9 @@
         <EnableBochsDebug>True</EnableBochsDebug>
         <StartBochsDebugGui>True</StartBochsDebugGui>
         <DebugMode>Source</DebugMode>
+        <AllowComments>False</AllowComments>
+        <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
+        <StackCorruptionDetectionEnabled>True</StackCorruptionDetectionEnabled>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

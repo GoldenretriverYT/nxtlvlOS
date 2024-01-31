@@ -1,4 +1,5 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core;
+using Cosmos.System;
 using nxtlvlOS.Windowing.Elements;
 using nxtlvlOS.Windowing.Fonts;
 using nxtlvlOS.Windowing.Utils;
@@ -109,7 +110,7 @@ namespace nxtlvlOS.Windowing {
 
 
             if(dirty) {
-                //Kernel.Instance.Logger.Log(LogLevel.Sill, $"Drawing {GetType().Name} ({CustomId}) because it is dirty");
+                Kernel.Instance.Logger.Log(LogLevel.Sill, $"Drawing {GetType().Name} ({CustomId}) because it is dirty");
                 Draw();
                 BufferWasUpdated = true;
             }
@@ -251,7 +252,7 @@ namespace nxtlvlOS.Windowing {
             DrawLineVertical(y1, y2, x2-1, colorArgb);
         }
 
-        public void DrawRectFilled(uint x1, uint y1, uint x2, uint y2, uint colorArgb) {
+        public unsafe void DrawRectFilled(uint x1, uint y1, uint x2, uint y2, uint colorArgb) {
             if (x1 > x2) {
                 (x1, x2) = (x2, x1);
             }
@@ -260,9 +261,13 @@ namespace nxtlvlOS.Windowing {
                 (y1, y2) = (y2, y1);
             }
 
-            for (var x = x1; x < x2; x++) {
-                for (var y = y1; y < y2; y++) {
-                    Buffer[(y * SizeX) + x] = colorArgb;
+            if(x1 == 0 && y1 == 0 && x2 == SizeX && y2 == SizeY) {
+                MemoryOperations.Fill(Buffer, colorArgb);
+            } else {
+                fixed (uint* bufPtr = Buffer) {
+                    for (var y = y1; y < y2; y++) {
+                        MemoryOperations.Fill(bufPtr + (y * SizeX) + x1, colorArgb, (int)(x2 - x1));
+                    }
                 }
             }
         }

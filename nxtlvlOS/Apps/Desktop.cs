@@ -16,6 +16,7 @@ using nxtlvlOS.Utils;
 
 namespace nxtlvlOS.Apps
 {
+    // TODO: Remove file functionality from desktop, let our desktop be a app launcher ONLY!
     public class Desktop : App
     {
         private Form desktopForm;
@@ -40,16 +41,17 @@ namespace nxtlvlOS.Apps
             } else {
                 directoryBmp = iconBmp;
             }
-            
-            desktopForm = new Form(SelfProcess);
-            desktopForm.RelativePosX = 0;
-            desktopForm.RelativePosY = 0;
-            desktopForm.SizeX = 1280;
-            desktopForm.SizeY = 720;
-            desktopForm.ShouldBeDrawnToScreen = false; // We will use the EmptyBuffer of WindowManager for backgrounds instead, improves performance
-            desktopForm.DoNotBringToFront = true;
-            desktopForm.SetTitlebarEnabled(false);
-            desktopForm.SetTitle("Desktop");
+
+            desktopForm = new Form(SelfProcess) {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                SizeX = 1280,
+                SizeY = 720,
+                ShouldBeDrawnToScreen = false, // We will use the EmptyBuffer of WindowManager for backgrounds instead, improves performance
+                DoNotBringToFront = true,
+                TitlebarEnabled = false,
+                Title = "Desktop"
+            };
 
             desktopForm.KeyPress += (ev) =>
             {
@@ -163,13 +165,14 @@ namespace nxtlvlOS.Apps
                     }
                 }
 
-                ImageLabel img = new();
-                img.RelativePosX = 5 + 16 + offsetX;
-                img.RelativePosY = 5 + offsetY;
-                img.SizeX = 64;
-                img.SizeY = 64;
+                ImageLabel img = new() {
+                    RelativePosX = 5 + 16 + offsetX,
+                    RelativePosY = 5 + offsetY,
+                    SizeX = 64,
+                    SizeY = 64,
+                    Image = (directoryBmp.Data)
+                };
                 img.SetTransparent(true);
-                img.SetImage(directoryBmp.Data);
                 img.Click += DirectoryClicked;
                 fileContainer.AddChild(img);
 
@@ -227,14 +230,15 @@ namespace nxtlvlOS.Apps
                 if (File.Exists(assoc.IconPath)) {
                     icon = new(File.ReadAllBytes(assoc.IconPath));
                 }
-                
-                ImageLabel img = new();
-                img.RelativePosX = 5 + 16 + offsetX;
-                img.RelativePosY = 5 + offsetY;
-                img.SizeX = 64;
-                img.SizeY = 64;
+
+                ImageLabel img = new() {
+                    RelativePosX = 5 + 16 + offsetX,
+                    RelativePosY = 5 + offsetY,
+                    SizeX = 64,
+                    SizeY = 64,
+                    Image = (icon.Data)
+                };
                 img.SetTransparent(true);
-                img.SetImage(icon.Data);
                 img.Click += FileClicked;
                 fileContainer.AddChild(img);
 
@@ -262,16 +266,16 @@ namespace nxtlvlOS.Apps
         }
 
         private void RenameFile(string originalPath) {
-            Form form = new(SelfProcess);
+            Form form = new(SelfProcess) {
+                RelativePosX = 200,
+                RelativePosY = 200,
 
-            form.RelativePosX = 200;
-            form.RelativePosY = 200;
+                SizeX = 400,
+                SizeY = 130,
 
-            form.SizeX = 400;
-            form.SizeY = 130;
-
-            form.SetTitle("Rename file");
-            form.SetTitlebarEnabled(true);
+                Title = "Rename file",
+                TitlebarEnabled = true
+            };
 
             Label lbl = new() {
                 RelativePosX = 10,
@@ -281,30 +285,33 @@ namespace nxtlvlOS.Apps
                 Text = "Specify a new name for '" + Path.GetFileName(originalPath) + "':",
             };
 
-            TextField newNameField = new();
-            newNameField.RelativePosX = 10;
-            newNameField.RelativePosY = 35;
-            newNameField.SizeX = 380;
-            newNameField.SizeY = 24;
+            TextField newNameField = new() {
+                RelativePosX = 10,
+                RelativePosY = 35,
+                SizeX = 380,
+                SizeY = 24,
 
-            newNameField.SetText(Path.GetFileName(originalPath));
+                Text = (Path.GetFileName(originalPath))
+            };
 
-            TextButton cancelBtn = new();
-            cancelBtn.RelativePosX = 10;
-            cancelBtn.RelativePosY = 70;
-            cancelBtn.SizeX = 185;
-            cancelBtn.SizeY = 24;
-            cancelBtn.SetText("Cancel");
+            TextButton cancelBtn = new() {
+                RelativePosX = 10,
+                RelativePosY = 70,
+                SizeX = 185,
+                SizeY = 24,
+                Text = ("Cancel")
+            };
             cancelBtn.Click += (state, x, y) => {
                 WindowManager.RemoveForm(form);
             };
 
-            TextButton okBtn = new();
-            okBtn.RelativePosX = 205;
-            okBtn.RelativePosY = 70;
-            okBtn.SizeX = 185;
-            okBtn.SizeY = 24;
-            okBtn.SetText("OK");
+            TextButton okBtn = new() {
+                RelativePosX = 205,
+                RelativePosY = 70,
+                SizeX = 185,
+                SizeY = 24,
+                Text = ("OK")
+            };
             okBtn.Click += (state, x, y) => {
                 Kernel.Instance.Logger.Log(LogLevel.Verb, "Renaming file '" + originalPath + "' to '" + (Path.GetDirectoryName(originalPath) + "\\" + newNameField.Text) + "'");
                 File.WriteAllBytes(Path.GetDirectoryName(originalPath) + "/" + newNameField.Text, File.ReadAllBytes(originalPath));

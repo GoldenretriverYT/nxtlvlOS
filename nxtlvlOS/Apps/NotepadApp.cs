@@ -1,4 +1,5 @@
-﻿using nxtlvlOS.Processing;
+﻿using Cosmos.Core;
+using nxtlvlOS.Processing;
 using nxtlvlOS.Services;
 using nxtlvlOS.Windowing;
 using nxtlvlOS.Windowing.Elements;
@@ -22,36 +23,45 @@ namespace nxtlvlOS.Apps
             get => _currentFilePath;
             set {
                 _currentFilePath = value;
-                form.SetTitle("Notepad - " + (value ?? "Untitled"));
+                form.Title = ("Notepad - " + (value ?? "Untitled"));
             }
         }
         private string _currentFilePath = null;
 
         public override void Exit() {
-            if (form != null) form.Close();
+            if (form != null && !form.IsBeingClosed) form.Close();
         }
 
-        public override void Init(string[] args) {
-            form = new(SelfProcess);
-            form.RelativePosX = 100;
-            form.RelativePosY = 100;
+        public override unsafe void Init(string[] args) {
+            form = new(SelfProcess) {
+                RelativePosX = 100,
+                RelativePosY = 100,
 
-            form.SizeX = 600;
-            form.SizeY = 400;
+                SizeX = 600,
+                SizeY = 400,
 
-            form.SetTitle("Notepad");
-            form.SetTitlebarEnabled(true);
+                Title = ("Notepad"),
+                TitlebarEnabled = (true)
+            };
+
+            Kernel.Instance.Logger.Log(LogLevel.Info, "Form located at 0x" + new IntPtr(GCImplementation.GetPointer(form)).ToString("X8"));
+
+            form.Closed += () => {
+                ProcessManager.KillProcess(SelfProcess);
+            };
 
             // Toolstrip
-            toolstrip = new();
-            toolstrip.RelativePosX = 0;
-            toolstrip.RelativePosY = 0;
+            toolstrip = new() {
+                RelativePosX = 0,
+                RelativePosY = 0,
 
-            toolstrip.SizeX = 600;
-            toolstrip.SetRowSize(24);
-            
-            var fileMenu = new ToolstripButton();
-            fileMenu.SetText("File");
+                SizeX = 600,
+                RowSize = (24)
+            };
+
+            var fileMenu = new ToolstripButton {
+                Text = "File"
+            };
             fileMenu.Click += (state, x, y) => {
                 ContextMenuService.Instance.ShowContextMenu(new() {
                     ("New", () => { New(); }),
@@ -65,8 +75,9 @@ namespace nxtlvlOS.Apps
                 }, (int)(fileMenu.GetAbsolutePosition().x), (int)(fileMenu.GetAbsolutePosition().y + fileMenu.SizeY), 200);
             };
 
-            var editMenu = new ToolstripButton();
-            editMenu.SetText("Edit");
+            var editMenu = new ToolstripButton {
+                Text = "Edit"
+            };
             editMenu.Click += (state, x, y) => {
                 ContextMenuService.Instance.ShowContextMenu(new() {
                     ("Cut", () => {}),
@@ -75,8 +86,9 @@ namespace nxtlvlOS.Apps
                 }, (int)(editMenu.GetAbsolutePosition().x), (int)(editMenu.GetAbsolutePosition().y + editMenu.SizeY), 200);
             };
 
-            var helpMenu = new ToolstripButton();
-            helpMenu.SetText("Help");
+            var helpMenu = new ToolstripButton {
+                Text = "Help"
+            };
             helpMenu.Click += (state, x, y) => {
                 ContextMenuService.Instance.ShowContextMenu(new() {
                     ("About Notepad", () => { About(); })
@@ -88,15 +100,16 @@ namespace nxtlvlOS.Apps
             toolstrip.AddItem(helpMenu);
 
             // TextField
-            textField = new();
-            textField.RelativePosX = 2;
-            textField.RelativePosY = 26; // toolstrip is included within the size
-                                         // note: the toolstrip is actually 25px to show a seperator
-            textField.SizeX = 600 - 4;
-            textField.SizeY = 400 - 52; // 52 = toolstrip (25px) + titlebar (24px) + 4px padding
+            textField = new() {
+                RelativePosX = 2,
+                RelativePosY = 26, // toolstrip is included within the size
+                                   // note: the toolstrip is actually 25px to show a seperator
+                SizeX = 600 - 4,
+                SizeY = 400 - 52, // 52 = toolstrip (25px) + titlebar (24px) + 4px padding
 
-            textField.SetBackgroundColor(0xFFFFFFFF);
-            textField.SetTextColor(0xFF000000);
+                BackgroundColor = (0xFFFFFFFF),
+                TextColor = (0xFF000000)
+            };
 
             form.AddChild(toolstrip);
             form.AddChild(textField);
@@ -111,7 +124,7 @@ namespace nxtlvlOS.Apps
 
         private void LoadFromCurrentFile() {
             var res = File.ReadAllText(CurrentFilePath);
-            textField.SetText(res);
+            textField.Text = (res);
         }
 
         public override void Update() {
@@ -120,7 +133,7 @@ namespace nxtlvlOS.Apps
 
         private void New() {
             CurrentFilePath = null;
-            textField.SetText("");
+            textField.Text = ("");
         }
 
         private void Open() {
@@ -145,15 +158,16 @@ namespace nxtlvlOS.Apps
         }
 
         private void About() {
-            Form aboutForm = new(SelfProcess);
-            aboutForm.RelativePosX = form.RelativePosX + 50;
-            aboutForm.RelativePosY = form.RelativePosY + 50;
+            Form aboutForm = new(SelfProcess) {
+                RelativePosX = form.RelativePosX + 50,
+                RelativePosY = form.RelativePosY + 50,
 
-            aboutForm.SizeX = 200;
-            aboutForm.SizeY = 200;
+                SizeX = 200,
+                SizeY = 200,
 
-            aboutForm.SetTitle("About - Notepad");
-            aboutForm.SetTitlebarEnabled(true);
+                Title = ("About - Notepad"),
+                TitlebarEnabled = (true)
+            };
 
             Container container = new();
 

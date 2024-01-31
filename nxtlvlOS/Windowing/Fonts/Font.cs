@@ -1,4 +1,5 @@
 ﻿using nxtlvlOS.Windowing.Elements;
+using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -8,7 +9,7 @@ namespace nxtlvlOS.Windowing.Fonts {
     /// <summary>
     /// Represents a bitmap font.
     /// </summary>
-    public abstract class Font {
+    public abstract class Font : ICopyable<Font> {
         /// <summary>
         /// Gets the raw pixel data of the bitmap font.
         /// </summary>
@@ -96,5 +97,7 @@ namespace nxtlvlOS.Windowing.Fonts {
         public virtual (int width, int lsb) GetGlyphMetrics(char c) {
             return (Width, 0);
         }
+
+        public abstract Font Copy();
     }
 }

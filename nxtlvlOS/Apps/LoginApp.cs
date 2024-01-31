@@ -31,20 +31,22 @@ namespace nxtlvlOS.Apps
                 RelativePosX = (1280 - 600) / 2,
                 RelativePosY = (720 - 170) / 2,
                 SizeX = 600,
-                SizeY = 170
+                SizeY = 170,
+                TitlebarEnabled = (true),
+                Title = ("Login - nxtlvlOS")
             };
-            loginForm.SetTitlebarEnabled(true);
-            loginForm.SetTitle("Login - nxtlvlOS");
             loginForm.SetCloseButtonEnabled(false);
 
             #region Create container
-            Container loginInputContainer = new();
-            loginInputContainer.RelativePosX = 0;
-            loginInputContainer.RelativePosY = 0;
+            Container loginInputContainer = new() {
+                RelativePosX = 0,
+                RelativePosY = 0
+            };
 
-            Container actionsContainer = new();
-            actionsContainer.RelativePosX = 0;
-            actionsContainer.RelativePosY = 0;
+            Container actionsContainer = new() {
+                RelativePosX = 0,
+                RelativePosY = 0
+            };
             #endregion
 
             #region Create login elements
@@ -65,27 +67,26 @@ namespace nxtlvlOS.Apps
                 RelativePosX = 0,
                 RelativePosY = 30,
                 CustomId = "__dbg__TextFieldAccountUsername",
+                Placeholder = "Username"
             };
-
-            accountUsername.SetPlaceholder("Username");
 
             TextField accountPassword = new() {
                 SizeX = 400,
                 SizeY = 24,
                 RelativePosX = 0,
                 RelativePosY = 65,
+                Placeholder = "Password"
             };
 
-            accountPassword.SetPlaceholder("Password");
-
-            TextButton accountLogin = new();
-            accountLogin.SizeX = 150;
-            accountLogin.SizeY = 24;
-            accountLogin.RelativePosX = 0;
-            accountLogin.RelativePosY = 0;
-            accountLogin.SetText("Login");
-            accountLogin.SetHorizontalAlignment(HorizontalAlignment.Center);
-            accountLogin.SetVerticalAlignment(VerticalAlignment.Middle);
+            TextButton accountLogin = new() {
+                SizeX = 150,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 0,
+                Text = "Login",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Middle
+            };
 
             accountLogin.Click += (state, absoluteX, absoluteY) =>
             {

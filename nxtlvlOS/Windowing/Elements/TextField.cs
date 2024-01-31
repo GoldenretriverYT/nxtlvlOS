@@ -16,23 +16,62 @@ using static System.Net.Mime.MediaTypeNames;
 namespace nxtlvlOS.Windowing.Elements {
     public class TextField : BufferedElement {
         private uint backgroundColor = ColorUtils.Primary500;
-        public uint BackgroundColor => backgroundColor;
+        public uint BackgroundColor {
+            get => backgroundColor;
+            set {
+                backgroundColor = value;
+                frame.SetBackgroundColor(value); // The frame also gets the background color so we dont have to perform costly PixelByPixel operations
+                this.SetDirty(true);
+            }
+        }
 
         private uint pressedColor = ColorUtils.Primary100;
-        public uint PressedColor => pressedColor;
+        public uint PressedColor {
+            get => pressedColor;
+            set {
+                pressedColor = value;
+                this.SetDirty(true);
+            }
+        }
 
-        public string Text => frame.Text;
-        public string Placeholder => frame.Placeholder;
-        public uint TextColor => frame.TextColor;
-        public uint PlaceholderColor => frame.PlaceholderColor;
-        public Font Font => frame.Font;
-        public int ScrollX => frame.ScrollX;
-        public int ScrollY => frame.ScrollY;
+        public string Text {
+            get => frame.Text;
+            set => frame.SetText(value);
+        }
+
+        public string Placeholder {
+            get => frame.Placeholder;
+            set => frame.SetPlaceholder(value);
+        }
+        public uint TextColor {
+            get => frame.TextColor;
+            set => frame.SetTextColor(value);
+        }
+
+        public uint PlaceholderColor {
+            get => frame.PlaceholderColor;
+            set => frame.SetPlaceholderColor(value);
+        }
+        public Font Font {
+            get => frame.Font;
+            set => frame.SetFont(value);
+        }
+        public int ScrollX {
+            get => frame.ScrollX;
+            set => frame.SetScrollX(value);
+        }
+        public int ScrollY {
+            get => frame.ScrollY;
+            set => frame.SetScrollY(value);
+        }
                                             
         public int CursorPos = 0;           
                                             
         public bool IsMouseDown { get; private set; } = false;
         public bool IsMouseHovering { get; private set; } = false;
+        public bool EnterIsConfirm { get; set; } = false;
+
+        public Event Confirmed { get; set; } = new Event();
                                             
         private ScrollableTextFrame frame = new() {
             CustomId = "TextFieldFrame"     
@@ -204,7 +243,7 @@ namespace nxtlvlOS.Windowing.Elements {
                 switch(ev.Key) {
                     case ConsoleKeyEx.Backspace:
                         if (CursorPos > 0 && Text.Length > 0) {
-                            SetText(Text.Remove(CursorPos - 1, 1));
+                            Text = (Text.Remove(CursorPos - 1, 1));
                             CursorPos--;
                         }
                         break;
@@ -217,7 +256,12 @@ namespace nxtlvlOS.Windowing.Elements {
                         if (CursorPos > Text.Length) CursorPos = Text.Length;
                         break;
                     case ConsoleKeyEx.Enter:
-                        SetText(Text.Insert(CursorPos, "\n"));
+                        if(EnterIsConfirm) {
+                            Confirmed.Invoke();
+                            return;
+                        }
+
+                        Text = (Text.Insert(CursorPos, "\n"));
                         CursorPos++;
                         break;
                     case ConsoleKeyEx.UpArrow:
@@ -233,49 +277,11 @@ namespace nxtlvlOS.Windowing.Elements {
                         break;
                 }
             }else {
-                SetText(Text.Insert(CursorPos, ev.KeyChar.ToString()));
+                Text = (Text.Insert(CursorPos, ev.KeyChar.ToString()));
                 CursorPos++;
             }
         }
 
-        public void SetText(string text) {
-            this.frame.SetText(text);
-        }
-
-        public void SetPlaceholder(string text) {
-            this.frame.SetPlaceholder(text);
-        }
-
-        public void SetFont(PCScreenFont font) {
-            this.frame.SetFont(font);
-        }
-
-        public void SetTextColor(uint color) {
-            this.frame.SetTextColor(color);
-        }
-
-        public void SetPlaceholderColor(uint color) {
-            this.frame.SetPlaceholderColor(color);
-        }
-
-        public void SetBackgroundColor(uint color) {
-            this.backgroundColor = color;
-            this.frame.SetBackgroundColor(color); // The frame also gets the background color so we dont have to perform costly PixelByPixel operations
-            this.SetDirty(true);
-        }
-
-        public void SetPressedColor(uint color) {
-            this.pressedColor = color;
-            this.SetDirty(true);
-        }
-
-        public void SetScrollX(int scrollX) {
-            this.frame.SetScrollX(scrollX);
-        }
-
-        public void SetScrollY(int scrollY) {
-            this.frame.SetScrollY(scrollY);
-        }
         public override void OnHoverStart() {
             IsMouseHovering = true;
             this.SetDirty(true);
@@ -376,7 +382,7 @@ namespace nxtlvlOS.Windowing.Elements {
                 this.SetDirty(true);
             }
 
-            public void SetFont(PCScreenFont font) {
+            public void SetFont(Font font) {
                 this.font = font;
                 this.SetDirty(true);
             }

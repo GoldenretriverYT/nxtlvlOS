@@ -62,22 +62,26 @@ namespace nxtlvlOS.Apps
                 return;
             }
 
-            oobeForm = new(SelfProcess);
-            oobeForm.RelativePosX = (1280 - 600) / 2;
-            oobeForm.RelativePosY = (720 - 400) / 2;
-            oobeForm.SizeX = 600;
-            oobeForm.SizeY = 400;
-            oobeForm.SetTitlebarEnabled(true);
+            oobeForm = new(SelfProcess) {
+                RelativePosX = (1280 - 600) / 2,
+                RelativePosY = (720 - 400) / 2,
+                SizeX = 600,
+                SizeY = 400,
+                TitlebarEnabled = (true)
+            };
 
             #region Create step containers here for referencing purposes
-            Container stepSelectKeyboardLayout = new();
-            stepSelectKeyboardLayout.Visible = true;
+            Container stepSelectKeyboardLayout = new() {
+                Visible = true
+            };
 
-            Container stepCreateAccountContainer = new();
-            stepCreateAccountContainer.Visible = false;
+            Container stepCreateAccountContainer = new() {
+                Visible = false
+            };
 
-            Container stepCopyFilesContainer = new();
-            stepCopyFilesContainer.Visible = false;
+            Container stepCopyFilesContainer = new() {
+                Visible = false
+            };
             #endregion
 
             #region Step 1 - Select a keyboard layout
@@ -99,14 +103,15 @@ namespace nxtlvlOS.Apps
             {
                 var _layout = kbLayout;
 
-                TextButton layoutButton = new();
-                layoutButton.SizeX = 500;
-                layoutButton.SizeY = 24;
-                layoutButton.RelativePosX = 0;
-                layoutButton.RelativePosY = offset;
-                layoutButton.SetText(kbLayout.Item1);
-                layoutButton.SetHorizontalAlignment(HorizontalAlignment.Center);
-                layoutButton.SetVerticalAlignment(VerticalAlignment.Middle);
+                TextButton layoutButton = new() {
+                    SizeX = 500,
+                    SizeY = 24,
+                    RelativePosX = 0,
+                    RelativePosY = offset,
+                    Text = kbLayout.Item1,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Middle
+                };
 
                 layoutButton.Click += (state, absoluteX, absoluteY) =>
                 {
@@ -136,28 +141,31 @@ namespace nxtlvlOS.Apps
                 Text = "Create an account to start using nxtlvlOS!"
             };
 
-            TextField accountUsername = new();
-            accountUsername.SizeX = 500;
-            accountUsername.SizeY = 24;
-            accountUsername.RelativePosX = 0;
-            accountUsername.RelativePosY = 50;
-            accountUsername.SetPlaceholder("Username");
+            TextField accountUsername = new() {
+                SizeX = 500,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 50,
+                Placeholder = ("Username")
+            };
 
-            TextField accountPassword = new();
-            accountPassword.SizeX = 500;
-            accountPassword.SizeY = 24;
-            accountPassword.RelativePosX = 0;
-            accountPassword.RelativePosY = 100;
-            accountPassword.SetPlaceholder("Password");
+            TextField accountPassword = new() {
+                SizeX = 500,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 100,
+                Placeholder = ("Password")
+            };
 
-            TextButton accountNextStep = new();
-            accountNextStep.SizeX = 500;
-            accountNextStep.SizeY = 24;
-            accountNextStep.RelativePosX = 0;
-            accountNextStep.RelativePosY = 150;
-            accountNextStep.SetText("Next step");
-            accountNextStep.SetHorizontalAlignment(HorizontalAlignment.Center);
-            accountNextStep.SetVerticalAlignment(VerticalAlignment.Middle);
+            TextButton accountNextStep = new() {
+                SizeX = 500,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 150,
+                Text = ("Next step"),
+                HorizontalAlignment = (HorizontalAlignment.Center),
+                VerticalAlignment = (VerticalAlignment.Middle)
+            };
 
             accountNextStep.Click += (state, absoluteX, absoluteY) =>
             {
@@ -188,14 +196,15 @@ namespace nxtlvlOS.Apps
                 Text = "We will now have to copy a files. This may take a while."
             };
 
-            TextButton copyFilesButton = new();
-            copyFilesButton.SizeX = 500;
-            copyFilesButton.SizeY = 24;
-            copyFilesButton.RelativePosX = 0;
-            copyFilesButton.RelativePosY = 50;
-            copyFilesButton.SetText("Copy files & finish OOBE");
-            copyFilesButton.SetHorizontalAlignment(HorizontalAlignment.Center);
-            copyFilesButton.SetVerticalAlignment(VerticalAlignment.Middle);
+            TextButton copyFilesButton = new() {
+                SizeX = 500,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 50,
+                Text = ("Copy files & finish OOBE"),
+                HorizontalAlignment = (HorizontalAlignment.Center),
+                VerticalAlignment = (VerticalAlignment.Middle)
+            };
 
             copyFilesButton.Click += (state, absoluteX, absoluteY) =>
             {

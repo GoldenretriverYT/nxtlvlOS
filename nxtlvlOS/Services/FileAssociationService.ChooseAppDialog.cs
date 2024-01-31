@@ -13,22 +13,23 @@ using nxtlvlOS.Loaders;
 namespace nxtlvlOS.Services {
     public partial class FileAssociationService {
         public void ShowChooseAppDialog(string ext, string originalPath, string[] originalArgs) {
-            Form form = new(SelfProcess);
+            Form form = new(SelfProcess) {
+                RelativePosX = 200,
+                RelativePosY = 200,
 
-            form.RelativePosX = 200;
-            form.RelativePosY = 200;
+                SizeX = 400,
+                SizeY = 200,
 
-            form.SizeX = 400;
-            form.SizeY = 200;
+                Title = ("Choose an app to open this file"),
+                TitlebarEnabled = (true)
+            };
 
-            form.SetTitle("Choose an app to open this file");
-            form.SetTitlebarEnabled(true);
-
-            ScrollView sv = new();
-            sv.RelativePosX = 10;
-            sv.RelativePosY = 5;
-            sv.SizeX = 390;
-            sv.SizeY = 170;
+            ScrollView sv = new() {
+                RelativePosX = 10,
+                RelativePosY = 5,
+                SizeX = 390,
+                SizeY = 170
+            };
 
             form.MouseDown += (MouseState state, uint absX, uint absY) => {
                 Kernel.Instance.Logger.Log(LogLevel.Sill, sv.ScrollY + "/" + sv.ContainerSizeY);
@@ -39,17 +40,19 @@ namespace nxtlvlOS.Services {
             int yOff = 0;
 
             foreach (var nativeApp in nativeAppRegistry) {
-                Rect button = new();
-                button.RelativePosX = 0;
-                button.RelativePosY = yOff;
-                button.SizeX = 390 - 32;
-                button.SizeY = 40;
+                Rect button = new() {
+                    RelativePosX = 0,
+                    RelativePosY = yOff,
+                    SizeX = 390 - 32,
+                    SizeY = 40
+                };
 
                 void ChooseApp(MouseState prevState, MouseState state, uint absX, uint absY) {
-                    AssociationFile assoc = new();
-                    assoc.Name = ext + " file";
-                    assoc.NativeTarget = nativeApp.Key;
-                    assoc.StartArgs = "{fullpath}";
+                    AssociationFile assoc = new() {
+                        Name = ext + " file",
+                        NativeTarget = nativeApp.Key,
+                        StartArgs = "{fullpath}"
+                    };
 
                     var assocPath = AssocFilesRoot + ext + ".asc";
                     assoc.WriteTo(assocPath);

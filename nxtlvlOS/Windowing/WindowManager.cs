@@ -18,6 +18,7 @@ namespace nxtlvlOS.Windowing
 {
     public static class WindowManager {
         public static IRenderTarget Target;
+        public static MemoryBlock TargetBuffer;
         public static uint[] Buffer;
         public static uint[] EmptyBuffer;
 
@@ -33,6 +34,14 @@ namespace nxtlvlOS.Windowing
 
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseDownEvent = new();
         public static Event<(MouseState state, uint x, uint y)> GlobalMouseUpEvent = new();
+
+        /// <summary>
+        /// Activates debug utilities; can cause performance impact
+        /// 
+        /// Current features:
+        ///   - Dump the hierarchy of the element under the mouse on click
+        /// </summary>
+        const bool DEBUG = false;
 
         /// <summary>
         /// The default font/the preferred font of the user.
@@ -99,13 +108,17 @@ namespace nxtlvlOS.Windowing
 
             MemoryOperations.Fill(EmptyBuffer, 0xFF4CAACF);
 
+            if(Target is SpagSVGAIITarget spagSVGAII) {
+                TargetBuffer = spagSVGAII.GetBuffer();
+            }
+
             InitCursor();
         }
 
         public static void InitCursor() {
             NXTBmp cursorBmp = new(AssetManager.CursorBmp);
 
-            cursorElement.SetImage(cursorBmp.Data);
+            cursorElement.Image = (cursorBmp.Data);
             cursorElement.SetTransparent(true);
             cursorElement.Draw();
 
@@ -160,7 +173,7 @@ namespace nxtlvlOS.Windowing
                 if (PreviouslyHoveredElement != elementUnderMouse && elementUnderMouse != null) {
                     if (PreviouslyHoveredElement != null) {
                         //Kernel.Instance.Logger.Log(LogLevel.Sill, $"Element {PreviouslyHoveredElement.GetType().Name} ({PreviouslyHoveredElement.CustomId}): OnHoverEnd");
-                        PreviouslyHoveredElement.OnHoverEnd();
+                        PreviouslyHoveredElement.OnHoverEnd(); // TODO: Crashes sometimes
                     }
 
                     PreviouslyHoveredElement = elementUnderMouse;
@@ -172,6 +185,10 @@ namespace nxtlvlOS.Windowing
                 // TODO: Handle mouse events for all mouse buttons
                 if (elementUnderMouse != null) {
                     if (MouseManager.MouseState != previousState) {
+                        if(DEBUG) {
+                            PrintHierarchy(elementUnderMouse, new List<string>());
+                        }
+
                         if ((MouseManager.MouseState & MouseState.Left) == MouseState.Left &&
                             (previousState & MouseState.Left) != MouseState.Left) {
                             FocusedElement = elementUnderMouse;
@@ -211,7 +228,13 @@ namespace nxtlvlOS.Windowing
                 }
 
                 foreach (var el in elements) {
-                    if (!el.VisibleIncludingParents || !el.ShouldBeDrawnToScreen || el.IsDeleted) continue;
+                    if (!el.VisibleIncludingParents || !el.ShouldBeDrawnToScreen || el.IsDeleted) {
+                        if(el.IsDeleted) {
+                            Kernel.Instance.Logger.Log(LogLevel.Warn, $"Element {el.GetType().Name} ({el.CustomId}) is deleted; ignoring");
+                        }
+
+                        continue;
+                    }
 
                     #region Copy Buffer
                     var (absolutePosX, absolutePosY) = el.GetAbsolutePosition();
@@ -239,7 +262,8 @@ namespace nxtlvlOS.Windowing
 
                         for (var y = startY; y < endY; y++) {
                             // Adjust the length to copy based on the overlapping region
-                            System.Buffer.BlockCopy(el.Buffer, (int)offsetInChild * 4, Buffer, (int)offsetInWMBuffer * 4, lengthToCopy);
+                            Target.BlockCopy(el.Buffer, (int)offsetInChild * 4, (int)offsetInWMBuffer * 4, lengthToCopy);
+                            
                             offsetInChild += el.SizeX;
                             offsetInWMBuffer += wmSizeX;
                         }
@@ -256,19 +280,19 @@ namespace nxtlvlOS.Windowing
 
                             for (var x = startX; x < endX; x++) {
                                 var childBufVal = el.Buffer[offsetInChild + (x - startX)];
-                                var currentBufVal = Buffer[offsetInThisElement + (x - startX)];
+                                var currentBufVal = TargetBuffer[(uint)((offsetInThisElement + (x - startX)) * 4)];
                                 var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
 
                                 if (childBufValAlpha == 0) continue;
 
                                 if (childBufValAlpha == 255) {
-                                    Buffer[offsetInThisElement + (x - startX)] = childBufVal;
+                                    TargetBuffer[(uint)((offsetInThisElement + (x - startX)) * 4)] = childBufVal;
                                 } else {
                                     byte red = (byte)(((childBufVal >> 16) & 0xFF) * childBufValAlpha + ((currentBufVal >> 16) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                     byte green = (byte)(((childBufVal >> 8) & 0xFF) * childBufValAlpha + ((currentBufVal >> 8) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                     byte blue = (byte)(((childBufVal >> 0) & 0xFF) * childBufValAlpha + ((currentBufVal >> 0) & 0xFF) * (255 - childBufValAlpha) >> 8);
 
-                                    Buffer[offsetInThisElement + (x - startX)] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
+                                    TargetBuffer[(uint)((offsetInThisElement + (x - startX)) * 4)] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
                                 }
 
                                 //Buffer[offsetInThisElement + (x - startX)] = ColorUtils.AlphaBlend(childBufVal, currentBufVal);
@@ -278,7 +302,7 @@ namespace nxtlvlOS.Windowing
                     #endregion
                 }
 
-                Target.DrawBuffer(Buffer);
+                //Target.DrawBuffer(Buffer);
                 //Thread.Sleep(100); // Slow down for testing
 
                 return new() { Type = WMResultType.OK, AdditionalData = null };
@@ -291,8 +315,20 @@ namespace nxtlvlOS.Windowing
             Forms.Add(form);
         }
 
+        /// <summary>
+        /// Only use this if you know what you are doing! This might not function properly.
+        /// </summary>
+        /// <param name="el"></param>
+        public static void AddElement(BufferedElement el) {
+            Forms.Add(el);
+        }
+
         public static void RemoveForm(Form form) {
             Forms.Remove(form);
+        }
+
+        public static void RemoveElement(BufferedElement el) {
+            Forms.Remove(el);
         }
 
         public static void PutToFront(Form form) {
@@ -300,7 +336,31 @@ namespace nxtlvlOS.Windowing
             Forms.Add(form);
         }
 
+        public static void PutToFront(BufferedElement el) {
+            Forms.Remove(el);
+            Forms.Add(el);
+        }
 
+        static void PrintHierarchy(BufferedElement el, List<string> currentLines) {
+            // add 2 spaces to each line
+            var newLines = currentLines.Select(x => "  " + x).ToList();
+
+            // add the current element
+            newLines.Insert(0, @$"-> {el.GetType().Name} (Id={el.CustomId}, RelX={el.RelativePosX}, RelY={el.RelativePosY}, AbsX={el.GetAbsolutePosition().x}, AbsY={el.GetAbsolutePosition().y}, SizeX={el.SizeX}, SizeY={el.SizeY})");
+        
+            if(el.Parent != null) {
+                PrintHierarchy(el.Parent, newLines);
+            } else {
+                foreach(var line in newLines) {
+                    var finalLines = newLines.Select(x => x.Replace("->", "  ")).ToList();
+                    finalLines.Insert(0, "-> WindowManager");
+
+                    foreach(var l in finalLines) {
+                        Kernel.Instance.Logger.Log(LogLevel.Sill, l);
+                    }
+                }
+            }
+        }
     }
 
     public struct WMResult {
@@ -314,6 +374,7 @@ namespace nxtlvlOS.Windowing
     }
 
     public interface IRenderTarget {
+        void BlockCopy(uint[] src, int srcOffset, int dstOffset, int count);
         public void DrawBuffer(uint[] buffer);
         public (uint w, uint h) GetSize();
     }

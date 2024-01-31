@@ -22,6 +22,7 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public override void Draw() {
+            this.SetDirty(false);
             if (ShouldBeDrawnToScreen && SizeX != 0 && SizeY != 0) {
                 DrawRect(0, 0, SizeX, SizeY, 0xFFFF0000);
             }

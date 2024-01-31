@@ -32,14 +32,15 @@ namespace nxtlvlOS.Apps
 
         public override void Init(string[] args)
         {
-            taskbarForm = new Form(SelfProcess);
-            taskbarForm.RelativePosX = 0;
-            taskbarForm.RelativePosY = 690;
-            taskbarForm.SizeX = 1280;
-            taskbarForm.SizeY = 30;
-            taskbarForm.ShouldBeShownInTaskbar = false;
-            taskbarForm.SetTitlebarEnabled(false);
-            taskbarForm.SetTitle("Taskbar");
+            taskbarForm = new Form(SelfProcess) {
+                RelativePosX = 0,
+                RelativePosY = 690,
+                SizeX = 1280,
+                SizeY = 30,
+                ShouldBeShownInTaskbar = false,
+                TitlebarEnabled = (false),
+                Title = ("Taskbar")
+            };
 
             tasksContainer = new();
             taskbarForm.AddChild(tasksContainer);
@@ -108,21 +109,29 @@ namespace nxtlvlOS.Apps
                 //GCImplementation.Free(child); // i am not sure why we need this...
             }
 
-            var startButton = new TextButton();
-            startButton.RelativePosX = 4;
-            startButton.RelativePosY = 4;
-            startButton.SizeX = 24;
-            startButton.SizeY = 24;
-            startButton.SetText("NX");
-            startButton.SetHorizontalAlignment(HorizontalAlignment.Left);
-            startButton.SetVerticalAlignment(VerticalAlignment.Middle);
+            var startButton = new TextButton {
+                RelativePosX = 4,
+                RelativePosY = 4,
+                SizeX = 24,
+                SizeY = 24,
+                Text = ("NX"),
+                HorizontalAlignment = (HorizontalAlignment.Left),
+                VerticalAlignment = (VerticalAlignment.Middle)
+            };
 
             startButton.Click += (_, _, _) =>
             {
                 // For now, lets show a context menu as start menu
+                // TODO: Add a real start menu
                 ContextMenuService.Instance.ShowContextMenu(new() {
                     ("System Preferences", () => {
                         OpenSystemPreferences();
+                    }),
+                    ("File Explorer", () => {
+                        OpenFileExplorer();
+                    }),
+                    ("Task Manager", () => {
+                        OpenTaskManager();
                     }),
                     ("Shutdown", () => {
                         Cosmos.HAL.Power.ACPIShutdown();
@@ -150,12 +159,13 @@ namespace nxtlvlOS.Apps
                 if (formElement is not Form form || !form.ShouldBeShownInTaskbar) continue;
                 formCount++;
 
-                var btn = new TextButton();
-                btn.RelativePosX = xOffset;
-                btn.RelativePosY = yOffset;
-                btn.SizeX = 144;
-                btn.SizeY = 24;
-                btn.SetText(form.Title);
+                var btn = new TextButton {
+                    RelativePosX = xOffset,
+                    RelativePosY = yOffset,
+                    SizeX = 144,
+                    SizeY = 24,
+                    Text = (form.Title)
+                };
                 btn.SetSafeDrawEnabled(true);
 
                 btn.Click += (s, absoluteX, absoluteY) =>
@@ -194,6 +204,14 @@ namespace nxtlvlOS.Apps
             ProcessManager.CreateProcess(new PreferenceApp(), "Preferences");
         }
 
+        static void OpenFileExplorer() {
+            ProcessManager.CreateProcess(new FileExplorer(), "File Explorer");
+        }
+
+        static void OpenTaskManager() {
+            ProcessManager.CreateProcess(new TaskManager(), "Task Manager");
+        }
+
         static void DiskTest() {
             int start = RTC.Hour * 3600 + RTC.Minute * 60 + RTC.Second;
             Kernel.Instance.Logger.Log(LogLevel.Info, "Writing 8mb of data...");
@@ -209,33 +227,36 @@ namespace nxtlvlOS.Apps
         }
 
         void UITest() {
-            Form form = new(SelfProcess);
-            form.SizeX = 1000;
-            form.SizeY = 600;
-            form.RelativePosX = 100;
-            form.RelativePosY = 40;
+            Form form = new(SelfProcess) {
+                SizeX = 1000,
+                SizeY = 600,
+                RelativePosX = 100,
+                RelativePosY = 40
+            };
 
-            var button = new TextButton();
-            button.RelativePosX = 10;
-            button.RelativePosY = 10;
-            button.SizeX = 100;
-            button.SizeY = 30;
-            button.SetText("Click me!");
+            var button = new TextButton {
+                RelativePosX = 10,
+                RelativePosY = 10,
+                SizeX = 100,
+                SizeY = 30,
+                Text = ("Click me!")
+            };
 
             button.Click += (_, _, _) => {
-                button.SetText("Clicked!");
+                button.Text = ("Clicked!");
             };
 
             form.AddChild(button);
 
-            var scrollView = new ScrollView();
-            scrollView.RelativePosX = 10;
-            scrollView.RelativePosY = 50;
-            scrollView.SizeX = 300;
-            scrollView.SizeY = 300;
+            var scrollView = new ScrollView {
+                RelativePosX = 10,
+                RelativePosY = 50,
+                SizeX = 300,
+                SizeY = 300,
 
-            scrollView.ContainerSizeX = 1000;
-            scrollView.ContainerSizeY = 1000;
+                ContainerSizeX = 1000,
+                ContainerSizeY = 1000
+            };
 
             form.AddChild(scrollView);
 
@@ -259,21 +280,23 @@ namespace nxtlvlOS.Apps
 
             scrollView.AddItem(label2);
 
-            var textField = new TextField();
-            textField.RelativePosX = 10;
-            textField.RelativePosY = 20;
-            textField.SizeX = 200;
-            textField.SizeY = 200;
-            textField.SetText("Hello world!");
+            var textField = new TextField {
+                RelativePosX = 10,
+                RelativePosY = 20,
+                SizeX = 200,
+                SizeY = 200,
+                Text = ("Hello world!")
+            };
             scrollView.AddItem(textField);
 
             // There currently are no scrollbars built into scrollview, add some "scroll buttons" to test scrolling
-            var scrollUpButton = new TextButton();
-            scrollUpButton.RelativePosX = 410;
-            scrollUpButton.RelativePosY = 50;
-            scrollUpButton.SizeX = 50;
-            scrollUpButton.SizeY = 50;
-            scrollUpButton.SetText("Up");
+            var scrollUpButton = new TextButton {
+                RelativePosX = 410,
+                RelativePosY = 50,
+                SizeX = 50,
+                SizeY = 50,
+                Text = ("Up")
+            };
 
             scrollUpButton.Click += (_, _, _) => {
                 scrollView.ScrollY += 10;
@@ -281,12 +304,13 @@ namespace nxtlvlOS.Apps
 
             form.AddChild(scrollUpButton);
 
-            var scrollDownButton = new TextButton();
-            scrollDownButton.RelativePosX = 410;
-            scrollDownButton.RelativePosY = 100;
-            scrollDownButton.SizeX = 50;
-            scrollDownButton.SizeY = 50;
-            scrollDownButton.SetText("Down");
+            var scrollDownButton = new TextButton {
+                RelativePosX = 410,
+                RelativePosY = 100,
+                SizeX = 50,
+                SizeY = 50,
+                Text = ("Down")
+            };
 
             scrollDownButton.Click += (_, _, _) => {
                 scrollView.ScrollY -= 10;
@@ -294,12 +318,13 @@ namespace nxtlvlOS.Apps
 
             form.AddChild(scrollDownButton);
 
-            var scrollLeftButton = new TextButton();
-            scrollLeftButton.RelativePosX = 360;
-            scrollLeftButton.RelativePosY = 75;
-            scrollLeftButton.SizeX = 50;
-            scrollLeftButton.SizeY = 50;
-            scrollLeftButton.SetText("Left");
+            var scrollLeftButton = new TextButton {
+                RelativePosX = 360,
+                RelativePosY = 75,
+                SizeX = 50,
+                SizeY = 50,
+                Text = ("Left")
+            };
 
             scrollLeftButton.Click += (_, _, _) => {
                 scrollView.ScrollX += 10;
@@ -307,12 +332,13 @@ namespace nxtlvlOS.Apps
 
             form.AddChild(scrollLeftButton);
 
-            var scrollRightButton = new TextButton();
-            scrollRightButton.RelativePosX = 460;
-            scrollRightButton.RelativePosY = 75;
-            scrollRightButton.SizeX = 50;
-            scrollRightButton.SizeY = 50;
-            scrollRightButton.SetText("Right");
+            var scrollRightButton = new TextButton {
+                RelativePosX = 460,
+                RelativePosY = 75,
+                SizeX = 50,
+                SizeY = 50,
+                Text = ("Right")
+            };
 
             scrollRightButton.Click += (_, _, _) => {
                 scrollView.ScrollX -= 10;

@@ -26,25 +26,29 @@ namespace nxtlvlOS.Apps
 
         public override void Init(string[] args)
         {
-            prefForm = new(SelfProcess);
-            prefForm.RelativePosX = (1280 - 600) / 2;
-            prefForm.RelativePosY = (720 - 424) / 2;
-            prefForm.SizeX = 600;
-            prefForm.SizeY = 424;
-            prefForm.Closed += () => {
-                Exit();
+            prefForm = new(SelfProcess) {
+                RelativePosX = (1280 - 600) / 2,
+                RelativePosY = (720 - 424) / 2,
+                SizeX = 600,
+                SizeY = 424,
+                TitlebarEnabled = true,
+                Title = "Preferences - nxtlvlOS",
             };
-            prefForm.SetTitlebarEnabled(true);
-            prefForm.SetTitle("Preferences - nxtlvlOS");
+
+            prefForm.Closed += () => {
+                ProcessManager.KillProcess(SelfProcess);
+            };
 
             #region Create container
-            Container prefInputContainer = new();
-            prefInputContainer.RelativePosX = 0;
-            prefInputContainer.RelativePosY = 0;
+            Container prefInputContainer = new() {
+                RelativePosX = 0,
+                RelativePosY = 0,
+            };
 
-            Container actionsContainer = new();
-            actionsContainer.RelativePosX = 0;
-            actionsContainer.RelativePosY = 0;
+            Container actionsContainer = new() {
+                RelativePosX = 0,
+                RelativePosY = 0,
+            };
             #endregion
 
             #region Create pref elements
@@ -57,11 +61,12 @@ namespace nxtlvlOS.Apps
             };
 
             // TODO: When dropdowns are added, make this a list of fonts in the 0:\System\Fonts folder
-            BasicDropdown prefWMFontField = new();
-            prefWMFontField.SizeX = 580;
-            prefWMFontField.SizeY = 24;
-            prefWMFontField.RelativePosX = 0;
-            prefWMFontField.RelativePosY = 20;
+            BasicDropdown prefWMFontField = new() {
+                SizeX = 580,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 20
+            };
             prefWMFontField.AddElement("system_default");
 
             foreach (var file in Directory.GetFiles(@"0:\System\Fonts")) {
@@ -83,12 +88,13 @@ namespace nxtlvlOS.Apps
             #endregion
 
             #region Create actions
-            TextButton prefSaveButton = new();
-            prefSaveButton.SizeX = 150;
-            prefSaveButton.SizeY = 24;
-            prefSaveButton.RelativePosX = 0;
-            prefSaveButton.RelativePosY = 0;
-            prefSaveButton.SetText("Save");
+            TextButton prefSaveButton = new() {
+                SizeX = 150,
+                SizeY = 24,
+                RelativePosX = 0,
+                RelativePosY = 0,
+                Text = "Save"
+            };
             prefSaveButton.Click += (state, mX, mY) => {
                 SystemPreferenceService.Instance.SetPreference("wm.default_font", prefWMFontField.SelectedElement.Replace("/", "\\"));
                 WindowManager.DefaultFont = null; // Reset the cached default font.

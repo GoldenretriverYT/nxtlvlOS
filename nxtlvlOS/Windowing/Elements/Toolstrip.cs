@@ -11,10 +11,23 @@ namespace nxtlvlOS.Windowing.Elements {
     /// </summary>
     public class Toolstrip : Layout {
         private uint lineColor = 0xFF808080;
-        public uint LineColor => lineColor;
+        public uint LineColor {
+            get => lineColor;
+            set {
+                lineColor = value;
+                SetDirty(true);
+            }
+        }
 
         private int rowSize = 30;
-        public int RowSize => rowSize;
+        public int RowSize {
+            get => rowSize;
+            set {
+                rowSize = value;
+                SetDirty(true);
+                DoLayout();
+            }
+        }
 
         private Rect line = new();
 
@@ -27,18 +40,8 @@ namespace nxtlvlOS.Windowing.Elements {
             AddChild(line);
         }
 
-        public void SetLineColor(uint color) {
-            lineColor = color;
-            SetDirty(true);
-        }
-
-        public void SetRowSize(int size) {
-            rowSize = size;
-            SetDirty(true);
-            DoLayout();
-        }
-
         public override void Draw() {
+            SetDirty(false);
         }
 
         public override void DoLayout() {

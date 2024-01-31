@@ -1,26 +1,58 @@
-﻿using Cosmos.System;
+﻿using Cosmos.Core;
+using Cosmos.Core.Memory;
+using Cosmos.HAL;
+using Cosmos.System;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing.Fonts;
 using nxtlvlOS.Windowing.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing.Elements {
     public class Form : BufferedElement {
+        private int id = 0;
+        private static int nextId = 0;
+
         private string title = "Untitled";
-        public string Title => title;
+        public string Title {
+            get => title;
+            set {
+                title = value;
+                SetDirty(true);
+            }
+        }
 
         private bool titlebarEnabled;
-        public bool TitlebarEnabled => titlebarEnabled;
+        public bool TitlebarEnabled {
+            get => titlebarEnabled;
+            set {
+                titlebarEnabled = value;
+                SetDirty(true);
+            }
+        }
 
         private uint backgroundColor = ColorUtils.Primary400; 
-        public uint BackgroundColor => backgroundColor;
+        public uint BackgroundColor {
+            get => backgroundColor;
+            set {
+                backgroundColor = value;
+                SetDirty(true);
+            }
+        }
 
         private uint titlebarColor = ColorUtils.Primary500;
-        public uint TitlebarColor => titlebarColor;
+        public uint TitlebarColor {
+            get => titlebarColor;
+            set {
+                titlebarColor = value;
+                SetDirty(true);
+            }
+        }
 
         public bool ShouldBeShownInTaskbar = true;
 
@@ -44,15 +76,17 @@ namespace nxtlvlOS.Windowing.Elements {
 
         public Form(Process owner) {
             this.owner = owner;
-            closeButton = new TextButton() {
+            this.id = nextId;
+            nextId++;
+
+            closeButton = new TextButton {
                 RelativePosX = 0,
                 RelativePosY = -20, // Negative due to the ChildRelativeOffsetY being 24
                 SizeX = 16,
                 SizeY = 16,
-                PaddingY = 0
+                PaddingY = 0,
+                Text = "X"
             };
-
-            closeButton.SetText("X");
 
             closeButton.Click += (MouseState _, uint _, uint _) => {
                 Close();
@@ -61,9 +95,16 @@ namespace nxtlvlOS.Windowing.Elements {
             ChildRelativeOffsetX = 1; // Border
 
             AddChild(closeButton);
+
+            Kernel.Instance.Logger.Log(LogLevel.Sill, $"Created form with id {id}");
+
+            /*Cosmos.HAL.Global.PIT.RegisterTimer(new PIT.PITTimer(() => {
+                Kernel.Instance.Logger.Log(LogLevel.Sill, $"alive:{id}");
+            }, 1000000000, true));*/
         }
 
         public override void Update() {
+            //Kernel.Instance.Logger.Log(LogLevel.Sill, $"alive:{id}");
             if(isBeingDragged) {
                 RelativePosX = (int)MouseManager.X + dragOffsetX;
                 RelativePosY = (int)MouseManager.Y + dragOffsetY;
@@ -80,26 +121,6 @@ namespace nxtlvlOS.Windowing.Elements {
             if (RelativePosY + SizeY > parentSize.h) RelativePosY = (int)(parentSize.h - SizeY);
 
             base.Update();
-        }
-
-        public void SetTitle(string title) {
-            this.title = title;
-            this.SetDirty(true);
-        }
-
-        public void SetTitlebarEnabled(bool enabled) {
-            this.titlebarEnabled = enabled;
-            this.SetDirty(true);
-        }
-
-        public void SetBackgroundColor(uint color) {
-            this.backgroundColor = color;
-            this.SetDirty(true);
-        }
-
-        public void SetTitlebarColor(uint color) {
-            this.titlebarColor = color;
-            this.SetDirty(true);
         }
 
         public void SetCloseButtonEnabled(bool enabled) {
@@ -150,7 +171,9 @@ namespace nxtlvlOS.Windowing.Elements {
         /// <summary>
         /// Close the form - this removes it from its parent or the window manager as well.
         /// </summary>
-        public void Close() {
+        public unsafe void Close() {
+            if(IsBeingClosed) return;
+
             IsBeingClosed = true;
             BeforeClose.Invoke();
 
@@ -161,6 +184,33 @@ namespace nxtlvlOS.Windowing.Elements {
             }
 
             Closed.Invoke();
+
+
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#((%@@@@@@@@@@
+            // @@/,..*(&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&#*,..*/&@@@@@@@
+            // @@/,,,,..,(@@@@%//*/#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&(/,,.,*#@@@@@@
+            // @@&(*,.,,*,,*((,..,,/@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&#(((%@@#/*,,.,/&@@@@@
+            // @@@@(**,,....,,,,,/(&@@@@@@@@@@@&%#/*,,,,*/((((#&@@@@@@@@@(*...,(%(*,..,*(@@@@@@
+            // @@@@%/*,,,,,,...,/&@@@@@@@@@%(****,,,...,,*,,,.,,*/%@@@@@@&#/,,*(/,,,,...,%@@@@@
+            // @@@@@@/*,,,,....*(&@@@@@@@(***/*,,*,,,,,,,**,****,,**(@@@@@%(*,,,,.,,*,,,,%@@@@@
+            // @@@@@@@/,,,..,,,*/&@@@@@#*****,,,,*/(#%%%#(/*,,,,,,,,*/#@@@%/*,,,.,,,,,,*(@@@@@@
+            // @@@@@@@&/,,,...*(%@@@@@(*,,,,,,*(%&&&&&&&&&&&%/*,,,,,,,*(@@@#/*,.,,,,,*(@@@@@@@@
+            // @@@@@@@@@%///**#@@@@@@(*,,,,,,(%&&&@@&&&&@@&&&&#/,,,,,,,,#@@@@&(/*//#@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@*,,,,,*(&&&@@@@@@@@@@@&&&&%(,,,,,,,*%@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@&*,,,,*(&&&&@@@@@@@@@@@@&&&&%/*,,,,,*%@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@*,,,*(%&&&&@@@&#((#%&@@&&&&&%/,,,,,/%@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@%*,,/#&&&&&#/,......,*(%&&&&&#/,,,,%@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@#**(%&&&#/,,,,,,,,,,,,*(%&&&%(*,*/@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@#*(%&#/,,,,,,,,,,,,,,,,*(%&&(**(@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@%/,,**,,,,,,,,,,,,,,,,,,,****,*(@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@&/*,,,,,,,,,,,,,,,,,,,***,,/@@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@(/****,,***,***//(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&%%%%%##%&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            //Heap.Free(GCImplementation.GetPointer(this)); // RISKY! Might cause memory corruption?
         }
     }
 }

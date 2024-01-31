@@ -5,6 +5,7 @@ using Cosmos.Debug.Kernel;
 using Cosmos.HAL.Drivers.Video.SVGAII;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
+using nxtlvlOS.Windowing;
 
 namespace nxtlvlOS {
     /// <summary>
@@ -309,7 +310,6 @@ namespace nxtlvlOS {
         /// Create cursor.
         /// </summary>
         public void CreateCursor() {
-            _xSVGADriver.DefineCursor();
         }
 
         /// <summary>

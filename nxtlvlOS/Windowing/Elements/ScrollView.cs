@@ -2,6 +2,8 @@
 using nxtlvlOS.Windowing.Elements.Shapes;
 using nxtlvlOS.Windowing.Utils;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace nxtlvlOS.Windowing.Elements {
     internal class ScrollView : Layout {
@@ -138,12 +140,29 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public override void Draw() {
+            SetDirty(false);
         }
 
         public override void AddItem(BufferedElement element) {
             innerContainer.AddChild(element);
-            DoLayout();
+            //DoLayout();
         }
+
+        public void RemoveItem(BufferedElement element) {
+            innerContainer.RemoveChild(element);
+            //DoLayout();
+        }
+
+        public void ClearItems() {
+            // copy list as we are modifying the original
+            foreach (BufferedElement element in innerContainer.Children.ToList()) {
+                innerContainer.RemoveChild(element);
+            }
+            
+            //DoLayout();
+        }
+
+        public List<BufferedElement> Items => innerContainer.Children;
     }
 
     class ScrollBar : Layout {
@@ -188,8 +207,8 @@ namespace nxtlvlOS.Windowing.Elements {
             ShouldBeDrawnToScreen = false;
             SizeChanged += () => { DoLayout(); };
 
-            upButton.SetText("^");
-            downButton.SetText("v");
+            upButton.Text = ("^");
+            downButton.Text = ("v");
 
             bar.BackgroundColor = ColorUtils.Primary500;
             bar.DoNotBringToFront = true;

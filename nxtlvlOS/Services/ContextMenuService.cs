@@ -23,10 +23,11 @@ namespace nxtlvlOS.Services {
 
             Instance = this;
 
-            ContextMenuForm = new(SelfProcess);
-            ContextMenuForm.SizeX = 300;
-            ContextMenuForm.Visible = false;
-            ContextMenuForm.ShouldBeShownInTaskbar = false;
+            ContextMenuForm = new(SelfProcess) {
+                SizeX = 300,
+                Visible = false,
+                ShouldBeShownInTaskbar = false
+            };
 
             WindowManager.GlobalMouseUpEvent += (eventData) => {
                 if (ContextMenuForm == null) {
@@ -73,13 +74,15 @@ namespace nxtlvlOS.Services {
             var yOffset = 0;
 
             foreach(var item in items) {
-                var button = new TextButton();
-                button.RelativePosX = 3;
-                button.RelativePosY = 3 + yOffset;
-                button.SizeX = ContextMenuForm.SizeX - 6;
-                button.SizeY = 22;
-                button.SetText(item.title);
-                button.SetHorizontalAlignment(HorizontalAlignment.Left);
+                var button = new TextButton {
+                    RelativePosX = 3,
+                    RelativePosY = 3 + yOffset,
+                    SizeX = ContextMenuForm.SizeX - 6,
+                    SizeY = 22,
+                    Text = (item.title),
+                    HorizontalAlignment = (HorizontalAlignment.Left)
+                };
+
                 button.Click += (MouseState state, uint absX, uint absY) => {
                     item.action();
                     ContextMenuForm.Visible = false;

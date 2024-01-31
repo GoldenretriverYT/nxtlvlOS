@@ -27,5 +27,15 @@ namespace nxtlvlOS.Windowing.Utils {
         public const uint Primary700 = 0xFF222244;
         public const uint Primary800 = 0xFF111133;
         public const uint Primary900 = 0xFF000022;
+
+        public const uint Light100 = 0xFFFFFFFF;
+        public const uint Light200 = 0xFFEEEEEE;
+        public const uint Light300 = 0xFFCCCCCC;
+        public const uint Light400 = 0xFFBBBBBB;
+        public const uint Light500 = 0xFF999999;
+        public const uint Light600 = 0xFF888888;
+        public const uint Light700 = 0xFF666666;
+        public const uint Light800 = 0xFF444444;
+        public const uint Light900 = 0xFF222222;
     }
 }

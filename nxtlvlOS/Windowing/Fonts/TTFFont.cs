@@ -10,12 +10,20 @@ namespace nxtlvlOS.Windowing.Fonts {
     public class TTFFont : Font {
         private string _randomName;
         public int Size { get; set; } = 16;
-
-        private (int adv, int lsb)[] metricsCache = new (int adv, int lsb)[65536];
         
         public TTFFont(byte[] data) : base(0, 0, data) {
+            TTFManager.GlyphCacheSize = 128; // cache at most 128 glyphs
             _randomName = "font" + new Random().Next(0, 1000000);
             TTFManager.RegisterFont(_randomName, data);
+        }
+
+        private TTFFont() : base(0, 0, null) { }
+
+        public override Font Copy() {
+            return new TTFFont() {
+                _randomName = _randomName,
+                Size = Size
+            };
         }
 
         public override void DrawChar(BufferedElement el, int x, int y, char c, uint color, bool safe, bool dbg, bool internalAlphaBlend = false) {

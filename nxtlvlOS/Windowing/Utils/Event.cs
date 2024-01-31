@@ -29,6 +29,10 @@ namespace nxtlvlOS.Windowing.Utils {
             }
         }
 
+        public void UnsubscribeAll() {
+            handlers.Clear();
+        }
+
         public unsafe void Invoke(T data) {
             foreach (var handler in handlers) {
                 if (handler == null) continue;
@@ -58,6 +62,10 @@ namespace nxtlvlOS.Windowing.Utils {
             if (handlers.Contains(action)) {
                 handlers.Remove(action);
             }
+        }
+
+        public void UnsubscribeAll() {
+            handlers.Clear();
         }
 
         public unsafe void Invoke(T1 data1, T2 data2) {
@@ -91,6 +99,10 @@ namespace nxtlvlOS.Windowing.Utils {
             }
         }
 
+        public void UnsubscribeAll() {
+            handlers.Clear();
+        }
+
         public unsafe void Invoke(T1 data1, T2 data2, T3 data3) {
             foreach (var handler in handlers) {
                 if (handler == null) continue;
@@ -122,6 +134,10 @@ namespace nxtlvlOS.Windowing.Utils {
             }
         }
 
+        public void UnsubscribeAll() {
+            handlers.Clear();
+        }
+
         public unsafe void Invoke(T1 data1, T2 data2, T3 data3, T4 data4) {
             foreach (var handler in handlers) {
                 if (handler == null) continue;
@@ -151,6 +167,10 @@ namespace nxtlvlOS.Windowing.Utils {
             if (handlers.Contains(action)) {
                 handlers.Remove(action);
             }
+        }
+
+        public void UnsubscribeAll() {
+            handlers.Clear();
         }
 
         public unsafe void Invoke() {
