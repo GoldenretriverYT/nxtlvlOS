@@ -21,7 +21,8 @@ namespace nxtlvlOS.Utils {
             foreach (var file in Directory.GetFiles(src)) {
                 try {
                     Kernel.Instance.Logger.Log(LogLevel.Info, "Copying (file) " + (src + file) + " to " + (dest + file));
-                    FileUtils.SafeCopy(src + file, dest + file);
+                    //FileUtils.SafeCopy(src + file, dest + file); // No longer needed because memory leaks are largely fixed
+                    File.Copy(src + file, dest + file, overwrite);
                 }catch(Exception ex) {
                     Kernel.Instance.Logger.Log(LogLevel.Fail, "Failed copying file: " + ex.Message);
                 }
