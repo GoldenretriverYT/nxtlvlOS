@@ -18,7 +18,6 @@ namespace nxtlvlOS.Windowing
 {
     public static class WindowManager {
         public static IRenderTarget Target;
-        public static MemoryBlock TargetBuffer;
         public static uint[] Buffer;
         public static uint[] EmptyBuffer;
 
@@ -107,10 +106,6 @@ namespace nxtlvlOS.Windowing
             EmptyBuffer = new uint[wmSizeX * (wmSizeY+24)];
 
             MemoryOperations.Fill(EmptyBuffer, 0xFF4CAACF);
-
-            if(Target is SpagSVGAIITarget spagSVGAII) {
-                TargetBuffer = spagSVGAII.GetBuffer();
-            }
 
             InitCursor();
         }
@@ -262,8 +257,7 @@ namespace nxtlvlOS.Windowing
 
                         for (var y = startY; y < endY; y++) {
                             // Adjust the length to copy based on the overlapping region
-                            Target.BlockCopy(el.Buffer, (int)offsetInChild * 4, (int)offsetInWMBuffer * 4, lengthToCopy);
-                            
+                            System.Buffer.BlockCopy(el.Buffer, (int)offsetInChild * 4, Buffer, (int)offsetInWMBuffer * 4, lengthToCopy);
                             offsetInChild += el.SizeX;
                             offsetInWMBuffer += wmSizeX;
                         }
@@ -280,19 +274,19 @@ namespace nxtlvlOS.Windowing
 
                             for (var x = startX; x < endX; x++) {
                                 var childBufVal = el.Buffer[offsetInChild + (x - startX)];
-                                var currentBufVal = TargetBuffer[(uint)((offsetInThisElement + (x - startX)) * 4)];
+                                var currentBufVal = Buffer[offsetInThisElement + (x - startX)];
                                 var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
 
                                 if (childBufValAlpha == 0) continue;
 
                                 if (childBufValAlpha == 255) {
-                                    TargetBuffer[(uint)((offsetInThisElement + (x - startX)) * 4)] = childBufVal;
+                                    Buffer[offsetInThisElement + (x - startX)] = childBufVal;
                                 } else {
                                     byte red = (byte)(((childBufVal >> 16) & 0xFF) * childBufValAlpha + ((currentBufVal >> 16) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                     byte green = (byte)(((childBufVal >> 8) & 0xFF) * childBufValAlpha + ((currentBufVal >> 8) & 0xFF) * (255 - childBufValAlpha) >> 8);
                                     byte blue = (byte)(((childBufVal >> 0) & 0xFF) * childBufValAlpha + ((currentBufVal >> 0) & 0xFF) * (255 - childBufValAlpha) >> 8);
 
-                                    TargetBuffer[(uint)((offsetInThisElement + (x - startX)) * 4)] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
+                                    Buffer[offsetInThisElement + (x - startX)] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
                                 }
 
                                 //Buffer[offsetInThisElement + (x - startX)] = ColorUtils.AlphaBlend(childBufVal, currentBufVal);
@@ -302,7 +296,7 @@ namespace nxtlvlOS.Windowing
                     #endregion
                 }
 
-                //Target.DrawBuffer(Buffer);
+                Target.DrawBuffer(Buffer);
                 //Thread.Sleep(100); // Slow down for testing
 
                 return new() { Type = WMResultType.OK, AdditionalData = null };
@@ -374,7 +368,6 @@ namespace nxtlvlOS.Windowing
     }
 
     public interface IRenderTarget {
-        void BlockCopy(uint[] src, int srcOffset, int dstOffset, int count);
         public void DrawBuffer(uint[] buffer);
         public (uint w, uint h) GetSize();
     }
