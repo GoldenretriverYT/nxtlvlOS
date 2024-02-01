@@ -1,15 +1,22 @@
-﻿using System;
+﻿using Cosmos.Core;
+using Cosmos.HAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Global = Cosmos.HAL.Global;
 
 namespace nxtlvlOS.Utils {
     public class TimingUtils {
         public static Dictionary<string, ulong> Timings = new();
 
+
+        public static void Init() {
+        }
+
         public static void Time(string key) {
-            Timings.Add(key, Cosmos.Core.CPU.GetCPUUptime());
+            Timings.Add(key, CPU.GetCPUUptime());
         }
 
         public static ulong EndTime(string key) {
@@ -18,8 +25,8 @@ namespace nxtlvlOS.Utils {
                 return 1337;
             }
 
-            ulong time = Cosmos.Core.CPU.GetCPUUptime() - Timings[key];
-            //Kernel.Instance.mDebugger.Send("[INFO] " + key + " took " + (time / 1_000_000) + "ms");
+            ulong time = CPU.GetCPUUptime() - Timings[key];
+            //Kernel.Instance.mDebugger.Send("[INFO] " + key + " took " + time + " CPU cycles (" + CyclestoMS(time) + "ms)");
             Timings.Remove(key);
 
             return time;

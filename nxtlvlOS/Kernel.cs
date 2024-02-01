@@ -32,6 +32,7 @@ namespace nxtlvlOS {
         public spagSVGAII Canvas;
 
         private int framesRendered = 0;
+        public int FramesRendered => framesRendered;
         private int previousSecond = -1;
         private uint lastAfterHeapCollect = 0;
         private uint lastAfterLog = 0;
@@ -60,6 +61,11 @@ namespace nxtlvlOS {
                 Cosmos.HAL.Global.PIT.RegisterTimer(new(() => {
                     msSinceBoot += 1;
                 }, /*1ms in ns*/ 1000000, true));
+                Logger.Log(LogLevel.Info, $"Initiliazed PIT!");
+
+                Logger.Log(LogLevel.Info, $"Initiliazing TimingUtils");
+                TimingUtils.Init();
+                Logger.Log(LogLevel.Info, $"Initiliazed TimingUtils!");
 
                 Logger.Log(LogLevel.Info, $"Initiliazing file system");
                 VFSManager.RegisterVFS(VFS, false);

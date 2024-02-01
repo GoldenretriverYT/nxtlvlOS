@@ -85,10 +85,13 @@ namespace nxtlvlOS.Windowing {
         public bool PreviousVisibility = false;
         public bool ScrollPassThrough = true; // We dont react to scroll by default
 
+        const bool DirtyLogging = false;
+
         public virtual void Update() {
             PreDrawAndChildUpdate.Invoke();
 
             if (ShouldBeDrawnToScreen && (_bufSizeX != SizeX || _bufSizeY != SizeY)) {
+                //Kernel.Instance.Logger.Log(LogLevel.Sill, $"Resizing buffer of {GetType().Name} ({CustomId}) to {SizeX}x{SizeY}");
                 _bufSizeX = SizeX;
                 _bufSizeY = SizeY;
                 var finalSize = (SizeY * SizeX);
@@ -110,7 +113,7 @@ namespace nxtlvlOS.Windowing {
 
 
             if(dirty) {
-                Kernel.Instance.Logger.Log(LogLevel.Sill, $"Drawing {GetType().Name} ({CustomId}) because it is dirty");
+                if(DirtyLogging) Kernel.Instance.Logger.Log(LogLevel.Sill, $"Drawing {GetType().Name} ({CustomId}) because it is dirty");
                 Draw();
                 BufferWasUpdated = true;
             }
@@ -183,6 +186,19 @@ namespace nxtlvlOS.Windowing {
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Disposes the buffer and all children.
+        /// Might cause memory corruption <- to be investigated
+        /// </summary>
+        public void Dispose() {
+            if(Buffer != null)
+                GCImplementation.Free(Buffer);
+            
+            foreach(var child in Children) {
+                child.Dispose();
+            }
         }
 
         public abstract void Draw();

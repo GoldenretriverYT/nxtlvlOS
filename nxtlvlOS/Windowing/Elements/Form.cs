@@ -210,7 +210,7 @@ namespace nxtlvlOS.Windowing.Elements {
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@&%%%%%##%&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
             // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            //Heap.Free(GCImplementation.GetPointer(this)); // RISKY! Might cause memory corruption?
+            Dispose(); // Disposes this buffer and all child buffers
         }
     }
 }
