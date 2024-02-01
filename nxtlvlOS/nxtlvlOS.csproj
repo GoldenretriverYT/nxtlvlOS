@@ -54,6 +54,7 @@
         <PackageReference Include="Cosmos.Plugs" Version="0.1.0-localbuild20231210060151" />
         <PackageReference Include="Cosmos.System2" Version="0.1.0-localbuild20231210060151" />
         <PackageReference Include="GoldenretriverYT.SimpleINI" Version="1.0.0" />
+        <PackageReference Include="Jint" Version="3.0.0" />
     </ItemGroup>
 
     <ItemGroup>

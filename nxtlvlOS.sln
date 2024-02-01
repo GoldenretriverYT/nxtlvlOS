@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFS", "TestFS\TestFS.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTTF", "CosmosTTF\CosmosTTF\CosmosTTF.csproj", "{90BEEA10-6822-4369-B281-612237217922}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "quak", "quak\quak.csproj", "{23074145-C673-4DA1-894B-80A9F26675A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{90BEEA10-6822-4369-B281-612237217922}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90BEEA10-6822-4369-B281-612237217922}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90BEEA10-6822-4369-B281-612237217922}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23074145-C673-4DA1-894B-80A9F26675A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23074145-C673-4DA1-894B-80A9F26675A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23074145-C673-4DA1-894B-80A9F26675A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23074145-C673-4DA1-894B-80A9F26675A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

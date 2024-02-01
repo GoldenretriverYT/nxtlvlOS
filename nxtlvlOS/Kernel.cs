@@ -5,6 +5,7 @@ using Cosmos.System;
 using Cosmos.System.FileSystem;
 using Cosmos.System.FileSystem.VFS;
 using Cosmos.System.Graphics;
+using Jint;
 using Microsoft.VisualBasic;
 using nxtlvlOS.Apps;
 using nxtlvlOS.Assets;
@@ -121,7 +122,7 @@ namespace nxtlvlOS {
                 fpsLabel = new Label() {
                     RelativePosX = 15,
                     RelativePosY = 15,
-                    SizeX = 300,
+                    SizeX = 500,
                     SizeY = 16,
                     Text = "FPS: ca. 0; Memory: 0kb / 0kb (0kb/s)",
                     HorizontalAlignment = HorizontalAlignment.Left,
@@ -160,11 +161,13 @@ namespace nxtlvlOS {
 
             if(framesRendered % 100 == 0) {
                 //Logger.Log(LogLevel.Verb, "Since last GC, " + (GCImplementation.GetUsedRAM() - lastAfterHeapCollect)/1024 + " kb were allocated");
-                Heap.Collect();
-                lastAfterHeapCollect = GCImplementation.GetUsedRAM();
+                
+                
             }
 
             if(RTC.Second != previousSecond) {
+                Heap.Collect();
+                lastAfterHeapCollect = GCImplementation.GetUsedRAM();
                 previousSecond = RTC.Second;
                 var diff = (int)GCImplementation.GetUsedRAM() - lastAfterLog;
 

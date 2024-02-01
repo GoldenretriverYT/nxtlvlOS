@@ -91,7 +91,7 @@ namespace nxtlvlOS.Windowing {
             PreDrawAndChildUpdate.Invoke();
 
             if (ShouldBeDrawnToScreen && (_bufSizeX != SizeX || _bufSizeY != SizeY)) {
-                //Kernel.Instance.Logger.Log(LogLevel.Sill, $"Resizing buffer of {GetType().Name} ({CustomId}) to {SizeX}x{SizeY}");
+                Kernel.Instance.Logger.Log(LogLevel.Sill, $"Resizing buffer of {GetType().Name} ({CustomId}) to {SizeX}x{SizeY}");
                 _bufSizeX = SizeX;
                 _bufSizeY = SizeY;
                 var finalSize = (SizeY * SizeX);
