@@ -1,4 +1,5 @@
-﻿using nxtlvlOS.Windowing.Fonts;
+﻿using nxtlvlOS.Loaders;
+using nxtlvlOS.Windowing.Fonts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,10 @@ using System.Threading.Tasks;
 
 namespace nxtlvlOS.Windowing.Elements {
     public class ImageLabel : BufferedElement {
-        private uint[] image = new uint[0];
-        public uint[] Image {
+        private NXTBmp image;
+        public NXTBmp Image {
             get => image;
             set {
-                if (value.Length != SizeX * SizeY) throw new Exception("Image size mismatch. Scaling is not support yet.");
-
                 image = value;
                 this.SetDirty(true);
             }
@@ -23,10 +22,9 @@ namespace nxtlvlOS.Windowing.Elements {
         }
 
         public override void Draw() {
-            if (image.Length != SizeX * SizeY) throw new Exception("Image size mismatch. Scaling is not support yet.");
             SetDirty(false);
-            
-            Buffer = image;
+
+            Buffer = image.Data;
         }
 
         public void SetTransparent(bool isTransparent) {

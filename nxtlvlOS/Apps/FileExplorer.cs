@@ -245,7 +245,7 @@ namespace nxtlvlOS.Apps {
                         RelativePosY = offY,
                         SizeX = 64,
                         SizeY = 64,
-                        Image = (icon.Data)
+                        Image = icon
                     };
                     img.SetTransparent(true);
                     img.Click += Clicked;

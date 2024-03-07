@@ -133,6 +133,7 @@ namespace nxtlvlOS.Windowing {
         }
 
         public virtual void OnMouseUp(MouseState state, MouseState prev, bool mouseIsOver) {
+            Kernel.Instance.Logger.Log(LogLevel.Sill, $"Mouse up on {GetType().Name} ({CustomId})");
             MouseUp.Invoke(state, prev, MouseManager.X, MouseManager.Y);
 
             if (mouseIsOver && enabled) {

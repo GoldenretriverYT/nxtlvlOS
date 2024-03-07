@@ -33,7 +33,8 @@ namespace nxtlvlOS.Apps
                 SizeX = 600,
                 SizeY = 170,
                 TitlebarEnabled = (true),
-                Title = ("Login - nxtlvlOS")
+                Title = ("Login - nxtlvlOS"),
+                ShowResizeKnob = true
             };
             loginForm.SetCloseButtonEnabled(false);
 

@@ -2,6 +2,7 @@
 using Cosmos.Core.Memory;
 using Cosmos.HAL;
 using Cosmos.System;
+using nxtlvlOS.Assets;
 using nxtlvlOS.Processing;
 using nxtlvlOS.Windowing.Fonts;
 using nxtlvlOS.Windowing.Utils;
@@ -54,11 +55,21 @@ namespace nxtlvlOS.Windowing.Elements {
             }
         }
 
+        private ImageLabel resizeKnob;
+        public bool ShowResizeKnob {
+            get => resizeKnob.Visible;
+            set {
+                resizeKnob.Visible = value;
+            }
+        }
+
         public bool ShouldBeShownInTaskbar = true;
 
         private TextButton closeButton;
         private bool isBeingDragged = false;
         private int dragOffsetX = 0, dragOffsetY = 0;
+        private int initialResizeX, initialResizeY;
+
 
         private Process owner;
         public Process Owner => owner;
@@ -92,15 +103,70 @@ namespace nxtlvlOS.Windowing.Elements {
                 Close();
             };
 
+            resizeKnob = new ImageLabel {
+                RelativePosX = 0,
+                RelativePosY = 0,
+                Image = AssetManager.LoadDynamicImage(@"0:\System\Img\ResizeKnob.bmp"),
+                SizeX = 8,
+                SizeY = 8
+            };
+
+            
+            resizeKnob.MouseDown += (MouseState state, uint mouseX, uint mouseY) => {
+                if((state & MouseState.Left) == MouseState.Left) {
+                    initialResizeX = (int)mouseX;
+                    initialResizeY = (int)mouseY;
+
+                    WindowManager.AddToOverlay(DrawResizeOverlay);
+                }
+            };
+
+            resizeKnob.MouseUp += HandleMouseUp;
+
+            void HandleMouseUp(MouseState state, MouseState prev, uint mouseX, uint mouseY) {
+                if(mouseX < initialResizeX) {
+                    initialResizeX = (int)mouseX;
+                }
+
+                if(mouseY < initialResizeY) {
+                    initialResizeY = (int)mouseY;
+                }
+
+                var deltaX = (int)mouseX - initialResizeX;
+                var deltaY = (int)mouseY - initialResizeY;
+
+                SizeX += (uint)deltaX;
+                SizeY += (uint)deltaY;
+
+                WindowManager.RemoveFromOverlay(DrawResizeOverlay);
+            };
+
             ChildRelativeOffsetX = 1; // Border
 
             AddChild(closeButton);
+            AddChild(resizeKnob);
 
             Kernel.Instance.Logger.Log(LogLevel.Sill, $"Created form with id {id}");
 
             /*Cosmos.HAL.Global.PIT.RegisterTimer(new PIT.PITTimer(() => {
                 Kernel.Instance.Logger.Log(LogLevel.Sill, $"alive:{id}");
             }, 1000000000, true));*/
+        }
+
+        private void DrawResizeOverlay() {
+            var absPos = GetAbsolutePosition();
+            var mX = MouseManager.X;
+            var mY = MouseManager.Y;
+
+            if(mX < initialResizeX) {
+                mX = (uint)initialResizeX;
+            }
+
+            if(mY < initialResizeY) {
+                mY = (uint)initialResizeY;
+            }
+            
+            WindowManager.DrawOverlayRect(absPos.x, absPos.y, mX, mY, 0xFF666666);
         }
 
         public override void Update() {
@@ -112,6 +178,9 @@ namespace nxtlvlOS.Windowing.Elements {
 
             closeButton.RelativePosX = (int)(SizeX - 22);
             closeButton.Visible = titlebarEnabled;
+
+            resizeKnob.RelativePosX = (int)(SizeX - 8);
+            resizeKnob.RelativePosY = (int)(SizeY - 8 - ChildRelativeOffsetY);
 
             var parentSize = Parent == null ? WindowManager.ScreenSize : (w: Parent.SizeX, h: Parent.SizeY);
 

@@ -29,6 +29,7 @@
         <AllowComments>False</AllowComments>
         <RemoveBootDebugOutput>True</RemoveBootDebugOutput>
         <StackCorruptionDetectionEnabled>True</StackCorruptionDetectionEnabled>
+        <StackCorruptionDetectionLevel>MethodFooters</StackCorruptionDetectionLevel>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

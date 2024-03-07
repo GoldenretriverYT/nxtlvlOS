@@ -170,7 +170,7 @@ namespace nxtlvlOS.Apps
                     RelativePosY = 5 + offsetY,
                     SizeX = 64,
                     SizeY = 64,
-                    Image = (directoryBmp.Data)
+                    Image = directoryBmp
                 };
                 img.SetTransparent(true);
                 img.Click += DirectoryClicked;
@@ -236,7 +236,7 @@ namespace nxtlvlOS.Apps
                     RelativePosY = 5 + offsetY,
                     SizeX = 64,
                     SizeY = 64,
-                    Image = (icon.Data)
+                    Image = icon
                 };
                 img.SetTransparent(true);
                 img.Click += FileClicked;

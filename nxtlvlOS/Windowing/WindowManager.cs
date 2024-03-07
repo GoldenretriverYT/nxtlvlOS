@@ -24,6 +24,7 @@ namespace nxtlvlOS.Windowing
         public static (uint w, uint h) ScreenSize => (wmSizeX, wmSizeY);
 
         public static List<BufferedElement> Forms = new();
+        public static List<Action> OverlayDrawers = new();
         private static uint wmSizeX, wmSizeY;
 
         private static MouseState previousState = MouseState.None;
@@ -113,7 +114,7 @@ namespace nxtlvlOS.Windowing
         public static void InitCursor() {
             NXTBmp cursorBmp = new(AssetManager.CursorBmp);
 
-            cursorElement.Image = (cursorBmp.Data);
+            cursorElement.Image = cursorBmp;
             cursorElement.SetTransparent(true);
             cursorElement.Draw();
 
@@ -276,15 +277,16 @@ namespace nxtlvlOS.Windowing
                                 var childBufVal = el.Buffer[offsetInChild + (x - startX)];
                                 var currentBufVal = Buffer[offsetInThisElement + (x - startX)];
                                 var childBufValAlpha = (byte)((childBufVal >> 24) & 0xFF);
+                                var adjustedChildBufValAlpha = 255 - childBufValAlpha;
 
                                 if (childBufValAlpha == 0) continue;
 
                                 if (childBufValAlpha == 255) {
                                     Buffer[offsetInThisElement + (x - startX)] = childBufVal;
                                 } else {
-                                    byte red = (byte)(((childBufVal >> 16) & 0xFF) * childBufValAlpha + ((currentBufVal >> 16) & 0xFF) * (255 - childBufValAlpha) >> 8);
-                                    byte green = (byte)(((childBufVal >> 8) & 0xFF) * childBufValAlpha + ((currentBufVal >> 8) & 0xFF) * (255 - childBufValAlpha) >> 8);
-                                    byte blue = (byte)(((childBufVal >> 0) & 0xFF) * childBufValAlpha + ((currentBufVal >> 0) & 0xFF) * (255 - childBufValAlpha) >> 8);
+                                    byte red = (byte)(((childBufVal >> 16) & 0xFF) * childBufValAlpha + ((currentBufVal >> 16) & 0xFF) * (adjustedChildBufValAlpha) >> 8);
+                                    byte green = (byte)(((childBufVal >> 8) & 0xFF) * childBufValAlpha + ((currentBufVal >> 8) & 0xFF) * (adjustedChildBufValAlpha) >> 8);
+                                    byte blue = (byte)(((childBufVal >> 0) & 0xFF) * childBufValAlpha + ((currentBufVal >> 0) & 0xFF) * (adjustedChildBufValAlpha) >> 8);
 
                                     Buffer[offsetInThisElement + (x - startX)] = (uint)((0xFF << 24) + (red << 16) + (green << 8) + blue);
                                 }
@@ -294,6 +296,10 @@ namespace nxtlvlOS.Windowing
                         }
                     }
                     #endregion
+                }
+
+                foreach (var drawer in OverlayDrawers) {
+                    drawer.Invoke();
                 }
 
                 Target.DrawBuffer(Buffer);
@@ -335,6 +341,18 @@ namespace nxtlvlOS.Windowing
             Forms.Add(el);
         }
 
+        /// <summary>
+        /// Adds a drawer to the overlay. Be careful as these are redrawn every frame and therefore impact performance significantly.
+        /// </summary>
+        /// <param name="el"></param>
+        public static void AddToOverlay(Action drawer) {
+            OverlayDrawers.Add(drawer);
+        }
+
+        public static void RemoveFromOverlay(Action drawer) {
+            OverlayDrawers.Remove(drawer);
+        }
+
         static void PrintHierarchy(BufferedElement el, List<string> currentLines) {
             // add 2 spaces to each line
             var newLines = currentLines.Select(x => "  " + x).ToList();
@@ -355,6 +373,55 @@ namespace nxtlvlOS.Windowing
                 }
             }
         }
+
+        #region Overlay Draw Utilities
+        public static void DrawOverlayLineHorizontal(uint x1, uint x2, uint y, uint colorArgb) {
+            if (x1 > x2) {
+                (x1, x2) = (x2, x1);
+            }
+
+            for (var x = x1; x < x2; x++) {
+                Buffer[(y * wmSizeX) + x] = colorArgb;
+            }
+        }
+
+        public static void DrawOverlayLineVertical(uint y1, uint y2, uint x, uint colorArgb) {
+            if (y1 > y2) {
+                (y1, y2) = (y2, y1);
+            }
+
+            for (var y = y1; y < y2; y++) {
+                Buffer[(y * wmSizeX) + x] = colorArgb;
+            }
+        }
+
+        public static void DrawOverlayRect(uint x1, uint y1, uint x2, uint y2, uint colorArgb) {
+            DrawOverlayLineHorizontal(x1, x2, y1, colorArgb);
+            DrawOverlayLineVertical(y1, y2, x1, colorArgb);
+            DrawOverlayLineHorizontal(x1, x2, y2 - 1, colorArgb);
+            DrawOverlayLineVertical(y1, y2, x2 - 1, colorArgb);
+        }
+
+        public static unsafe void DrawOverlayRectFilled(uint x1, uint y1, uint x2, uint y2, uint colorArgb) {
+            if (x1 > x2) {
+                (x1, x2) = (x2, x1);
+            }
+
+            if (y1 > y2) {
+                (y1, y2) = (y2, y1);
+            }
+
+            if (x1 == 0 && y1 == 0 && x2 == wmSizeX && y2 == wmSizeY) {
+                MemoryOperations.Fill(Buffer, colorArgb);
+            } else {
+                fixed (uint* bufPtr = Buffer) {
+                    for (var y = y1; y < y2; y++) {
+                        MemoryOperations.Fill(bufPtr + (y * wmSizeX) + x1, colorArgb, (int)(x2 - x1));
+                    }
+                }
+            }
+        }
+        #endregion
     }
 
     public struct WMResult {
